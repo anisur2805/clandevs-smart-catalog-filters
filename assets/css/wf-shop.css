@@ -120,8 +120,9 @@
 
 .wf-price-slider {
   position: relative;
-  height: 26px;
+  height: 28px;
   margin-top: 6px;
+  padding: 0 8px;
 }
 
 .wf-price-range-inputs {
@@ -131,9 +132,9 @@
 
 .wf-price-range {
   position: absolute;
-  left: 0;
+  left: 8px;
   top: 0;
-  width: 100%;
+  width: calc(100% - 16px);
   height: 26px;
   margin: 0;
   background: transparent;
@@ -152,6 +153,7 @@
   background: #fff;
   pointer-events: auto;
   cursor: pointer;
+  box-shadow: 0 0 0 2px #fff;
 }
 
 .wf-price-range::-webkit-slider-runnable-track {
@@ -167,6 +169,7 @@
   background: #fff;
   pointer-events: auto;
   cursor: pointer;
+  box-shadow: 0 0 0 2px #fff;
 }
 
 .wf-price-range::-moz-range-track {
@@ -176,8 +179,8 @@
 
 .wf-price-track {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 8px;
+  right: 8px;
   top: 11px;
   height: 4px;
   border-radius: 999px;
@@ -218,7 +221,16 @@
 
 .wf-actions .button {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: nowrap;
+  border-radius: 6px;
 }
 
 .wf-actions .button.alt {
