@@ -66,6 +66,9 @@ final class ShopFilters {
 
 		add_filter( 'loop_shop_columns', array( $this, 'filter_loop_columns' ) );
 		add_filter( 'loop_shop_per_page', array( $this, 'filter_loop_per_page' ), 20 );
+
+		remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
+		add_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ), 10 );
 	}
 
 	/**
@@ -252,6 +255,26 @@ final class ShopFilters {
 		}
 
 		echo '</section>';
+		echo '</div>';
+	}
+
+	/**
+	 * Render no-results empty state.
+	 *
+	 * @return void
+	 */
+	public function render_no_products_state(): void {
+		if ( ! $this->is_shop_archive() ) {
+			return;
+		}
+
+		echo '<div class="wf-no-results" role="status" aria-live="polite">';
+		echo '<h3>' . esc_html__( 'No products found', 'woo-filters' ) . '</h3>';
+		echo '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filters' ) . '</p>';
+		echo '<div class="wf-empty-actions">';
+		echo '<a class="button alt" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
+		echo '<a class="button" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
+		echo '</div>';
 		echo '</div>';
 	}
 
@@ -864,6 +887,15 @@ final class ShopFilters {
 			}
 		}
 
+		return wc_get_page_permalink( 'shop' );
+	}
+
+	/**
+	 * Get default shop page URL.
+	 *
+	 * @return string
+	 */
+	private function get_shop_page_url(): string {
 		return wc_get_page_permalink( 'shop' );
 	}
 
