@@ -384,10 +384,12 @@ final class ShopFilters {
 		$selected_rating = $this->get_request_absint( 'rating_filter' );
 		$min_price       = $this->get_request_decimal( 'min_price' );
 		$max_price       = $this->get_request_decimal( 'max_price' );
+		$in_stock_only   = $this->get_request_flag( 'wf_in_stock' );
+		$on_sale_only    = $this->get_request_flag( 'wf_on_sale' );
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
 		echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $this->get_filter_nonce() ) . '" />';
-		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'min_price', 'max_price', 'rating_filter', 'paged', 'product-page' ) );
+		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' ) );
 		$this->render_active_filters();
 
 		echo '<div class="wf-filter-block">';
@@ -422,6 +424,12 @@ final class ShopFilters {
 		echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
 		echo '<span>' . esc_html__( 'Any', 'woo-filters' ) . '</span>';
 		echo '</label>';
+		echo '</div>';
+
+		echo '<div class="wf-filter-block">';
+		echo '<h4>' . esc_html__( 'Availability', 'woo-filters' ) . '</h4>';
+		echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'woo-filters' ) . '</span></label>';
+		echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'woo-filters' ) . '</span></label>';
 		echo '</div>';
 
 		if ( '' !== $this->color_taxonomy ) {
@@ -504,6 +512,20 @@ final class ShopFilters {
 			$chips[] = array(
 				'label' => sprintf( __( '%d stars & up', 'woo-filters' ), $rating ),
 				'url'   => $this->build_remove_filter_url( 'rating_filter' ),
+			);
+		}
+
+		if ( $this->get_request_flag( 'wf_in_stock' ) ) {
+			$chips[] = array(
+				'label' => __( 'Stock: In stock', 'woo-filters' ),
+				'url'   => $this->build_remove_filter_url( 'wf_in_stock' ),
+			);
+		}
+
+		if ( $this->get_request_flag( 'wf_on_sale' ) ) {
+			$chips[] = array(
+				'label' => __( 'Sale: On sale', 'woo-filters' ),
+				'url'   => $this->build_remove_filter_url( 'wf_on_sale' ),
 			);
 		}
 
@@ -856,6 +878,8 @@ final class ShopFilters {
 			$args['min_price'],
 			$args['max_price'],
 			$args['rating_filter'],
+			$args['wf_in_stock'],
+			$args['wf_on_sale'],
 			$args['paged'],
 			$args['product-page']
 		);
@@ -950,6 +974,16 @@ final class ShopFilters {
 		}
 
 		return absint( wp_unslash( (string) $_GET[ $key ] ) );
+	}
+
+	/**
+	 * Parse request key as boolean flag.
+	 *
+	 * @param string $key Query key.
+	 * @return bool
+	 */
+	private function get_request_flag( string $key ): bool {
+		return 1 === $this->get_request_absint( $key );
 	}
 
 	/**
@@ -1093,6 +1127,23 @@ final class ShopFilters {
 					'type'    => 'DECIMAL(10,2)',
 				);
 			}
+		}
+
+		if ( ! isset( $excluded['wf_in_stock'] ) && $this->get_request_flag( 'wf_in_stock' ) ) {
+			$meta_clauses[] = array(
+				'key'     => '_stock_status',
+				'value'   => 'instock',
+				'compare' => '=',
+			);
+		}
+
+		if ( ! isset( $excluded['wf_on_sale'] ) && $this->get_request_flag( 'wf_on_sale' ) ) {
+			$meta_clauses[] = array(
+				'key'     => '_sale_price',
+				'value'   => 0,
+				'compare' => '>',
+				'type'    => 'NUMERIC',
+			);
 		}
 
 		return array(
