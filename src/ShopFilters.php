@@ -15,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles WooCommerce archive filters and UI rendering.
  */
 final class ShopFilters {
+	/** @var string */
+	private const NONCE_ACTION = 'wf_filter_request';
+
 	/** @var int */
 	private const MAX_PER_PAGE = 9999;
 
@@ -113,6 +116,14 @@ final class ShopFilters {
 			$this->asset_version,
 			true
 		);
+
+		wp_localize_script(
+			'wf-shop-filters',
+			'wfShopFilters',
+			array(
+				'nonce' => $this->get_filter_nonce(),
+			)
+		);
 	}
 
 	/**
@@ -160,6 +171,10 @@ final class ShopFilters {
 		}
 
 		if ( ! $this->is_query_shop_archive( $query ) ) {
+			return;
+		}
+
+		if ( ! $this->is_valid_filter_request() ) {
 			return;
 		}
 
@@ -371,6 +386,7 @@ final class ShopFilters {
 		$max_price       = $this->get_request_decimal( 'max_price' );
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
+		echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $this->get_filter_nonce() ) . '" />';
 		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'min_price', 'max_price', 'rating_filter', 'paged', 'product-page' ) );
 		$this->render_active_filters();
 
@@ -610,6 +626,8 @@ final class ShopFilters {
 		unset( $args['paged'], $args['product-page'] );
 		$args['wf_per_page'] = 0 === $value ? self::MAX_PER_PAGE : $value;
 
+		$args = $this->with_security_args( $args );
+
 		return add_query_arg( $args, $this->get_archive_url() );
 	}
 
@@ -621,6 +639,17 @@ final class ShopFilters {
 	 * @return \WP_Query
 	 */
 	private function get_shortcode_products_query( int $per_page, int $paged ): \WP_Query {
+		if ( ! $this->is_valid_filter_request() ) {
+			return new \WP_Query(
+				array(
+					'post_type'      => 'product',
+					'post_status'    => 'publish',
+					'paged'          => max( 1, $paged ),
+					'posts_per_page' => min( self::MAX_PER_PAGE, $per_page ),
+				)
+			);
+		}
+
 		$query_args = array(
 			'post_type'      => 'product',
 			'post_status'    => 'publish',
@@ -715,12 +744,13 @@ final class ShopFilters {
 
 		$current_url = $this->get_archive_url();
 		$page_base   = remove_query_arg( array( 'paged', 'product-page' ), $current_url );
+		$base_args   = $this->with_security_args( array() );
 
 		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'woo-filters' ) . '">';
 		echo wp_kses_post(
 			paginate_links(
 				array(
-					'base'      => esc_url_raw( add_query_arg( 'paged', '%#%', $page_base ) ),
+					'base'      => esc_url_raw( add_query_arg( array_merge( $base_args, array( 'paged' => '%#%' ) ), $page_base ) ),
 					'format'    => '',
 					'current'   => max( 1, $query->get( 'paged' ) ),
 					'total'     => max( 1, (int) $query->max_num_pages ),
@@ -786,12 +816,12 @@ final class ShopFilters {
 		unset( $args['paged'], $args['product-page'] );
 
 		if ( ! isset( $args[ $key ] ) ) {
-			return add_query_arg( $args, $this->get_archive_url() );
+			return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
 		}
 
 		if ( '' === $value_to_remove || ! is_array( $args[ $key ] ) ) {
 			unset( $args[ $key ] );
-			return add_query_arg( $args, $this->get_archive_url() );
+			return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
 		}
 
 		$remaining = array_values(
@@ -809,7 +839,7 @@ final class ShopFilters {
 			$args[ $key ] = $remaining;
 		}
 
-		return add_query_arg( $args, $this->get_archive_url() );
+		return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
 	}
 
 	/**
@@ -830,7 +860,7 @@ final class ShopFilters {
 			$args['product-page']
 		);
 
-		return add_query_arg( $args, $this->get_archive_url() );
+		return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
 	}
 
 	/**
@@ -878,6 +908,18 @@ final class ShopFilters {
 				$args[ $normalized_key ] = $item;
 			}
 		}
+
+		return $args;
+	}
+
+	/**
+	 * Add security-related query args.
+	 *
+	 * @param array $args Existing args.
+	 * @return array
+	 */
+	private function with_security_args( array $args ): array {
+		$args['wf_nonce'] = $this->get_filter_nonce();
 
 		return $args;
 	}
@@ -1229,6 +1271,15 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Return current filter nonce.
+	 *
+	 * @return string
+	 */
+	private function get_filter_nonce(): string {
+		return wp_create_nonce( self::NONCE_ACTION );
+	}
+
+	/**
 	 * Determine whether current singular page has shortcode usage.
 	 *
 	 * @return bool
@@ -1244,6 +1295,34 @@ final class ShopFilters {
 		}
 
 		return has_shortcode( (string) $post->post_content, 'woo_filters' );
+	}
+
+	/**
+	 * Determine whether request comes from AJAX navigation.
+	 *
+	 * @return bool
+	 */
+	private function is_ajax_navigation_request(): bool {
+		return isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && 'xmlhttprequest' === strtolower( sanitize_text_field( wp_unslash( (string) $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) );
+	}
+
+	/**
+	 * Validate request nonce for AJAX filter operations.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_filter_request(): bool {
+		if ( ! $this->is_ajax_navigation_request() ) {
+			return true;
+		}
+
+		if ( ! isset( $_GET['wf_nonce'] ) ) {
+			return false;
+		}
+
+		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
+
+		return (bool) wp_verify_nonce( $nonce, self::NONCE_ACTION );
 	}
 
 	/**
