@@ -69,6 +69,17 @@
   color: #6b7280;
 }
 
+.wf-cat-list small {
+  margin-left: auto;
+  color: #6b7280;
+}
+
+.wf-cat-list label.is-disabled,
+.wf-term-list label.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .wf-price-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
