@@ -54,6 +54,14 @@ final class StyleSettings {
 			self::PAGE_SLUG
 		);
 
+		add_settings_field(
+			'preset_skin',
+			__( 'Default Skin', 'woo-filters' ),
+			array( $this, 'render_skin_field' ),
+			self::PAGE_SLUG,
+			'wf_style_section_main'
+		);
+
 		$this->register_color_field( 'accent_color', __( 'Accent Color', 'woo-filters' ) );
 		$this->register_color_field( 'sidebar_bg_color', __( 'Sidebar Background', 'woo-filters' ) );
 		$this->register_color_field( 'sidebar_border_color', __( 'Sidebar Border', 'woo-filters' ) );
@@ -116,7 +124,23 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function render_section_intro(): void {
-		echo '<p>' . esc_html__( 'Control frontend filter colors and typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt.', 'woo-filters' ) . '</p>';
+		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt.', 'woo-filters' ) . '</p>';
+	}
+
+	/**
+	 * Render skin select field.
+	 *
+	 * @return void
+	 */
+	public function render_skin_field(): void {
+		$options      = self::get_options();
+		$current_skin = isset( $options['preset_skin'] ) ? self::sanitize_skin( (string) $options['preset_skin'] ) : 'classic';
+
+		echo '<select name="' . esc_attr( self::OPTION_KEY ) . '[preset_skin]">';
+		foreach ( self::get_skin_choices() as $slug => $label ) {
+			echo '<option value="' . esc_attr( $slug ) . '" ' . selected( $current_skin, $slug, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select>';
 	}
 
 	/**
@@ -206,12 +230,12 @@ final class StyleSettings {
 	 * @return array
 	 */
 	public function sanitize_settings( $raw ): array {
-		$defaults = self::get_defaults();
 		if ( ! is_array( $raw ) ) {
-			return $defaults;
+			return self::get_defaults();
 		}
 
-		$sanitized = $defaults;
+		$sanitized                = array();
+		$sanitized['preset_skin'] = self::sanitize_skin( isset( $raw['preset_skin'] ) ? (string) $raw['preset_skin'] : 'classic' );
 		$colors    = array(
 			'accent_color',
 			'sidebar_bg_color',
@@ -264,7 +288,14 @@ final class StyleSettings {
 			$options = array();
 		}
 
-		return array_merge( self::get_defaults(), $options );
+		$defaults = self::get_defaults();
+		$skin     = isset( $options['preset_skin'] ) ? self::sanitize_skin( (string) $options['preset_skin'] ) : 'classic';
+		$preset   = self::get_skin_values( $skin );
+		$merged   = array_merge( $defaults, $preset, $options );
+
+		$merged['preset_skin'] = $skin;
+
+		return $merged;
 	}
 
 	/**
@@ -274,6 +305,7 @@ final class StyleSettings {
 	 */
 	private static function get_defaults(): array {
 		return array(
+			'preset_skin'          => 'classic',
 			'accent_color'        => '#0b6a78',
 			'sidebar_bg_color'    => '#ffffff',
 			'sidebar_border_color' => '#e5e8ee',
@@ -286,5 +318,66 @@ final class StyleSettings {
 			'font_size'           => '16',
 			'custom_css'          => '',
 		);
+	}
+
+	/**
+	 * Get available preset skins.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function get_skin_choices(): array {
+		return array(
+			'classic'  => __( 'Classic', 'woo-filters' ),
+			'graphite' => __( 'Graphite', 'woo-filters' ),
+			'sunrise'  => __( 'Sunrise', 'woo-filters' ),
+		);
+	}
+
+	/**
+	 * Sanitize skin value.
+	 *
+	 * @param string $skin Raw skin.
+	 * @return string
+	 */
+	private static function sanitize_skin( string $skin ): string {
+		$skin = sanitize_key( $skin );
+
+		return array_key_exists( $skin, self::get_skin_choices() ) ? $skin : 'classic';
+	}
+
+	/**
+	 * Get style variables for a preset skin.
+	 *
+	 * @param string $skin Skin key.
+	 * @return array
+	 */
+	private static function get_skin_values( string $skin ): array {
+		switch ( self::sanitize_skin( $skin ) ) {
+			case 'graphite':
+				return array(
+					'accent_color'         => '#0f766e',
+					'sidebar_bg_color'     => '#f8fafc',
+					'sidebar_border_color' => '#d1d5db',
+					'heading_color'        => '#111827',
+					'chip_bg_color'        => '#f9fafb',
+					'chip_border_color'    => '#94a3b8',
+					'button_bg_color'      => '#334155',
+					'button_text_color'    => '#f8fafc',
+				);
+			case 'sunrise':
+				return array(
+					'accent_color'         => '#c2410c',
+					'sidebar_bg_color'     => '#fffaf5',
+					'sidebar_border_color' => '#fed7aa',
+					'heading_color'        => '#7c2d12',
+					'chip_bg_color'        => '#fff7ed',
+					'chip_border_color'    => '#fdba74',
+					'button_bg_color'      => '#ea580c',
+					'button_text_color'    => '#ffffff',
+				);
+			case 'classic':
+			default:
+				return array();
+		}
 	}
 }
