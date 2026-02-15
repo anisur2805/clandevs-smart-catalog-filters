@@ -108,6 +108,7 @@ final class ShopFilters {
 			array(),
 			$this->asset_version
 		);
+		$this->enqueue_inline_styles();
 
 		wp_enqueue_script(
 			'wf-shop-filters',
@@ -124,6 +125,40 @@ final class ShopFilters {
 				'nonce' => $this->get_filter_nonce(),
 			)
 		);
+	}
+
+	/**
+	 * Add user-configured CSS variables and custom CSS.
+	 *
+	 * @return void
+	 */
+	private function enqueue_inline_styles(): void {
+		$options = StyleSettings::get_options();
+
+		$variables = array(
+			'--wf-accent'          => isset( $options['accent_color'] ) ? (string) $options['accent_color'] : '#0b6a78',
+			'--wf-sidebar-bg'      => isset( $options['sidebar_bg_color'] ) ? (string) $options['sidebar_bg_color'] : '#ffffff',
+			'--wf-sidebar-border'  => isset( $options['sidebar_border_color'] ) ? (string) $options['sidebar_border_color'] : '#e5e8ee',
+			'--wf-heading-color'   => isset( $options['heading_color'] ) ? (string) $options['heading_color'] : '#1f2937',
+			'--wf-chip-bg'         => isset( $options['chip_bg_color'] ) ? (string) $options['chip_bg_color'] : '#ffffff',
+			'--wf-chip-border'     => isset( $options['chip_border_color'] ) ? (string) $options['chip_border_color'] : '#c7d5e3',
+			'--wf-button-bg'       => isset( $options['button_bg_color'] ) ? (string) $options['button_bg_color'] : '#4b5563',
+			'--wf-button-text'     => isset( $options['button_text_color'] ) ? (string) $options['button_text_color'] : '#ffffff',
+			'--wf-font-family'     => isset( $options['font_family'] ) ? (string) $options['font_family'] : 'inherit',
+			'--wf-font-size'       => ( isset( $options['font_size'] ) ? absint( $options['font_size'] ) : 16 ) . 'px',
+		);
+
+		$declarations = array();
+		foreach ( $variables as $name => $value ) {
+			$declarations[] = $name . ':' . trim( (string) $value );
+		}
+
+		$css = '.wf-shop-layout{' . implode( ';', $declarations ) . ';}';
+		if ( ! empty( $options['custom_css'] ) ) {
+			$css .= "\n" . (string) $options['custom_css'];
+		}
+
+		wp_add_inline_style( 'wf-shop-filters', $css );
 	}
 
 	/**
