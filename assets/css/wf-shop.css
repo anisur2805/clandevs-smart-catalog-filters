@@ -118,6 +118,34 @@
   margin-top: 28px;
 }
 
+.wf-no-results {
+  border: 1px solid #dbe5ee;
+  border-radius: 10px;
+  background: #f8fbfe;
+  padding: 32px 20px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.wf-no-results h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: #1f2937;
+}
+
+.wf-no-results p {
+  margin: 0;
+  color: #4b5563;
+}
+
+.wf-empty-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
 .wf-active-filters {
   margin-bottom: 16px;
   padding: 10px;
