@@ -223,7 +223,7 @@
       return;
     }
 
-    var allowedArea = link.closest('.woocommerce-pagination, .wf-per-page, .wf-active-filters, .wf-actions, .wf-empty-actions');
+    var allowedArea = link.closest('.woocommerce-pagination, .wf-per-page, .wf-active-filters, .wf-top-active-filters, .wf-actions, .wf-empty-actions');
     if (!allowedArea) {
       return;
     }
