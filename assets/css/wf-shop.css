@@ -63,6 +63,24 @@
   padding: 0;
 }
 
+.wf-sidebar .wf-cat-list,
+.wf-sidebar .wf-term-list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.wf-sidebar .wf-cat-list li::before,
+.wf-sidebar .wf-term-list li::before {
+  content: none !important;
+  display: none !important;
+}
+
+.wf-sidebar .wf-cat-list li::marker,
+.wf-sidebar .wf-term-list li::marker {
+  content: '' !important;
+}
+
 .wf-cat-list li,
 .wf-term-list li {
   margin: 8px 0;
@@ -97,6 +115,86 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  margin-top: 14px;
+}
+
+.wf-price-slider {
+  position: relative;
+  height: 28px;
+  margin-top: 6px;
+  padding: 0 8px;
+}
+
+.wf-price-range-inputs {
+  position: absolute;
+  inset: 0;
+}
+
+.wf-price-range {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  width: calc(100% - 16px);
+  height: 26px;
+  margin: 0;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.wf-price-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--wf-accent);
+  background: #fff;
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.wf-price-range::-webkit-slider-runnable-track {
+  height: 4px;
+  background: transparent;
+}
+
+.wf-price-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--wf-accent);
+  background: #fff;
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.wf-price-range::-moz-range-track {
+  height: 4px;
+  background: transparent;
+}
+
+.wf-price-track {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 11px;
+  height: 4px;
+  border-radius: 999px;
+  background: #d8dee8;
+}
+
+.wf-price-track-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--wf-accent);
 }
 
 .wf-price-grid label {
@@ -123,7 +221,16 @@
 
 .wf-actions .button {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: nowrap;
+  border-radius: 6px;
 }
 
 .wf-actions .button.alt {

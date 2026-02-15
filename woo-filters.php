@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Woo Filters
  * Description: Shop/archive filters for WooCommerce.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Author: Anisur Rahman
  * Author URI: https://github.com/anisur2805
  * Requires at least: 6.0

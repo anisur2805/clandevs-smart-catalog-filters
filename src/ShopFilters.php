@@ -421,6 +421,17 @@ final class ShopFilters {
 		$max_price       = $this->get_request_decimal( 'max_price' );
 		$in_stock_only   = $this->get_request_flag( 'wf_in_stock' );
 		$on_sale_only    = $this->get_request_flag( 'wf_on_sale' );
+		$price_bounds    = $this->get_price_bounds();
+		$slider_min      = $price_bounds['min'];
+		$slider_max      = $price_bounds['max'];
+		$current_min     = null !== $min_price ? $min_price : $slider_min;
+		$current_max     = null !== $max_price ? $max_price : $slider_max;
+
+		if ( $current_min > $current_max ) {
+			$tmp         = $current_min;
+			$current_min = $current_max;
+			$current_max = $tmp;
+		}
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
 		echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $this->get_filter_nonce() ) . '" />';
@@ -441,9 +452,16 @@ final class ShopFilters {
 
 		echo '<div class="wf-filter-block">';
 		echo '<h4>' . esc_html__( 'Price', 'woo-filters' ) . '</h4>';
+		echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
+		echo '<div class="wf-price-range-inputs">';
+		echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
+		echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
+		echo '</div>';
+		echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
+		echo '</div>';
 		echo '<div class="wf-price-grid">';
-		echo '<label><span>' . esc_html__( 'Min', 'woo-filters' ) . '</span><input type="number" min="0" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" /></label>';
-		echo '<label><span>' . esc_html__( 'Max', 'woo-filters' ) . '</span><input type="number" min="0" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" /></label>';
+		echo '<label><span>' . esc_html__( 'Min', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
+		echo '<label><span>' . esc_html__( 'Max', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
 		echo '</div>';
 		echo '</div>';
 
@@ -1431,6 +1449,62 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Get global product price boundaries for slider controls.
+	 *
+	 * @return array{min: float, max: float}
+	 */
+	private function get_price_bounds(): array {
+		$cache_key = 'price_bounds';
+		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+		if ( is_array( $cached ) && isset( $cached['min'], $cached['max'] ) ) {
+			return array(
+				'min' => (float) $cached['min'],
+				'max' => (float) $cached['max'],
+			);
+		}
+
+		global $wpdb;
+
+		$sql = $wpdb->prepare(
+			"SELECT
+				MIN(CAST(pm.meta_value AS DECIMAL(20, 4))) AS min_price,
+				MAX(CAST(pm.meta_value AS DECIMAL(20, 4))) AS max_price
+			FROM {$wpdb->posts} AS p
+			INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
+			WHERE pm.meta_key = %s
+				AND pm.meta_value <> ''
+				AND p.post_type = %s
+				AND p.post_status = %s",
+			'_price',
+			'product',
+			'publish'
+		);
+
+		$row = $wpdb->get_row( $sql, ARRAY_A );
+
+		$min = isset( $row['min_price'] ) ? (float) $row['min_price'] : 0.0;
+		$max = isset( $row['max_price'] ) ? (float) $row['max_price'] : 0.0;
+
+		if ( $min < 0 ) {
+			$min = 0.0;
+		}
+
+		if ( $max <= $min ) {
+			$max = $min + 100;
+		}
+
+		$bounds = array(
+			'min' => $min,
+			'max' => $max,
+		);
+
+		wp_cache_set( $cache_key, $bounds, self::CACHE_GROUP, 300 );
+
+		return $bounds;
+	}
+
+	/**
 	 * Format decimal value for numeric input fields.
 	 *
 	 * @param float|null $value Decimal value.
@@ -1441,6 +1515,8 @@ final class ShopFilters {
 			return '';
 		}
 
-		return rtrim( rtrim( (string) $value, '0' ), '.' );
+		$formatted = rtrim( rtrim( sprintf( '%.4F', $value ), '0' ), '.' );
+
+		return '' !== $formatted ? $formatted : '0';
 	}
 }
