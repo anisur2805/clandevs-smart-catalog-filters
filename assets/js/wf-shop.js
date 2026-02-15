@@ -8,6 +8,10 @@
 
   var priceDebounceTimer = null;
   var currentController = null;
+  var requestNonce =
+    typeof window.wfShopFilters === 'object' && window.wfShopFilters && window.wfShopFilters.nonce
+      ? String(window.wfShopFilters.nonce)
+      : '';
 
   function setLoading(isLoading) {
     layout.classList.toggle('wf-is-loading', !!isLoading);
@@ -75,6 +79,9 @@
 
     query.delete('paged');
     query.delete('product-page');
+    if (requestNonce && !query.get('wf_nonce')) {
+      query.set('wf_nonce', requestNonce);
+    }
 
     destination.search = query.toString();
     return destination.toString();
@@ -105,6 +112,12 @@
 
   function requestAndSwap(url, options) {
     var opts = options || {};
+    var requestedUrl = new URL(url, window.location.origin);
+
+    if (requestNonce && !requestedUrl.searchParams.get('wf_nonce')) {
+      requestedUrl.searchParams.set('wf_nonce', requestNonce);
+    }
+    url = requestedUrl.toString();
 
     if (!isSameOriginUrl(url)) {
       window.location.href = url;
