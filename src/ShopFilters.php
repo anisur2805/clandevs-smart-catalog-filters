@@ -62,6 +62,7 @@ final class ShopFilters {
 
 		add_action( 'woocommerce_before_main_content', array( $this, 'render_layout_start' ), 15 );
 		add_action( 'woocommerce_after_main_content', array( $this, 'render_layout_end' ), 5 );
+		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_top_active_filters' ), 20 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_per_page_switcher' ), 25 );
 
 		add_filter( 'loop_shop_columns', array( $this, 'filter_loop_columns' ) );
@@ -279,6 +280,31 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Render top active filters bar above product loop.
+	 *
+	 * @return void
+	 */
+	public function render_top_active_filters(): void {
+		if ( ! $this->is_shop_archive() ) {
+			return;
+		}
+
+		$chips = $this->get_active_filter_chips();
+		if ( empty( $chips ) ) {
+			return;
+		}
+
+		echo '<div class="wf-top-active-filters">';
+		echo '<div class="wf-chip-list">';
+		foreach ( $chips as $chip ) {
+			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
+		}
+		echo '</div>';
+		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'woo-filters' ) . '</a>';
+		echo '</div>';
+	}
+
+	/**
 	 * Render per-page links.
 	 *
 	 * @return void
@@ -389,6 +415,29 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_active_filters(): void {
+		$chips = $this->get_active_filter_chips();
+
+		if ( empty( $chips ) ) {
+			return;
+		}
+
+		echo '<div class="wf-active-filters">';
+		echo '<h5>' . esc_html__( 'Active Filters', 'woo-filters' ) . '</h5>';
+		echo '<div class="wf-chip-list">';
+		foreach ( $chips as $chip ) {
+			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
+		}
+		echo '</div>';
+		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'woo-filters' ) . '</a>';
+		echo '</div>';
+	}
+
+	/**
+	 * Build a normalized list of active filter chips.
+	 *
+	 * @return array
+	 */
+	private function get_active_filter_chips(): array {
 		$chips = array();
 
 		$selected_category = $this->get_request_slug( 'wf_cat' );
@@ -429,19 +478,7 @@ final class ShopFilters {
 			);
 		}
 
-		if ( empty( $chips ) ) {
-			return;
-		}
-
-		echo '<div class="wf-active-filters">';
-		echo '<h5>' . esc_html__( 'Active Filters', 'woo-filters' ) . '</h5>';
-		echo '<div class="wf-chip-list">';
-		foreach ( $chips as $chip ) {
-			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
-		}
-		echo '</div>';
-		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'woo-filters' ) . '</a>';
-		echo '</div>';
+		return $chips;
 	}
 
 	/**
