@@ -69,6 +69,16 @@ final class ShopFilters {
 		add_shortcode( 'woo_filters', array( $this, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'pre_get_posts', array( $this, 'apply_filters_to_main_query' ) );
+		add_action( 'save_post_product', array( $this, 'invalidate_filter_cache' ), 10, 3 );
+		add_action( 'deleted_post', array( $this, 'invalidate_filter_cache' ), 10, 2 );
+		add_action( 'trash_post', array( $this, 'invalidate_filter_cache' ), 10, 2 );
+		add_action( 'untrash_post', array( $this, 'invalidate_filter_cache' ), 10, 2 );
+		add_action( 'set_object_terms', array( $this, 'invalidate_filter_cache' ), 10, 6 );
+		add_action( 'created_term', array( $this, 'invalidate_filter_cache' ), 10, 3 );
+		add_action( 'edited_term', array( $this, 'invalidate_filter_cache' ), 10, 3 );
+		add_action( 'delete_term', array( $this, 'invalidate_filter_cache' ), 10, 5 );
+		add_action( 'woocommerce_product_set_stock_status', array( $this, 'invalidate_filter_cache' ), 10, 2 );
+		add_action( 'woocommerce_update_product', array( $this, 'invalidate_filter_cache' ), 10, 2 );
 
 		add_action( 'woocommerce_before_main_content', array( $this, 'render_layout_start' ), 15 );
 		add_action( 'woocommerce_after_main_content', array( $this, 'render_layout_end' ), 5 );
@@ -80,6 +90,15 @@ final class ShopFilters {
 
 		remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
 		add_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ), 10 );
+	}
+
+	/**
+	 * Invalidate cached filter metadata keys.
+	 *
+	 * @return void
+	 */
+	public function invalidate_filter_cache( ...$unused ): void {
+		update_option( 'wf_cache_last_changed', (string) microtime( true ), false );
 	}
 
 	/**
@@ -1223,12 +1242,12 @@ final class ShopFilters {
 	 * @return int
 	 */
 	private function get_contextual_term_count( string $taxonomy, string $term_slug, string $source_key ): int {
-		$cache_key = 'ctx_count_' . md5( wp_json_encode( array(
+		$cache_key = $this->build_cache_key( 'ctx_count_' . md5( wp_json_encode( array(
 			'taxonomy' => $taxonomy,
 			'slug'     => $term_slug,
 			'source'   => $source_key,
 			'query'    => $this->get_current_query_args(),
-		) ) );
+		) ) ) );
 		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( false !== $cached ) {
@@ -1310,7 +1329,7 @@ final class ShopFilters {
 	 * @return array
 	 */
 	private function get_terms_cached( array $args ): array {
-		$cache_key = 'terms_' . md5( wp_json_encode( $args ) );
+		$cache_key = $this->build_cache_key( 'terms_' . md5( wp_json_encode( $args ) ) );
 		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( false !== $cached && is_array( $cached ) ) {
@@ -1475,7 +1494,7 @@ final class ShopFilters {
 	 * @return array{min: float, max: float}
 	 */
 	private function get_price_bounds(): array {
-		$cache_key = 'price_bounds';
+		$cache_key = $this->build_cache_key( 'price_bounds' );
 		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( is_array( $cached ) && isset( $cached['min'], $cached['max'] ) ) {
@@ -1523,6 +1542,31 @@ final class ShopFilters {
 		wp_cache_set( $cache_key, $bounds, self::CACHE_GROUP, 300 );
 
 		return $bounds;
+	}
+
+	/**
+	 * Build namespaced cache key using rolling invalidation marker.
+	 *
+	 * @param string $suffix Cache suffix.
+	 * @return string
+	 */
+	private function build_cache_key( string $suffix ): string {
+		return $suffix . ':' . $this->get_cache_last_changed();
+	}
+
+	/**
+	 * Get global last-changed marker for filter cache namespace.
+	 *
+	 * @return string
+	 */
+	private function get_cache_last_changed(): string {
+		$last_changed = get_option( 'wf_cache_last_changed', '' );
+		if ( ! is_string( $last_changed ) || '' === $last_changed ) {
+			$last_changed = (string) microtime( true );
+			update_option( 'wf_cache_last_changed', $last_changed, false );
+		}
+
+		return $last_changed;
 	}
 
 	/**
