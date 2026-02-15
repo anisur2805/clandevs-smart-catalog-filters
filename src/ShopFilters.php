@@ -284,7 +284,10 @@ final class ShopFilters {
 
 		ob_start();
 		echo '<div class="wf-shop-layout wf-shortcode-layout ' . esc_attr( $skin_class ) . '">';
+		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
+		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
 		echo '<aside class="wf-sidebar">';
+		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
 		$this->render_filter_form();
 		echo '</aside>';
 		echo '<section class="wf-products">';
@@ -322,7 +325,10 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-shop-layout ' . esc_attr( $this->get_layout_skin_class() ) . '">';
+		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
+		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
 		echo '<aside class="wf-sidebar">';
+		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
 		$this->render_filter_form();
 		echo '</aside>';
 		echo '<section class="wf-products">';
