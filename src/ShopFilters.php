@@ -644,7 +644,15 @@ final class ShopFilters {
 			return;
 		}
 
-		echo '<ul class="wf-term-list">';
+		$list_id = 'wf-term-list-' . sanitize_key( $taxonomy );
+
+		if ( count( $terms ) > 7 ) {
+			echo '<div class="wf-option-search-wrap">';
+			echo '<input type="search" class="wf-option-search" data-list-id="' . esc_attr( $list_id ) . '" placeholder="' . esc_attr__( 'Search options...', 'woo-filters' ) . '" aria-label="' . esc_attr__( 'Search filter options', 'woo-filters' ) . '" />';
+			echo '</div>';
+		}
+
+		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-term-list">';
 		foreach ( $terms as $term ) {
 			$live_count = $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key );
 			$checked    = in_array( $term->slug, $selected_values, true );

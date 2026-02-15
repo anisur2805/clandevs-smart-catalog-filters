@@ -110,6 +110,34 @@
     }
 
     initPriceSliders();
+    initOptionSearch();
+  }
+
+  function initOptionSearch() {
+    var searchInputs = layout.querySelectorAll('.wf-option-search');
+    searchInputs.forEach(function (input) {
+      var listId = input.getAttribute('data-list-id') || '';
+      var list = listId ? document.getElementById(listId) : null;
+      if (!list) {
+        return;
+      }
+
+      function filterItems() {
+        var query = String(input.value || '')
+          .trim()
+          .toLowerCase();
+        var items = list.querySelectorAll('li');
+
+        items.forEach(function (item) {
+          var label = item.querySelector('label span');
+          var text = label ? String(label.textContent || '').trim().toLowerCase() : '';
+          item.classList.toggle('wf-option-hidden', query !== '' && text.indexOf(query) === -1);
+        });
+      }
+
+      input.addEventListener('input', filterItems);
+      filterItems();
+    });
   }
 
   function parseFloatSafe(value, fallback) {
@@ -312,6 +340,10 @@
 
     var filterForm = target.form;
     if (filterForm && filterForm.classList.contains('wf-filter-form')) {
+      if (target.classList.contains('wf-option-search')) {
+        return;
+      }
+
       if (target.name === 'min_price' || target.name === 'max_price') {
         return;
       }
@@ -369,4 +401,5 @@
   });
 
   initPriceSliders();
+  initOptionSearch();
 })();
