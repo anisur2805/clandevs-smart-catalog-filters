@@ -370,6 +370,30 @@
   font-weight: 600;
 }
 
+.wf-shop-layout.wf-skin-graphite .wf-sidebar {
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.wf-shop-layout.wf-skin-graphite .wf-chip {
+  border-radius: 6px;
+}
+
+.wf-shop-layout.wf-skin-sunrise .wf-sidebar {
+  box-shadow: 0 12px 28px rgba(234, 88, 12, 0.12);
+}
+
+.wf-shop-layout.wf-skin-sunrise .wf-filter-block h4 {
+  letter-spacing: 0.2px;
+}
+
+.wf-shop-layout.wf-skin-sunrise .wf-chip {
+  border-radius: 14px;
+}
+
+.wf-shop-layout.wf-skin-sunrise .wf-actions .button.alt {
+  box-shadow: 0 8px 18px rgba(234, 88, 12, 0.26);
+}
+
 @media (max-width: 1024px) {
   .wf-shop-layout {
     grid-template-columns: 240px minmax(0, 1fr);

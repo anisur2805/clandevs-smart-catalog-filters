@@ -261,9 +261,10 @@ final class ShopFilters {
 
 		$this->is_shortcode_context = true;
 		$this->shortcode_action_url = get_permalink();
+		$skin_class                 = $this->get_layout_skin_class();
 
 		ob_start();
-		echo '<div class="wf-shop-layout wf-shortcode-layout">';
+		echo '<div class="wf-shop-layout wf-shortcode-layout ' . esc_attr( $skin_class ) . '">';
 		echo '<aside class="wf-sidebar">';
 		$this->render_filter_form();
 		echo '</aside>';
@@ -301,7 +302,7 @@ final class ShopFilters {
 			return;
 		}
 
-		echo '<div class="wf-shop-layout">';
+		echo '<div class="wf-shop-layout ' . esc_attr( $this->get_layout_skin_class() ) . '">';
 		echo '<aside class="wf-sidebar">';
 		$this->render_filter_form();
 		echo '</aside>';
@@ -1454,6 +1455,18 @@ final class ShopFilters {
 	 */
 	private function is_query_shop_archive( \WP_Query $query ): bool {
 		return (bool) ( $query->is_post_type_archive( 'product' ) || $query->is_tax( get_object_taxonomies( 'product' ) ) );
+	}
+
+	/**
+	 * Get CSS class name for active style preset.
+	 *
+	 * @return string
+	 */
+	private function get_layout_skin_class(): string {
+		$options = StyleSettings::get_options();
+		$skin    = isset( $options['preset_skin'] ) ? sanitize_key( (string) $options['preset_skin'] ) : 'classic';
+
+		return 'wf-skin-' . $skin;
 	}
 
 	/**
