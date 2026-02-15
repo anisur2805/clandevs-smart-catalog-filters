@@ -39,6 +39,12 @@ final class ShopFilters {
 	/** @var string */
 	private $asset_version = '0.4.0';
 
+	/** @var bool */
+	private $is_shortcode_context = false;
+
+	/** @var string */
+	private $shortcode_action_url = '';
+
 	/**
 	 * Constructor.
 	 *
@@ -57,6 +63,7 @@ final class ShopFilters {
 	 */
 	public function register_hooks(): void {
 		add_action( 'init', array( $this, 'bootstrap_taxonomies' ), 20 );
+		add_shortcode( 'woo_filters', array( $this, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'pre_get_posts', array( $this, 'apply_filters_to_main_query' ) );
 
@@ -88,7 +95,7 @@ final class ShopFilters {
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
-		if ( ! $this->is_shop_archive() ) {
+		if ( ! $this->is_shop_archive() && ! $this->has_shortcode_on_current_page() ) {
 			return;
 		}
 
@@ -170,6 +177,71 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Render shortcode output.
+	 *
+	 * @param array $atts Shortcode attributes.
+	 * @return string
+	 */
+	public function render_shortcode( array $atts = array() ): string {
+		$atts = shortcode_atts(
+			array(
+				'per_page' => '12',
+				'columns'  => '4',
+			),
+			$atts,
+			'woo_filters'
+		);
+
+		$per_page = absint( $atts['per_page'] );
+		if ( $per_page <= 0 ) {
+			$per_page = 12;
+		}
+
+		$columns = absint( $atts['columns'] );
+		if ( $columns <= 0 || $columns > 6 ) {
+			$columns = 4;
+		}
+
+		$paged = max( 1, $this->get_request_absint( 'paged' ) );
+		if ( $paged <= 1 ) {
+			$paged = max( 1, $this->get_request_absint( 'product-page' ) );
+		}
+
+		$query = $this->get_shortcode_products_query( $per_page, $paged );
+
+		$this->is_shortcode_context = true;
+		$this->shortcode_action_url = get_permalink();
+
+		ob_start();
+		echo '<div class="wf-shop-layout wf-shortcode-layout">';
+		echo '<aside class="wf-sidebar">';
+		$this->render_filter_form();
+		echo '</aside>';
+		echo '<section class="wf-products">';
+
+		if ( $query->have_posts() ) {
+			echo '<ul class="products columns-' . esc_attr( (string) $columns ) . '">';
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				wc_get_template_part( 'content', 'product' );
+			}
+			echo '</ul>';
+			$this->render_shortcode_pagination( $query );
+		} else {
+			$this->render_no_products_state();
+		}
+
+		echo '</section>';
+		echo '</div>';
+
+		wp_reset_postdata();
+		$this->is_shortcode_context = false;
+		$this->shortcode_action_url = '';
+
+		return (string) ob_get_clean();
+	}
+
+	/**
 	 * Render layout wrapper and sidebar start.
 	 *
 	 * @return void
@@ -206,7 +278,7 @@ final class ShopFilters {
 	 * @return void
 	 */
 	public function render_no_products_state(): void {
-		if ( ! $this->is_shop_archive() ) {
+		if ( ! $this->is_shop_archive() && ! $this->is_shortcode_context ) {
 			return;
 		}
 
@@ -539,6 +611,126 @@ final class ShopFilters {
 		$args['wf_per_page'] = 0 === $value ? self::MAX_PER_PAGE : $value;
 
 		return add_query_arg( $args, $this->get_archive_url() );
+	}
+
+	/**
+	 * Build products query for shortcode context.
+	 *
+	 * @param int $per_page Products per page.
+	 * @param int $paged    Current page.
+	 * @return \WP_Query
+	 */
+	private function get_shortcode_products_query( int $per_page, int $paged ): \WP_Query {
+		$query_args = array(
+			'post_type'      => 'product',
+			'post_status'    => 'publish',
+			'paged'          => max( 1, $paged ),
+			'posts_per_page' => min( self::MAX_PER_PAGE, $per_page ),
+		);
+
+		$tax_clauses  = array();
+		$meta_clauses = array();
+
+		$selected_category = $this->get_request_slug( 'wf_cat' );
+		if ( '' !== $selected_category ) {
+			$tax_clauses[] = array(
+				'taxonomy' => 'product_cat',
+				'field'    => 'slug',
+				'terms'    => array( $selected_category ),
+			);
+		}
+
+		$selected_brands = $this->get_request_slug_list( 'wf_brand' );
+		if ( '' !== $this->brand_taxonomy && ! empty( $selected_brands ) ) {
+			$tax_clauses[] = array(
+				'taxonomy' => $this->brand_taxonomy,
+				'field'    => 'slug',
+				'terms'    => $selected_brands,
+				'operator' => 'IN',
+			);
+		}
+
+		$selected_colors = $this->get_request_slug_list( 'wf_color' );
+		if ( '' !== $this->color_taxonomy && ! empty( $selected_colors ) ) {
+			$tax_clauses[] = array(
+				'taxonomy' => $this->color_taxonomy,
+				'field'    => 'slug',
+				'terms'    => $selected_colors,
+				'operator' => 'IN',
+			);
+		}
+
+		$min_price = $this->get_request_decimal( 'min_price' );
+		$max_price = $this->get_request_decimal( 'max_price' );
+
+		if ( null !== $min_price || null !== $max_price ) {
+			$range_min = null !== $min_price ? $min_price : 0.0;
+			$range_max = null !== $max_price ? $max_price : self::MAX_PRICE;
+
+			if ( $range_min > $range_max ) {
+				$tmp       = $range_min;
+				$range_min = $range_max;
+				$range_max = $tmp;
+			}
+
+			$meta_clauses[] = array(
+				'key'     => '_price',
+				'value'   => array( $range_min, $range_max ),
+				'compare' => 'BETWEEN',
+				'type'    => 'NUMERIC',
+			);
+		}
+
+		$rating = $this->get_request_absint( 'rating_filter' );
+		if ( $rating > 0 && $rating <= 5 ) {
+			$meta_clauses[] = array(
+				'key'     => '_wc_average_rating',
+				'value'   => (float) $rating,
+				'compare' => '>=',
+				'type'    => 'DECIMAL(10,2)',
+			);
+		}
+
+		if ( ! empty( $tax_clauses ) ) {
+			$query_args['tax_query'] = $this->merge_query_clauses( array(), $tax_clauses );
+		}
+
+		if ( ! empty( $meta_clauses ) ) {
+			$query_args['meta_query'] = $this->merge_query_clauses( array(), $meta_clauses );
+		}
+
+		return new \WP_Query( $query_args );
+	}
+
+	/**
+	 * Render pagination for shortcode product query.
+	 *
+	 * @param \WP_Query $query Query object.
+	 * @return void
+	 */
+	private function render_shortcode_pagination( \WP_Query $query ): void {
+		if ( $query->max_num_pages <= 1 ) {
+			return;
+		}
+
+		$current_url = $this->get_archive_url();
+		$page_base   = remove_query_arg( array( 'paged', 'product-page' ), $current_url );
+
+		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'woo-filters' ) . '">';
+		echo wp_kses_post(
+			paginate_links(
+				array(
+					'base'      => esc_url_raw( add_query_arg( 'paged', '%#%', $page_base ) ),
+					'format'    => '',
+					'current'   => max( 1, $query->get( 'paged' ) ),
+					'total'     => max( 1, (int) $query->max_num_pages ),
+					'type'      => 'list',
+					'prev_text' => '&larr;',
+					'next_text' => '&rarr;',
+				)
+			)
+		);
+		echo '</nav>';
 	}
 
 	/**
@@ -1012,6 +1204,10 @@ final class ShopFilters {
 	 * @return string
 	 */
 	private function get_archive_url(): string {
+		if ( $this->is_shortcode_context && '' !== $this->shortcode_action_url ) {
+			return $this->shortcode_action_url;
+		}
+
 		$queried_object = get_queried_object();
 		if ( $queried_object instanceof \WP_Term ) {
 			$term_link = get_term_link( $queried_object );
@@ -1030,6 +1226,24 @@ final class ShopFilters {
 	 */
 	private function get_shop_page_url(): string {
 		return wc_get_page_permalink( 'shop' );
+	}
+
+	/**
+	 * Determine whether current singular page has shortcode usage.
+	 *
+	 * @return bool
+	 */
+	private function has_shortcode_on_current_page(): bool {
+		if ( ! is_singular() ) {
+			return false;
+		}
+
+		$post = get_post();
+		if ( ! $post instanceof \WP_Post ) {
+			return false;
+		}
+
+		return has_shortcode( (string) $post->post_content, 'woo_filters' );
 	}
 
 	/**
