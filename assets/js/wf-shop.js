@@ -108,6 +108,125 @@
     if (incomingProducts && currentProducts) {
       currentProducts.replaceWith(incomingProducts);
     }
+
+    initPriceSliders();
+  }
+
+  function parseFloatSafe(value, fallback) {
+    var numeric = Number.parseFloat(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function formatDecimal(value) {
+    return String(Number(value.toFixed(2)));
+  }
+
+  function dispatchInputEvent(target) {
+    target.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function initPriceSliders() {
+    var forms = layout.querySelectorAll('.wf-filter-form');
+    forms.forEach(function (form) {
+      var slider = form.querySelector('.wf-price-slider');
+      var minInput = form.querySelector('input[name="min_price"]');
+      var maxInput = form.querySelector('input[name="max_price"]');
+
+      if (!slider || !minInput || !maxInput) {
+        return;
+      }
+
+      var rangeMin = slider.querySelector('.wf-price-range-min');
+      var rangeMax = slider.querySelector('.wf-price-range-max');
+      var trackFill = slider.querySelector('.wf-price-track-fill');
+
+      if (!rangeMin || !rangeMax || !trackFill) {
+        return;
+      }
+
+      var sliderMin = parseFloatSafe(slider.dataset.min, 0);
+      var sliderMax = parseFloatSafe(slider.dataset.max, sliderMin + 100);
+      if (sliderMax <= sliderMin) {
+        sliderMax = sliderMin + 100;
+      }
+
+      function updateTrack(minValue, maxValue) {
+        var range = sliderMax - sliderMin;
+        if (range <= 0) {
+          trackFill.style.left = '0%';
+          trackFill.style.width = '100%';
+          return;
+        }
+
+        var minPercent = ((minValue - sliderMin) / range) * 100;
+        var maxPercent = ((maxValue - sliderMin) / range) * 100;
+        trackFill.style.left = minPercent + '%';
+        trackFill.style.width = Math.max(0, maxPercent - minPercent) + '%';
+      }
+
+      function syncFromNumberInputs(source) {
+        var minValue = parseFloatSafe(minInput.value, sliderMin);
+        var maxValue = parseFloatSafe(maxInput.value, sliderMax);
+
+        minValue = clamp(minValue, sliderMin, sliderMax);
+        maxValue = clamp(maxValue, sliderMin, sliderMax);
+
+        if (minValue > maxValue) {
+          if (source === 'min') {
+            maxValue = minValue;
+          } else {
+            minValue = maxValue;
+          }
+        }
+
+        rangeMin.value = formatDecimal(minValue);
+        rangeMax.value = formatDecimal(maxValue);
+        updateTrack(minValue, maxValue);
+      }
+
+      function syncFromRangeInputs(source) {
+        var minValue = parseFloatSafe(rangeMin.value, sliderMin);
+        var maxValue = parseFloatSafe(rangeMax.value, sliderMax);
+
+        if (minValue > maxValue) {
+          if (source === 'min') {
+            maxValue = minValue;
+            rangeMax.value = formatDecimal(maxValue);
+          } else {
+            minValue = maxValue;
+            rangeMin.value = formatDecimal(minValue);
+          }
+        }
+
+        minInput.value = formatDecimal(minValue);
+        maxInput.value = formatDecimal(maxValue);
+        updateTrack(minValue, maxValue);
+
+        dispatchInputEvent(minInput);
+      }
+
+      rangeMin.addEventListener('input', function () {
+        syncFromRangeInputs('min');
+      });
+
+      rangeMax.addEventListener('input', function () {
+        syncFromRangeInputs('max');
+      });
+
+      minInput.addEventListener('input', function () {
+        syncFromNumberInputs('min');
+      });
+
+      maxInput.addEventListener('input', function () {
+        syncFromNumberInputs('max');
+      });
+
+      syncFromNumberInputs('');
+    });
   }
 
   function requestAndSwap(url, options) {
@@ -248,4 +367,6 @@
   window.addEventListener('popstate', function () {
     requestAndSwap(window.location.href, { pushState: false });
   });
+
+  initPriceSliders();
 })();

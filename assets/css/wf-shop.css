@@ -97,6 +97,78 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  margin-top: 14px;
+}
+
+.wf-price-slider {
+  position: relative;
+}
+
+.wf-price-range-inputs {
+  position: relative;
+  height: 24px;
+}
+
+.wf-price-range {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  margin: 0;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.wf-price-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--wf-accent);
+  background: #fff;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.wf-price-range::-webkit-slider-runnable-track {
+  height: 4px;
+  background: transparent;
+}
+
+.wf-price-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--wf-accent);
+  background: #fff;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.wf-price-range::-moz-range-track {
+  height: 4px;
+  background: transparent;
+}
+
+.wf-price-track {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: #d8dee8;
+  margin-top: -12px;
+}
+
+.wf-price-track-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--wf-accent);
 }
 
 .wf-price-grid label {
