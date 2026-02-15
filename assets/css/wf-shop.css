@@ -111,6 +111,24 @@
   cursor: not-allowed;
 }
 
+.wf-option-search-wrap {
+  margin-bottom: 10px;
+}
+
+.wf-option-search {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--wf-sidebar-border);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+}
+
+.wf-option-hidden {
+  display: none !important;
+}
+
 .wf-price-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
