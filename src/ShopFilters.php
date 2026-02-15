@@ -155,71 +155,12 @@ final class ShopFilters {
 			return;
 		}
 
-		$tax_clauses  = array();
-		$meta_clauses = array();
-
-		$selected_category = $this->get_request_slug( 'wf_cat' );
-		if ( '' !== $selected_category ) {
-			$tax_clauses[] = array(
-				'taxonomy' => 'product_cat',
-				'field'    => 'slug',
-				'terms'    => array( $selected_category ),
-			);
-		}
-
-		$selected_brands = $this->get_request_slug_list( 'wf_brand' );
-		if ( '' !== $this->brand_taxonomy && ! empty( $selected_brands ) ) {
-			$tax_clauses[] = array(
-				'taxonomy' => $this->brand_taxonomy,
-				'field'    => 'slug',
-				'terms'    => $selected_brands,
-				'operator' => 'IN',
-			);
-		}
-
-		$selected_colors = $this->get_request_slug_list( 'wf_color' );
-		if ( '' !== $this->color_taxonomy && ! empty( $selected_colors ) ) {
-			$tax_clauses[] = array(
-				'taxonomy' => $this->color_taxonomy,
-				'field'    => 'slug',
-				'terms'    => $selected_colors,
-				'operator' => 'IN',
-			);
-		}
+		$clauses      = $this->get_request_filter_clauses();
+		$tax_clauses  = $clauses['tax'];
+		$meta_clauses = $clauses['meta'];
 
 		if ( ! empty( $tax_clauses ) ) {
 			$query->set( 'tax_query', $this->merge_query_clauses( (array) $query->get( 'tax_query' ), $tax_clauses ) );
-		}
-
-		$min_price = $this->get_request_decimal( 'min_price' );
-		$max_price = $this->get_request_decimal( 'max_price' );
-
-		if ( null !== $min_price || null !== $max_price ) {
-			$range_min = null !== $min_price ? $min_price : 0.0;
-			$range_max = null !== $max_price ? $max_price : self::MAX_PRICE;
-
-			if ( $range_min > $range_max ) {
-				$tmp       = $range_min;
-				$range_min = $range_max;
-				$range_max = $tmp;
-			}
-
-			$meta_clauses[] = array(
-				'key'     => '_price',
-				'value'   => array( $range_min, $range_max ),
-				'compare' => 'BETWEEN',
-				'type'    => 'NUMERIC',
-			);
-		}
-
-		$rating = $this->get_request_absint( 'rating_filter' );
-		if ( $rating > 0 && $rating <= 5 ) {
-			$meta_clauses[] = array(
-				'key'     => '_wc_average_rating',
-				'value'   => (float) $rating,
-				'compare' => '>=',
-				'type'    => 'DECIMAL(10,2)',
-			);
 		}
 
 		if ( ! empty( $meta_clauses ) ) {
@@ -343,7 +284,7 @@ final class ShopFilters {
 		if ( '' !== $this->brand_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Filter by Brands', 'woo-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', $selected_brands );
+			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands );
 			echo '</div>';
 		}
 
@@ -372,7 +313,7 @@ final class ShopFilters {
 		if ( '' !== $this->color_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Color', 'woo-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', $selected_colors );
+			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors );
 			echo '</div>';
 		}
 
@@ -468,7 +409,13 @@ final class ShopFilters {
 		echo '<ul class="wf-cat-list">';
 		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'woo-filters' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
-			echo '<li><label><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '" ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span></label></li>';
+			$live_count = $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' );
+			$is_active  = $selected === $term->slug;
+			$disabled   = ! $is_active && 0 === $live_count;
+			$disabled_a = $disabled ? ' disabled="disabled"' : '';
+			$label_c    = $disabled ? ' class="is-disabled"' : '';
+
+			echo '<li><label' . $label_c . '><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '"' . $disabled_a . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
 		}
 		echo '</ul>';
 	}
@@ -481,7 +428,7 @@ final class ShopFilters {
 	 * @param array  $selected_values Selected term slugs.
 	 * @return void
 	 */
-	private function render_term_checkboxes( string $taxonomy, string $field_name, array $selected_values ): void {
+	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values ): void {
 		$terms = $this->get_terms_cached(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -499,12 +446,17 @@ final class ShopFilters {
 
 		echo '<ul class="wf-term-list">';
 		foreach ( $terms as $term ) {
-			$checked = in_array( $term->slug, $selected_values, true );
+			$live_count = $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key );
+			$checked    = in_array( $term->slug, $selected_values, true );
+			$disabled   = ! $checked && 0 === $live_count;
+			$disabled_a = $disabled ? ' disabled="disabled"' : '';
+			$label_c    = $disabled ? ' class="is-disabled"' : '';
+
 			echo '<li>';
-			echo '<label>';
-			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '" ' . checked( $checked, true, false ) . ' />';
+			echo '<label' . $label_c . '>';
+			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"' . $disabled_a . ' ' . checked( $checked, true, false ) . ' />';
 			echo '<span>' . esc_html( $term->name ) . '</span>';
-			echo '<small>' . esc_html( (string) $term->count ) . '</small>';
+			echo '<small>' . esc_html( (string) $live_count ) . '</small>';
 			echo '</label>';
 			echo '</li>';
 		}
@@ -788,6 +740,150 @@ final class ShopFilters {
 		);
 
 		return $values;
+	}
+
+	/**
+	 * Build normalized filter clauses from request.
+	 *
+	 * @param array $exclude_keys Keys to ignore while building clauses.
+	 * @return array{tax: array, meta: array}
+	 */
+	private function get_request_filter_clauses( array $exclude_keys = array() ): array {
+		$excluded = array_fill_keys( $exclude_keys, true );
+
+		$tax_clauses  = array();
+		$meta_clauses = array();
+
+		if ( ! isset( $excluded['wf_cat'] ) ) {
+			$selected_category = $this->get_request_slug( 'wf_cat' );
+			if ( '' !== $selected_category ) {
+				$tax_clauses[] = array(
+					'taxonomy' => 'product_cat',
+					'field'    => 'slug',
+					'terms'    => array( $selected_category ),
+				);
+			}
+		}
+
+		if ( ! isset( $excluded['wf_brand'] ) ) {
+			$selected_brands = $this->get_request_slug_list( 'wf_brand' );
+			if ( '' !== $this->brand_taxonomy && ! empty( $selected_brands ) ) {
+				$tax_clauses[] = array(
+					'taxonomy' => $this->brand_taxonomy,
+					'field'    => 'slug',
+					'terms'    => $selected_brands,
+					'operator' => 'IN',
+				);
+			}
+		}
+
+		if ( ! isset( $excluded['wf_color'] ) ) {
+			$selected_colors = $this->get_request_slug_list( 'wf_color' );
+			if ( '' !== $this->color_taxonomy && ! empty( $selected_colors ) ) {
+				$tax_clauses[] = array(
+					'taxonomy' => $this->color_taxonomy,
+					'field'    => 'slug',
+					'terms'    => $selected_colors,
+					'operator' => 'IN',
+				);
+			}
+		}
+
+		if ( ! isset( $excluded['min_price'] ) || ! isset( $excluded['max_price'] ) ) {
+			$min_price = $this->get_request_decimal( 'min_price' );
+			$max_price = $this->get_request_decimal( 'max_price' );
+
+			if ( null !== $min_price || null !== $max_price ) {
+				$range_min = null !== $min_price ? $min_price : 0.0;
+				$range_max = null !== $max_price ? $max_price : self::MAX_PRICE;
+
+				if ( $range_min > $range_max ) {
+					$tmp       = $range_min;
+					$range_min = $range_max;
+					$range_max = $tmp;
+				}
+
+				$meta_clauses[] = array(
+					'key'     => '_price',
+					'value'   => array( $range_min, $range_max ),
+					'compare' => 'BETWEEN',
+					'type'    => 'NUMERIC',
+				);
+			}
+		}
+
+		if ( ! isset( $excluded['rating_filter'] ) ) {
+			$rating = $this->get_request_absint( 'rating_filter' );
+			if ( $rating > 0 && $rating <= 5 ) {
+				$meta_clauses[] = array(
+					'key'     => '_wc_average_rating',
+					'value'   => (float) $rating,
+					'compare' => '>=',
+					'type'    => 'DECIMAL(10,2)',
+				);
+			}
+		}
+
+		return array(
+			'tax'  => $tax_clauses,
+			'meta' => $meta_clauses,
+		);
+	}
+
+	/**
+	 * Get live product count for a term in the current filter context.
+	 *
+	 * @param string $taxonomy   Term taxonomy.
+	 * @param string $term_slug  Term slug.
+	 * @param string $source_key Filter key to exclude from baseline context.
+	 * @return int
+	 */
+	private function get_contextual_term_count( string $taxonomy, string $term_slug, string $source_key ): int {
+		$cache_key = 'ctx_count_' . md5( wp_json_encode( array(
+			'taxonomy' => $taxonomy,
+			'slug'     => $term_slug,
+			'source'   => $source_key,
+			'query'    => $this->get_current_query_args(),
+		) ) );
+		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+		if ( false !== $cached ) {
+			return (int) $cached;
+		}
+
+		$clauses = $this->get_request_filter_clauses( array( $source_key ) );
+		$clauses['tax'][] = array(
+			'taxonomy' => $taxonomy,
+			'field'    => 'slug',
+			'terms'    => array( $term_slug ),
+		);
+
+		$query_args = array(
+			'post_type'              => 'product',
+			'post_status'            => 'publish',
+			'fields'                 => 'ids',
+			'posts_per_page'         => 1,
+			'no_found_rows'          => false,
+			'suppress_filters'       => false,
+			'cache_results'          => false,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		);
+
+		if ( ! empty( $clauses['tax'] ) ) {
+			$query_args['tax_query'] = $this->merge_query_clauses( array(), $clauses['tax'] );
+		}
+
+		if ( ! empty( $clauses['meta'] ) ) {
+			$query_args['meta_query'] = $this->merge_query_clauses( array(), $clauses['meta'] );
+		}
+
+		$count_query = new \WP_Query( $query_args );
+		$count       = (int) $count_query->found_posts;
+
+		wp_cache_set( $cache_key, $count, self::CACHE_GROUP, 300 );
+
+		return $count;
 	}
 
 	/**
