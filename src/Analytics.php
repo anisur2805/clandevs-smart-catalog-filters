@@ -42,7 +42,7 @@ final class Analytics {
 	 */
 	public function register_menu(): void {
 		add_submenu_page(
-			'woocommerce',
+			AdminMenu::get_menu_slug(),
 			__( 'Woo Filters Analytics', 'woo-filters' ),
 			__( 'Woo Filters Analytics', 'woo-filters' ),
 			'manage_woocommerce',

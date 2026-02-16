@@ -25,6 +25,16 @@ require_once __DIR__ . '/src/Autoloader.php';
 \WooFilters\Autoloader::register( __DIR__ . '/src' );
 
 add_action(
+	'before_woocommerce_init',
+	static function () {
+		if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+		}
+	}
+);
+
+add_action(
 	'plugins_loaded',
 	static function () {
 		load_plugin_textdomain( 'woo-filters', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
