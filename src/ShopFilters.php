@@ -433,6 +433,14 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_filter_form(): void {
+		$filter_options  = FilterSettings::get_options();
+		$show_categories = isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'];
+		$show_brands     = isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'];
+		$show_price      = isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'];
+		$show_rating     = isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'];
+		$show_stock      = isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'];
+		$show_colors     = isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'];
+
 		$action          = $this->get_archive_url();
 		$selected_brands = $this->get_request_slug_list( 'wf_brand' );
 		$selected_colors = $this->get_request_slug_list( 'wf_color' );
@@ -458,54 +466,62 @@ final class ShopFilters {
 		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' ) );
 		$this->render_active_filters();
 
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Categories', 'woo-filters' ) . '</h4>';
-		$this->render_categories();
-		echo '</div>';
+		if ( $show_categories ) {
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html__( 'Categories', 'woo-filters' ) . '</h4>';
+			$this->render_categories();
+			echo '</div>';
+		}
 
-		if ( '' !== $this->brand_taxonomy ) {
+		if ( $show_brands && '' !== $this->brand_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Filter by Brands', 'woo-filters' ) . '</h4>';
 			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands );
 			echo '</div>';
 		}
 
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Price', 'woo-filters' ) . '</h4>';
-		echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
-		echo '<div class="wf-price-range-inputs">';
-		echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
-		echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
-		echo '</div>';
-		echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
-		echo '</div>';
-		echo '<div class="wf-price-grid">';
-		echo '<label><span>' . esc_html__( 'Min', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
-		echo '<label><span>' . esc_html__( 'Max', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
-		echo '</div>';
-		echo '</div>';
-
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Customer Rating', 'woo-filters' ) . '</h4>';
-		for ( $i = 5; $i >= 1; $i-- ) {
-			echo '<label class="wf-radio">';
-			echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
-			echo '<span>' . esc_html( sprintf( __( '%d stars & up', 'woo-filters' ), $i ) ) . '</span>';
-			echo '</label>';
+		if ( $show_price ) {
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html__( 'Price', 'woo-filters' ) . '</h4>';
+			echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
+			echo '<div class="wf-price-range-inputs">';
+			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
+			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
+			echo '</div>';
+			echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
+			echo '</div>';
+			echo '<div class="wf-price-grid">';
+			echo '<label><span>' . esc_html__( 'Min', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
+			echo '<label><span>' . esc_html__( 'Max', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
+			echo '</div>';
+			echo '</div>';
 		}
-		echo '<label class="wf-radio">';
-		echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
-		echo '<span>' . esc_html__( 'Any', 'woo-filters' ) . '</span>';
-		echo '</label>';
-		echo '</div>';
 
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Availability', 'woo-filters' ) . '</h4>';
-		echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'woo-filters' ) . '</span></label>';
-		echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'woo-filters' ) . '</span></label>';
-		echo '</div>';
+		if ( $show_rating ) {
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html__( 'Customer Rating', 'woo-filters' ) . '</h4>';
+			for ( $i = 5; $i >= 1; $i-- ) {
+				echo '<label class="wf-radio">';
+				echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
+				echo '<span>' . esc_html( sprintf( __( '%d stars & up', 'woo-filters' ), $i ) ) . '</span>';
+				echo '</label>';
+			}
+			echo '<label class="wf-radio">';
+			echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
+			echo '<span>' . esc_html__( 'Any', 'woo-filters' ) . '</span>';
+			echo '</label>';
+			echo '</div>';
+		}
 
-		if ( '' !== $this->color_taxonomy ) {
+		if ( $show_stock ) {
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html__( 'Availability', 'woo-filters' ) . '</h4>';
+			echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'woo-filters' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'woo-filters' ) . '</span></label>';
+			echo '</div>';
+		}
+
+		if ( $show_colors && '' !== $this->color_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Color', 'woo-filters' ) . '</h4>';
 			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors );
@@ -548,10 +564,11 @@ final class ShopFilters {
 	 * @return array
 	 */
 	private function get_active_filter_chips(): array {
+		$filter_options = FilterSettings::get_options();
 		$chips = array();
 
 		$selected_category = $this->get_request_slug( 'wf_cat' );
-		if ( '' !== $selected_category ) {
+		if ( isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'] && '' !== $selected_category ) {
 			$term = get_term_by( 'slug', $selected_category, 'product_cat' );
 			if ( $term instanceof \WP_Term ) {
 				$chips[] = array(
@@ -561,11 +578,15 @@ final class ShopFilters {
 			}
 		}
 
-		$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'woo-filters' ) ) );
-		$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'woo-filters' ) ) );
+		if ( isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'woo-filters' ) ) );
+		}
+		if ( isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'woo-filters' ) ) );
+		}
 
 		$min_price = $this->get_request_decimal( 'min_price' );
-		if ( null !== $min_price ) {
+		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $min_price ) {
 			$chips[] = array(
 				'label' => sprintf( __( 'Min: %s', 'woo-filters' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'min_price' ),
@@ -573,7 +594,7 @@ final class ShopFilters {
 		}
 
 		$max_price = $this->get_request_decimal( 'max_price' );
-		if ( null !== $max_price ) {
+		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $max_price ) {
 			$chips[] = array(
 				'label' => sprintf( __( 'Max: %s', 'woo-filters' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'max_price' ),
@@ -581,21 +602,21 @@ final class ShopFilters {
 		}
 
 		$rating = $this->get_request_absint( 'rating_filter' );
-		if ( $rating > 0 && $rating <= 5 ) {
+		if ( isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] && $rating > 0 && $rating <= 5 ) {
 			$chips[] = array(
 				'label' => sprintf( __( '%d stars & up', 'woo-filters' ), $rating ),
 				'url'   => $this->build_remove_filter_url( 'rating_filter' ),
 			);
 		}
 
-		if ( $this->get_request_flag( 'wf_in_stock' ) ) {
+		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
 			$chips[] = array(
 				'label' => __( 'Stock: In stock', 'woo-filters' ),
 				'url'   => $this->build_remove_filter_url( 'wf_in_stock' ),
 			);
 		}
 
-		if ( $this->get_request_flag( 'wf_on_sale' ) ) {
+		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
 			$chips[] = array(
 				'label' => __( 'Sale: On sale', 'woo-filters' ),
 				'url'   => $this->build_remove_filter_url( 'wf_on_sale' ),
@@ -1135,12 +1156,13 @@ final class ShopFilters {
 	 * @return array{tax: array, meta: array}
 	 */
 	private function get_request_filter_clauses( array $exclude_keys = array() ): array {
+		$filter_options = FilterSettings::get_options();
 		$excluded = array_fill_keys( $exclude_keys, true );
 
 		$tax_clauses  = array();
 		$meta_clauses = array();
 
-		if ( ! isset( $excluded['wf_cat'] ) ) {
+		if ( ! isset( $excluded['wf_cat'] ) && isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'] ) {
 			$selected_category = $this->get_request_slug( 'wf_cat' );
 			if ( '' !== $selected_category ) {
 				$tax_clauses[] = array(
@@ -1151,7 +1173,7 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['wf_brand'] ) ) {
+		if ( ! isset( $excluded['wf_brand'] ) && isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
 			$selected_brands = $this->get_request_slug_list( 'wf_brand' );
 			if ( '' !== $this->brand_taxonomy && ! empty( $selected_brands ) ) {
 				$tax_clauses[] = array(
@@ -1163,7 +1185,7 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['wf_color'] ) ) {
+		if ( ! isset( $excluded['wf_color'] ) && isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
 			$selected_colors = $this->get_request_slug_list( 'wf_color' );
 			if ( '' !== $this->color_taxonomy && ! empty( $selected_colors ) ) {
 				$tax_clauses[] = array(
@@ -1175,7 +1197,7 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['min_price'] ) || ! isset( $excluded['max_price'] ) ) {
+		if ( ( ! isset( $excluded['min_price'] ) || ! isset( $excluded['max_price'] ) ) && isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] ) {
 			$min_price = $this->get_request_decimal( 'min_price' );
 			$max_price = $this->get_request_decimal( 'max_price' );
 
@@ -1198,7 +1220,7 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['rating_filter'] ) ) {
+		if ( ! isset( $excluded['rating_filter'] ) && isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] ) {
 			$rating = $this->get_request_absint( 'rating_filter' );
 			if ( $rating > 0 && $rating <= 5 ) {
 				$meta_clauses[] = array(
@@ -1210,7 +1232,7 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['wf_in_stock'] ) && $this->get_request_flag( 'wf_in_stock' ) ) {
+		if ( ! isset( $excluded['wf_in_stock'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
 			$meta_clauses[] = array(
 				'key'     => '_stock_status',
 				'value'   => 'instock',
@@ -1218,7 +1240,7 @@ final class ShopFilters {
 			);
 		}
 
-		if ( ! isset( $excluded['wf_on_sale'] ) && $this->get_request_flag( 'wf_on_sale' ) ) {
+		if ( ! isset( $excluded['wf_on_sale'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
 			$meta_clauses[] = array(
 				'key'     => '_sale_price',
 				'value'   => 0,

@@ -41,7 +41,7 @@ final class Plugin {
 	 *
 	 * @var string
 	 */
-	private $version = '0.8.0';
+	private $version = '0.9.0';
 
 	/**
 	 * Shop filters service.
@@ -56,6 +56,13 @@ final class Plugin {
 	 * @var StyleSettings|null
 	 */
 	private $style_settings = null;
+
+	/**
+	 * Filter settings service.
+	 *
+	 * @var FilterSettings|null
+	 */
+	private $filter_settings = null;
 
 	/**
 	 * Constructor.
@@ -96,5 +103,8 @@ final class Plugin {
 
 		$this->style_settings = new StyleSettings();
 		$this->style_settings->register_hooks();
+
+		$this->filter_settings = new FilterSettings();
+		$this->filter_settings->register_hooks();
 	}
 }
