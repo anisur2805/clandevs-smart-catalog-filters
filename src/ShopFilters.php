@@ -36,6 +36,9 @@ final class ShopFilters {
 	/** @var string */
 	private $color_taxonomy = '';
 
+	/** @var array<int, string> */
+	private $custom_attribute_taxonomies = array();
+
 	/** @var string */
 	private $plugin_url = '';
 
@@ -109,6 +112,7 @@ final class ShopFilters {
 	public function bootstrap_taxonomies(): void {
 		$this->brand_taxonomy = $this->resolve_taxonomy( array( 'pa_brand', 'product_brand', 'brand' ) );
 		$this->color_taxonomy = $this->resolve_taxonomy( array( 'pa_color', 'color' ) );
+		$this->custom_attribute_taxonomies = $this->get_filterable_attribute_taxonomies();
 	}
 
 	/**
@@ -258,8 +262,11 @@ final class ShopFilters {
 	public function render_shortcode( array $atts = array() ): string {
 		$atts = shortcode_atts(
 			array(
-				'per_page' => '12',
-				'columns'  => '4',
+				'per_page'        => '12',
+				'columns'         => '4',
+				'category'        => '',
+				'show_filters'    => 'yes',
+				'show_pagination' => 'yes',
 			),
 			$atts,
 			'woo_filters'
@@ -274,26 +281,36 @@ final class ShopFilters {
 		if ( $columns <= 0 || $columns > 6 ) {
 			$columns = 4;
 		}
+		$forced_category = sanitize_title( (string) $atts['category'] );
+		$show_filters    = $this->parse_shortcode_bool( (string) $atts['show_filters'], true );
+		$show_pagination = $this->parse_shortcode_bool( (string) $atts['show_pagination'], true );
 
 		$paged = max( 1, $this->get_request_absint( 'paged' ) );
 		if ( $paged <= 1 ) {
 			$paged = max( 1, $this->get_request_absint( 'product-page' ) );
 		}
 
-		$query = $this->get_shortcode_products_query( $per_page, $paged );
+		$query = $this->get_shortcode_products_query( $per_page, $paged, $forced_category );
 
 		$this->is_shortcode_context = true;
 		$this->shortcode_action_url = get_permalink();
 		$skin_class                 = $this->get_layout_skin_class();
 
 		ob_start();
-		echo '<div class="wf-shop-layout wf-shortcode-layout ' . esc_attr( $skin_class ) . '">';
-		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
-		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-		echo '<aside class="wf-sidebar">';
-		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
-		$this->render_filter_form();
-		echo '</aside>';
+		$layout_class = 'wf-shop-layout wf-shortcode-layout ' . $skin_class;
+		if ( ! $show_filters ) {
+			$layout_class .= ' wf-shortcode-no-sidebar';
+		}
+
+		echo '<div class="' . esc_attr( $layout_class ) . '">';
+		if ( $show_filters ) {
+			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
+			echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
+			echo '<aside class="wf-sidebar">';
+			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
+			$this->render_filter_form();
+			echo '</aside>';
+		}
 		echo '<section class="wf-products">';
 
 		if ( $query->have_posts() ) {
@@ -303,7 +320,9 @@ final class ShopFilters {
 				wc_get_template_part( 'content', 'product' );
 			}
 			echo '</ul>';
-			$this->render_shortcode_pagination( $query );
+			if ( $show_pagination ) {
+				$this->render_shortcode_pagination( $query );
+			}
 		} else {
 			$this->render_no_products_state();
 		}
@@ -454,6 +473,11 @@ final class ShopFilters {
 		$action          = $this->get_archive_url();
 		$selected_brands  = $this->get_request_slug_list( 'wf_brand' );
 		$selected_colors  = $this->get_request_slug_list( 'wf_color' );
+		$selected_attributes = array();
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
+			$selected_attributes[ $request_key ] = $this->get_request_slug_list( $request_key );
+		}
 		$multiselect_mode = $this->get_request_multiselect_mode();
 		$selected_rating = $this->get_request_absint( 'rating_filter' );
 		$min_price       = $this->get_request_decimal( 'min_price' );
@@ -474,7 +498,11 @@ final class ShopFilters {
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
 		echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $this->get_filter_nonce() ) . '" />';
-		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'wf_logic', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' ) );
+		$excluded_preserved = array( 'wf_cat', 'wf_brand', 'wf_color', 'wf_logic', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' );
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			$excluded_preserved[] = $this->get_attribute_request_key( $attribute_taxonomy );
+		}
+		$this->render_preserved_fields( $excluded_preserved );
 		$this->render_active_filters();
 
 		if ( $show_categories ) {
@@ -539,7 +567,19 @@ final class ShopFilters {
 		if ( $show_colors && '' !== $this->color_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Color', 'woo-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors );
+			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors, true );
+			echo '</div>';
+		}
+
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
+			$field_name  = $request_key . '[]';
+			$selected    = isset( $selected_attributes[ $request_key ] ) && is_array( $selected_attributes[ $request_key ] ) ? $selected_attributes[ $request_key ] : array();
+			$is_color_attribute = $this->is_color_like_taxonomy( $attribute_taxonomy );
+
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html( $this->get_attribute_display_label( $attribute_taxonomy ) ) . '</h4>';
+			$this->render_term_checkboxes( $attribute_taxonomy, $field_name, $request_key, $selected, $is_color_attribute );
 			echo '</div>';
 		}
 
@@ -598,6 +638,11 @@ final class ShopFilters {
 		}
 		if ( isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
 			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'woo-filters' ) ) );
+		}
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
+			$label       = $this->get_attribute_display_label( $attribute_taxonomy );
+			$chips       = array_merge( $chips, $this->get_term_chips_from_selected( $attribute_taxonomy, $request_key, $label ) );
 		}
 
 		$multiselect_mode = $this->get_request_multiselect_mode();
@@ -687,12 +732,14 @@ final class ShopFilters {
 	/**
 	 * Render checkbox list for a taxonomy.
 	 *
-	 * @param string $taxonomy        Taxonomy key.
-	 * @param string $field_name      HTML field name.
-	 * @param array  $selected_values Selected term slugs.
+	 * @param string $taxonomy           Taxonomy key.
+	 * @param string $field_name         HTML field name.
+	 * @param string $request_key        Request key.
+	 * @param array  $selected_values    Selected term slugs.
+	 * @param bool   $show_color_swatch  Whether to render color swatches.
 	 * @return void
 	 */
-	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values ): void {
+	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false ): void {
 		$terms = $this->get_terms_cached(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -727,6 +774,12 @@ final class ShopFilters {
 			echo '<li>';
 			echo '<label' . $label_c . '>';
 			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"' . $disabled_a . ' ' . checked( $checked, true, false ) . ' />';
+			if ( $show_color_swatch ) {
+				$swatch_hex = $this->get_term_color_hex( $term );
+				if ( '' !== $swatch_hex ) {
+					echo '<span class="wf-color-swatch" style="background:' . esc_attr( $swatch_hex ) . ';"></span>';
+				}
+			}
 			echo '<span>' . esc_html( $term->name ) . '</span>';
 			echo '<small>' . esc_html( (string) $live_count ) . '</small>';
 			echo '</label>';
@@ -781,11 +834,12 @@ final class ShopFilters {
 	/**
 	 * Build products query for shortcode context.
 	 *
-	 * @param int $per_page Products per page.
-	 * @param int $paged    Current page.
+	 * @param int    $per_page        Products per page.
+	 * @param int    $paged           Current page.
+	 * @param string $forced_category Optional forced category slug.
 	 * @return \WP_Query
 	 */
-	private function get_shortcode_products_query( int $per_page, int $paged ): \WP_Query {
+	private function get_shortcode_products_query( int $per_page, int $paged, string $forced_category = '' ): \WP_Query {
 		if ( ! $this->is_valid_filter_request() ) {
 			return new \WP_Query(
 				array(
@@ -810,6 +864,9 @@ final class ShopFilters {
 		$tax_operator = 'and' === $logic_mode ? 'AND' : 'IN';
 
 		$selected_category = $this->get_request_slug( 'wf_cat' );
+		if ( '' === $selected_category && '' !== $forced_category ) {
+			$selected_category = $forced_category;
+		}
 		if ( '' !== $selected_category ) {
 			$tax_clauses[] = array(
 				'taxonomy' => 'product_cat',
@@ -834,6 +891,20 @@ final class ShopFilters {
 				'taxonomy' => $this->color_taxonomy,
 				'field'    => 'slug',
 				'terms'    => $selected_colors,
+				'operator' => $tax_operator,
+			);
+		}
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
+			$selected    = $this->get_request_slug_list( $request_key );
+			if ( empty( $selected ) ) {
+				continue;
+			}
+
+			$tax_clauses[] = array(
+				'taxonomy' => $attribute_taxonomy,
+				'field'    => 'slug',
+				'terms'    => $selected,
 				'operator' => $tax_operator,
 			);
 		}
@@ -878,6 +949,30 @@ final class ShopFilters {
 		}
 
 		return new \WP_Query( $query_args );
+	}
+
+	/**
+	 * Parse shortcode yes/no-style boolean attribute.
+	 *
+	 * @param string $value   Raw value.
+	 * @param bool   $default Default value.
+	 * @return bool
+	 */
+	private function parse_shortcode_bool( string $value, bool $default ): bool {
+		$normalized = strtolower( trim( $value ) );
+		if ( '' === $normalized ) {
+			return $default;
+		}
+
+		if ( in_array( $normalized, array( '1', 'true', 'yes', 'on' ), true ) ) {
+			return true;
+		}
+
+		if ( in_array( $normalized, array( '0', 'false', 'no', 'off' ), true ) ) {
+			return false;
+		}
+
+		return $default;
 	}
 
 	/**
@@ -1011,6 +1106,9 @@ final class ShopFilters {
 			$args['paged'],
 			$args['product-page']
 		);
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			unset( $args[ $this->get_attribute_request_key( $attribute_taxonomy ) ] );
+		}
 
 		return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
 	}
@@ -1239,6 +1337,24 @@ final class ShopFilters {
 				);
 			}
 		}
+		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
+			if ( isset( $excluded[ $request_key ] ) ) {
+				continue;
+			}
+
+			$selected_attribute_terms = $this->get_request_slug_list( $request_key );
+			if ( empty( $selected_attribute_terms ) ) {
+				continue;
+			}
+
+			$tax_clauses[] = array(
+				'taxonomy' => $attribute_taxonomy,
+				'field'    => 'slug',
+				'terms'    => $selected_attribute_terms,
+				'operator' => $tax_operator,
+			);
+		}
 
 		if ( ( ! isset( $excluded['min_price'] ) || ! isset( $excluded['max_price'] ) ) && isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] ) {
 			$min_price = $this->get_request_decimal( 'min_price' );
@@ -1422,6 +1538,102 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Resolve filterable product attribute taxonomies excluding dedicated brand/color.
+	 *
+	 * @return array<int, string>
+	 */
+	private function get_filterable_attribute_taxonomies(): array {
+		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) || ! function_exists( 'wc_attribute_taxonomy_name' ) ) {
+			return array();
+		}
+
+		$attribute_taxonomies = wc_get_attribute_taxonomies();
+		if ( empty( $attribute_taxonomies ) ) {
+			return array();
+		}
+
+		$resolved = array();
+		foreach ( $attribute_taxonomies as $attribute ) {
+			if ( ! is_object( $attribute ) || ! isset( $attribute->attribute_name ) ) {
+				continue;
+			}
+
+			$taxonomy = wc_attribute_taxonomy_name( (string) $attribute->attribute_name );
+			if ( ! taxonomy_exists( $taxonomy ) ) {
+				continue;
+			}
+
+			if ( $taxonomy === $this->brand_taxonomy || $taxonomy === $this->color_taxonomy ) {
+				continue;
+			}
+
+			$resolved[] = $taxonomy;
+		}
+
+		return array_values( array_unique( $resolved ) );
+	}
+
+	/**
+	 * Build request key for dynamic attribute taxonomy.
+	 *
+	 * @param string $taxonomy Taxonomy key.
+	 * @return string
+	 */
+	private function get_attribute_request_key( string $taxonomy ): string {
+		return 'wf_attr_' . sanitize_key( $taxonomy );
+	}
+
+	/**
+	 * Get display label for an attribute taxonomy.
+	 *
+	 * @param string $taxonomy Taxonomy key.
+	 * @return string
+	 */
+	private function get_attribute_display_label( string $taxonomy ): string {
+		$taxonomy_object = get_taxonomy( $taxonomy );
+		if ( $taxonomy_object instanceof \WP_Taxonomy && isset( $taxonomy_object->labels->singular_name ) && '' !== (string) $taxonomy_object->labels->singular_name ) {
+			return (string) $taxonomy_object->labels->singular_name;
+		}
+
+		return ucwords( str_replace( array( 'pa_', '_' ), array( '', ' ' ), $taxonomy ) );
+	}
+
+	/**
+	 * Determine whether taxonomy should render color swatches.
+	 *
+	 * @param string $taxonomy Taxonomy key.
+	 * @return bool
+	 */
+	private function is_color_like_taxonomy( string $taxonomy ): bool {
+		return $taxonomy === $this->color_taxonomy || false !== strpos( $taxonomy, 'color' );
+	}
+
+	/**
+	 * Resolve color swatch hex value from term metadata.
+	 *
+	 * @param \WP_Term $term Term object.
+	 * @return string
+	 */
+	private function get_term_color_hex( \WP_Term $term ): string {
+		$meta_keys = array( 'color', 'sw_color', 'product_attribute_color', 'attribute_pa_color' );
+		foreach ( $meta_keys as $meta_key ) {
+			$value = get_term_meta( $term->term_id, $meta_key, true );
+			if ( ! is_string( $value ) ) {
+				continue;
+			}
+
+			$color = sanitize_hex_color( $value );
+			if ( is_string( $color ) && '' !== $color ) {
+				return $color;
+			}
+		}
+
+		$name_color = sanitize_hex_color( (string) $term->name );
+
+		return is_string( $name_color ) ? $name_color : '';
+	}
+
+	/**
 	 * Resolve first available taxonomy.
 	 *
 	 * @param array $candidates Candidate taxonomy keys.
@@ -1500,7 +1712,8 @@ final class ShopFilters {
 	 * @return bool
 	 */
 	private function is_valid_filter_request(): bool {
-		if ( ! $this->has_filter_query_keys() ) {
+		if ( ! $this->has_filter_query_keys() ) {}
+		if ( ! $this->has_filter_query_args() ) {
 			return true;
 		}
 
@@ -1509,8 +1722,46 @@ final class ShopFilters {
 		}
 
 		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
+		if ( strlen( $nonce ) < 8 ) {
+			return false;
+		}
 
-		return (bool) wp_verify_nonce( $nonce, self::NONCE_ACTION );
+		$verified = wp_verify_nonce( $nonce, self::NONCE_ACTION );
+
+		return 1 === $verified || 2 === $verified;
+	}
+
+	/**
+	 * Determine whether current request includes filter-bearing query args.
+	 *
+	 * @return bool
+	 */
+	private function has_filter_query_args(): bool {
+		$filter_keys = array(
+			'wf_cat',
+			'wf_brand',
+			'wf_color',
+			'wf_logic',
+			'min_price',
+			'max_price',
+			'rating_filter',
+			'wf_in_stock',
+			'wf_on_sale',
+		);
+
+		foreach ( $filter_keys as $key ) {
+			if ( isset( $_GET[ $key ] ) ) {
+				return true;
+			}
+		}
+
+		foreach ( $_GET as $key => $value ) {
+			if ( 0 === strpos( sanitize_key( (string) $key ), 'wf_attr_' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
