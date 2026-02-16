@@ -7,6 +7,8 @@
  * Author URI: https://github.com/anisur2805
  * Requires at least: 6.0
  * Requires PHP: 7.4
+ * Text Domain: woo-filters
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,6 +22,8 @@ require_once __DIR__ . '/src/Autoloader.php';
 add_action(
 	'plugins_loaded',
 	static function () {
+		load_plugin_textdomain( 'woo-filters', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
