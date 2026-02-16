@@ -1674,7 +1674,7 @@ final class ShopFilters {
 	 * @return bool
 	 */
 	private function is_valid_filter_request(): bool {
-		if ( ! $this->is_ajax_navigation_request() ) {
+		if ( ! $this->has_filter_query_args() ) {
 			return true;
 		}
 
@@ -1683,8 +1683,46 @@ final class ShopFilters {
 		}
 
 		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
+		if ( strlen( $nonce ) < 8 ) {
+			return false;
+		}
 
-		return (bool) wp_verify_nonce( $nonce, self::NONCE_ACTION );
+		$verified = wp_verify_nonce( $nonce, self::NONCE_ACTION );
+
+		return 1 === $verified || 2 === $verified;
+	}
+
+	/**
+	 * Determine whether current request includes filter-bearing query args.
+	 *
+	 * @return bool
+	 */
+	private function has_filter_query_args(): bool {
+		$filter_keys = array(
+			'wf_cat',
+			'wf_brand',
+			'wf_color',
+			'wf_logic',
+			'min_price',
+			'max_price',
+			'rating_filter',
+			'wf_in_stock',
+			'wf_on_sale',
+		);
+
+		foreach ( $filter_keys as $key ) {
+			if ( isset( $_GET[ $key ] ) ) {
+				return true;
+			}
+		}
+
+		foreach ( $_GET as $key => $value ) {
+			if ( 0 === strpos( sanitize_key( (string) $key ), 'wf_attr_' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
