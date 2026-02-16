@@ -58,6 +58,13 @@ final class Plugin {
 	private $style_settings = null;
 
 	/**
+	 * Filter settings service.
+	 *
+	 * @var FilterSettings|null
+	 */
+	private $filter_settings = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $plugin_file Main plugin file.
@@ -96,5 +103,8 @@ final class Plugin {
 
 		$this->style_settings = new StyleSettings();
 		$this->style_settings->register_hooks();
+
+		$this->filter_settings = new FilterSettings();
+		$this->filter_settings->register_hooks();
 	}
 }

@@ -8,6 +8,8 @@
 
   var priceDebounceTimer = null;
   var currentController = null;
+  var isDrawerOpen = false;
+  var mobileBreakpoint = window.matchMedia('(max-width: 860px)');
   var requestNonce =
     typeof window.wfShopFilters === 'object' && window.wfShopFilters && window.wfShopFilters.nonce
       ? String(window.wfShopFilters.nonce)
@@ -15,6 +17,27 @@
 
   function setLoading(isLoading) {
     layout.classList.toggle('wf-is-loading', !!isLoading);
+  }
+
+  function setDrawerState(nextState) {
+    isDrawerOpen = !!nextState;
+    layout.classList.toggle('wf-drawer-open', isDrawerOpen);
+    document.body.classList.toggle('wf-no-scroll', isDrawerOpen);
+
+    var toggle = layout.querySelector('.wf-filter-toggle');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', isDrawerOpen ? 'true' : 'false');
+    }
+  }
+
+  function closeDrawer() {
+    setDrawerState(false);
+  }
+
+  function initMobileDrawer() {
+    if (!mobileBreakpoint.matches) {
+      closeDrawer();
+    }
   }
 
   function isPrimaryClick(event) {
@@ -296,6 +319,7 @@
       })
       .then(function (html) {
         swapFromResponse(html);
+        closeDrawer();
 
         if (opts.pushState !== false) {
           window.history.pushState({ wf: true }, '', url);
@@ -382,6 +406,23 @@
   });
 
   layout.addEventListener('click', function (event) {
+    var target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    if (target.closest('.wf-filter-toggle')) {
+      event.preventDefault();
+      setDrawerState(!isDrawerOpen);
+      return;
+    }
+
+    if (target.closest('.wf-sidebar-close') || target.closest('.wf-sidebar-overlay')) {
+      event.preventDefault();
+      closeDrawer();
+      return;
+    }
+
     var link = event.target.closest('a');
     if (!link || !isPrimaryClick(event) || !isNavigableLink(link)) {
       return;
@@ -400,6 +441,23 @@
     requestAndSwap(window.location.href, { pushState: false });
   });
 
+  document.addEventListener('keydown', function (event) {
+    if ('Escape' === event.key) {
+      closeDrawer();
+    }
+  });
+
+  if (typeof mobileBreakpoint.addEventListener === 'function') {
+    mobileBreakpoint.addEventListener('change', function () {
+      initMobileDrawer();
+    });
+  } else if (typeof mobileBreakpoint.addListener === 'function') {
+    mobileBreakpoint.addListener(function () {
+      initMobileDrawer();
+    });
+  }
+
   initPriceSliders();
   initOptionSearch();
+  initMobileDrawer();
 })();
