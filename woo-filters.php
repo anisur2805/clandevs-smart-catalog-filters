@@ -12,6 +12,8 @@
  * WC tested up to: 10.0
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: woo-filters
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,6 +27,8 @@ require_once __DIR__ . '/src/Autoloader.php';
 add_action(
 	'plugins_loaded',
 	static function () {
+		load_plugin_textdomain( 'woo-filters', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
