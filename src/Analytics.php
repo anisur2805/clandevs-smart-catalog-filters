@@ -392,8 +392,8 @@ final class Analytics {
 
 			foreach ( $values as $value => $count ) {
 				$rows[] = array(
-					'type'  => $this->humanize_key( (string) $type ),
-					'value' => $this->humanize_key( (string) $value ),
+					'type'  => $this->get_translated_filter_type_label( (string) $type ),
+					'value' => $this->get_translated_filter_value_label( (string) $value ),
 					'count' => absint( $count ),
 				);
 			}
@@ -432,7 +432,53 @@ final class Analytics {
 	}
 
 	/**
-	 * Humanize key for admin table output.
+	 * Get translated label for filter type key.
+	 *
+	 * @param string $type_key Filter type key.
+	 * @return string
+	 */
+	private function get_translated_filter_type_label( string $type_key ): string {
+		$labels = array(
+			'category'     => __( 'Category', 'woo-filters' ),
+			'brand'        => __( 'Brand', 'woo-filters' ),
+			'color'        => __( 'Color', 'woo-filters' ),
+			'logic'        => __( 'Logic', 'woo-filters' ),
+			'rating'       => __( 'Rating', 'woo-filters' ),
+			'min_price'    => __( 'Minimum Price', 'woo-filters' ),
+			'max_price'    => __( 'Maximum Price', 'woo-filters' ),
+			'availability' => __( 'Availability', 'woo-filters' ),
+		);
+
+		if ( isset( $labels[ $type_key ] ) ) {
+			return $labels[ $type_key ];
+		}
+
+		return $this->humanize_key( $type_key );
+	}
+
+	/**
+	 * Get translated label for filter value key.
+	 *
+	 * @param string $value_key Filter value key.
+	 * @return string
+	 */
+	private function get_translated_filter_value_label( string $value_key ): string {
+		$labels = array(
+			'in_stock' => __( 'In stock', 'woo-filters' ),
+			'on_sale'  => __( 'On sale', 'woo-filters' ),
+			'and'      => __( 'AND', 'woo-filters' ),
+			'or'       => __( 'OR', 'woo-filters' ),
+		);
+
+		if ( isset( $labels[ $value_key ] ) ) {
+			return $labels[ $value_key ];
+		}
+
+		return $this->humanize_key( $value_key );
+	}
+
+	/**
+	 * Humanize key fallback for admin table output.
 	 *
 	 * @param string $value Raw key.
 	 * @return string

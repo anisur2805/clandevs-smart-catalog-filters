@@ -209,6 +209,10 @@ final class ShopFilters {
 			return $per_page;
 		}
 
+		if ( ! $this->is_valid_filter_request() ) {
+			return $per_page;
+		}
+
 		$requested = $this->get_request_absint( 'wf_per_page' );
 		if ( $requested > 0 && $requested <= self::MAX_PER_PAGE ) {
 			return $requested;
@@ -1703,21 +1707,11 @@ final class ShopFilters {
 	}
 
 	/**
-	 * Determine whether request comes from AJAX navigation.
-	 *
-	 * @return bool
-	 */
-	private function is_ajax_navigation_request(): bool {
-		return isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && 'xmlhttprequest' === strtolower( sanitize_text_field( wp_unslash( (string) $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) );
-	}
-
-	/**
-	 * Validate request nonce for AJAX filter operations.
+	 * Validate request nonce for filter operations.
 	 *
 	 * @return bool
 	 */
 	private function is_valid_filter_request(): bool {
-		// if ( ! $this->has_filter_query_keys() ) {}
 		if ( ! $this->has_filter_query_args() ) {
 			return true;
 		}
@@ -1767,6 +1761,52 @@ final class ShopFilters {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Detect if current request contains filter-related keys.
+	 *
+	 * @return bool
+	 */
+	private function has_filter_query_keys(): bool {
+		foreach ( array_keys( $_GET ) as $key ) {
+			$normalized_key = sanitize_key( (string) $key );
+			if ( '' === $normalized_key ) {
+				continue;
+			}
+
+			if ( in_array( $normalized_key, $this->get_filter_request_keys(), true ) ) {
+				return true;
+			}
+
+			if ( 0 === strpos( $normalized_key, 'wf_attr_' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Return request keys recognized as filter controls.
+	 *
+	 * @return array
+	 */
+	private function get_filter_request_keys(): array {
+		return array(
+			'wf_cat',
+			'wf_brand',
+			'wf_color',
+			'wf_logic',
+			'min_price',
+			'max_price',
+			'rating_filter',
+			'wf_in_stock',
+			'wf_on_sale',
+			'wf_per_page',
+			'paged',
+			'product-page',
+		);
 	}
 
 	/**
