@@ -434,8 +434,9 @@ final class ShopFilters {
 	 */
 	private function render_filter_form(): void {
 		$action          = $this->get_archive_url();
-		$selected_brands = $this->get_request_slug_list( 'wf_brand' );
-		$selected_colors = $this->get_request_slug_list( 'wf_color' );
+		$selected_brands  = $this->get_request_slug_list( 'wf_brand' );
+		$selected_colors  = $this->get_request_slug_list( 'wf_color' );
+		$multiselect_mode = $this->get_request_multiselect_mode();
 		$selected_rating = $this->get_request_absint( 'rating_filter' );
 		$min_price       = $this->get_request_decimal( 'min_price' );
 		$max_price       = $this->get_request_decimal( 'max_price' );
@@ -455,7 +456,7 @@ final class ShopFilters {
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
 		echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $this->get_filter_nonce() ) . '" />';
-		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' ) );
+		$this->render_preserved_fields( array( 'wf_cat', 'wf_brand', 'wf_color', 'wf_logic', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' ) );
 		$this->render_active_filters();
 
 		echo '<div class="wf-filter-block">';
@@ -469,6 +470,12 @@ final class ShopFilters {
 			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands );
 			echo '</div>';
 		}
+
+		echo '<div class="wf-filter-block">';
+		echo '<h4>' . esc_html__( 'Multi-select Logic', 'woo-filters' ) . '</h4>';
+		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'woo-filters' ) . '</span></label>';
+		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'woo-filters' ) . '</span></label>';
+		echo '</div>';
 
 		echo '<div class="wf-filter-block">';
 		echo '<h4>' . esc_html__( 'Price', 'woo-filters' ) . '</h4>';
@@ -563,6 +570,14 @@ final class ShopFilters {
 
 		$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'woo-filters' ) ) );
 		$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'woo-filters' ) ) );
+
+		$multiselect_mode = $this->get_request_multiselect_mode();
+		if ( 'and' === $multiselect_mode ) {
+			$chips[] = array(
+				'label' => __( 'Logic: AND', 'woo-filters' ),
+				'url'   => $this->build_remove_filter_url( 'wf_logic' ),
+			);
+		}
 
 		$min_price = $this->get_request_decimal( 'min_price' );
 		if ( null !== $min_price ) {
@@ -762,6 +777,8 @@ final class ShopFilters {
 
 		$tax_clauses  = array();
 		$meta_clauses = array();
+		$logic_mode   = $this->get_request_multiselect_mode();
+		$tax_operator = 'and' === $logic_mode ? 'AND' : 'IN';
 
 		$selected_category = $this->get_request_slug( 'wf_cat' );
 		if ( '' !== $selected_category ) {
@@ -778,7 +795,7 @@ final class ShopFilters {
 				'taxonomy' => $this->brand_taxonomy,
 				'field'    => 'slug',
 				'terms'    => $selected_brands,
-				'operator' => 'IN',
+				'operator' => $tax_operator,
 			);
 		}
 
@@ -788,7 +805,7 @@ final class ShopFilters {
 				'taxonomy' => $this->color_taxonomy,
 				'field'    => 'slug',
 				'terms'    => $selected_colors,
-				'operator' => 'IN',
+				'operator' => $tax_operator,
 			);
 		}
 
@@ -956,6 +973,7 @@ final class ShopFilters {
 			$args['wf_cat'],
 			$args['wf_brand'],
 			$args['wf_color'],
+			$args['wf_logic'],
 			$args['min_price'],
 			$args['max_price'],
 			$args['rating_filter'],
@@ -1068,6 +1086,21 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Parse request key for multi-select relation mode.
+	 *
+	 * @return string
+	 */
+	private function get_request_multiselect_mode(): string {
+		if ( ! isset( $_GET['wf_logic'] ) ) {
+			return 'or';
+		}
+
+		$value = sanitize_key( wp_unslash( (string) $_GET['wf_logic'] ) );
+
+		return 'and' === $value ? 'and' : 'or';
+	}
+
+	/**
 	 * Parse decimal from request.
 	 *
 	 * @param string $key Query key.
@@ -1136,6 +1169,8 @@ final class ShopFilters {
 	 */
 	private function get_request_filter_clauses( array $exclude_keys = array() ): array {
 		$excluded = array_fill_keys( $exclude_keys, true );
+		$logic_mode = $this->get_request_multiselect_mode();
+		$tax_operator = 'and' === $logic_mode ? 'AND' : 'IN';
 
 		$tax_clauses  = array();
 		$meta_clauses = array();
@@ -1158,7 +1193,7 @@ final class ShopFilters {
 					'taxonomy' => $this->brand_taxonomy,
 					'field'    => 'slug',
 					'terms'    => $selected_brands,
-					'operator' => 'IN',
+					'operator' => $tax_operator,
 				);
 			}
 		}
@@ -1170,7 +1205,7 @@ final class ShopFilters {
 					'taxonomy' => $this->color_taxonomy,
 					'field'    => 'slug',
 					'terms'    => $selected_colors,
-					'operator' => 'IN',
+					'operator' => $tax_operator,
 				);
 			}
 		}
