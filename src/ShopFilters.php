@@ -1717,6 +1717,7 @@ final class ShopFilters {
 	 * @return bool
 	 */
 	private function is_valid_filter_request(): bool {
+		// if ( ! $this->has_filter_query_keys() ) {}
 		if ( ! $this->has_filter_query_args() ) {
 			return true;
 		}
