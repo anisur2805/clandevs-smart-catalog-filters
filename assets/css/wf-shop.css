@@ -17,6 +17,10 @@
   font-size: var(--wf-font-size);
 }
 
+.wf-shortcode-layout.wf-shortcode-no-sidebar {
+  grid-template-columns: 1fr;
+}
+
 .wf-filter-toggle,
 .wf-sidebar-overlay,
 .wf-sidebar-close {

@@ -258,8 +258,11 @@ final class ShopFilters {
 	public function render_shortcode( array $atts = array() ): string {
 		$atts = shortcode_atts(
 			array(
-				'per_page' => '12',
-				'columns'  => '4',
+				'per_page'        => '12',
+				'columns'         => '4',
+				'category'        => '',
+				'show_filters'    => 'yes',
+				'show_pagination' => 'yes',
 			),
 			$atts,
 			'woo_filters'
@@ -274,26 +277,36 @@ final class ShopFilters {
 		if ( $columns <= 0 || $columns > 6 ) {
 			$columns = 4;
 		}
+		$forced_category = sanitize_title( (string) $atts['category'] );
+		$show_filters    = $this->parse_shortcode_bool( (string) $atts['show_filters'], true );
+		$show_pagination = $this->parse_shortcode_bool( (string) $atts['show_pagination'], true );
 
 		$paged = max( 1, $this->get_request_absint( 'paged' ) );
 		if ( $paged <= 1 ) {
 			$paged = max( 1, $this->get_request_absint( 'product-page' ) );
 		}
 
-		$query = $this->get_shortcode_products_query( $per_page, $paged );
+		$query = $this->get_shortcode_products_query( $per_page, $paged, $forced_category );
 
 		$this->is_shortcode_context = true;
 		$this->shortcode_action_url = get_permalink();
 		$skin_class                 = $this->get_layout_skin_class();
 
 		ob_start();
-		echo '<div class="wf-shop-layout wf-shortcode-layout ' . esc_attr( $skin_class ) . '">';
-		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
-		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-		echo '<aside class="wf-sidebar">';
-		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
-		$this->render_filter_form();
-		echo '</aside>';
+		$layout_class = 'wf-shop-layout wf-shortcode-layout ' . $skin_class;
+		if ( ! $show_filters ) {
+			$layout_class .= ' wf-shortcode-no-sidebar';
+		}
+
+		echo '<div class="' . esc_attr( $layout_class ) . '">';
+		if ( $show_filters ) {
+			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
+			echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
+			echo '<aside class="wf-sidebar">';
+			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
+			$this->render_filter_form();
+			echo '</aside>';
+		}
 		echo '<section class="wf-products">';
 
 		if ( $query->have_posts() ) {
@@ -303,7 +316,9 @@ final class ShopFilters {
 				wc_get_template_part( 'content', 'product' );
 			}
 			echo '</ul>';
-			$this->render_shortcode_pagination( $query );
+			if ( $show_pagination ) {
+				$this->render_shortcode_pagination( $query );
+			}
 		} else {
 			$this->render_no_products_state();
 		}
@@ -815,11 +830,12 @@ final class ShopFilters {
 	/**
 	 * Build products query for shortcode context.
 	 *
-	 * @param int $per_page Products per page.
-	 * @param int $paged    Current page.
+	 * @param int    $per_page        Products per page.
+	 * @param int    $paged           Current page.
+	 * @param string $forced_category Optional forced category slug.
 	 * @return \WP_Query
 	 */
-	private function get_shortcode_products_query( int $per_page, int $paged ): \WP_Query {
+	private function get_shortcode_products_query( int $per_page, int $paged, string $forced_category = '' ): \WP_Query {
 		if ( ! $this->is_valid_filter_request() ) {
 			return new \WP_Query(
 				array(
@@ -844,6 +860,9 @@ final class ShopFilters {
 		$tax_operator = 'and' === $logic_mode ? 'AND' : 'IN';
 
 		$selected_category = $this->get_request_slug( 'wf_cat' );
+		if ( '' === $selected_category && '' !== $forced_category ) {
+			$selected_category = $forced_category;
+		}
 		if ( '' !== $selected_category ) {
 			$tax_clauses[] = array(
 				'taxonomy' => 'product_cat',
@@ -926,6 +945,30 @@ final class ShopFilters {
 		}
 
 		return new \WP_Query( $query_args );
+	}
+
+	/**
+	 * Parse shortcode yes/no-style boolean attribute.
+	 *
+	 * @param string $value   Raw value.
+	 * @param bool   $default Default value.
+	 * @return bool
+	 */
+	private function parse_shortcode_bool( string $value, bool $default ): bool {
+		$normalized = strtolower( trim( $value ) );
+		if ( '' === $normalized ) {
+			return $default;
+		}
+
+		if ( in_array( $normalized, array( '1', 'true', 'yes', 'on' ), true ) ) {
+			return true;
+		}
+
+		if ( in_array( $normalized, array( '0', 'false', 'no', 'off' ), true ) ) {
+			return false;
+		}
+
+		return $default;
 	}
 
 	/**
