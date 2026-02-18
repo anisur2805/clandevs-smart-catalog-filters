@@ -1,6 +1,6 @@
 {
   "name": "anisur2805/woo-filters",
-  "description": "WooCommerce AJAX product filters",
+  "description": "Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).",
   "type": "wordpress-plugin",
   "require-dev": {
     "phpunit/phpunit": "^9.6"

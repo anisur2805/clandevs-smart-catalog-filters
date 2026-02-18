@@ -8,11 +8,11 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AJAX-based WooCommerce product filters with category, price, rating, availability, brand, color, and attribute filtering.
+Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).
 
 == Description ==
 
-Woo Filters helps customers narrow products quickly on WooCommerce archive pages without full page reloads.
+Woo Filters helps shoppers quickly find products using category, brand, color, attribute, price, rating, and availability filters with AJAX-powered updates.
 
 Core capabilities:
 

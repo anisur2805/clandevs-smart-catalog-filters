@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Woo Filters
- * Description: Shop/archive filters for WooCommerce.
+ * Description: Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).
  * Version: 0.11.0
  * Author: Anisur Rahman
  * Author URI: https://github.com/anisur2805
@@ -13,6 +13,7 @@
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: woo-filters
+ * Requires Plugins: woocommerce
  * Domain Path: /languages
  */
 
