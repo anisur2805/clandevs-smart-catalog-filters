@@ -89,7 +89,7 @@ final class StyleSettings {
 	 */
 	public function register_menu(): void {
 		add_submenu_page(
-			'woocommerce',
+			AdminMenu::get_menu_slug(),
 			__( 'Woo Filters Styling', 'woo-filters' ),
 			__( 'Woo Filters Styling', 'woo-filters' ),
 			'manage_woocommerce',

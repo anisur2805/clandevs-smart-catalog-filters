@@ -25,6 +25,31 @@ require_once __DIR__ . '/src/Autoloader.php';
 
 \WooFilters\Autoloader::register( __DIR__ . '/src' );
 
+add_filter(
+	'plugin_action_links_' . plugin_basename( __FILE__ ),
+	static function ( array $links ): array {
+		$custom_links = array(
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filters' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'woo-filters' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'woo-filters' ) . '</a>',
+		);
+
+		return array_merge( $custom_links, $links );
+	}
+);
+
+add_action(
+	'before_woocommerce_init',
+	static function () {
+		if ( ! class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+			return;
+		}
+
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+	}
+);
+
 add_action(
 	'plugins_loaded',
 	static function () {

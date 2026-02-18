@@ -72,6 +72,13 @@ final class Plugin {
 	private $analytics = null;
 
 	/**
+	 * Admin menu service.
+	 *
+	 * @var AdminMenu|null
+	 */
+	private $admin_menu = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $plugin_file Main plugin file.
@@ -107,6 +114,9 @@ final class Plugin {
 
 		$this->shop_filters = new ShopFilters( $this->plugin_url, $this->version );
 		$this->shop_filters->register_hooks();
+
+		$this->admin_menu = new AdminMenu();
+		$this->admin_menu->register_hooks();
 
 		$this->style_settings = new StyleSettings();
 		$this->style_settings->register_hooks();
