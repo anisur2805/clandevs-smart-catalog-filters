@@ -66,12 +66,22 @@ final class StyleSettings {
 		$this->register_color_field( 'sidebar_bg_color', __( 'Sidebar Background', 'woo-filters' ) );
 		$this->register_color_field( 'sidebar_border_color', __( 'Sidebar Border', 'woo-filters' ) );
 		$this->register_color_field( 'heading_color', __( 'Heading Color', 'woo-filters' ) );
+		$this->register_color_field( 'text_color', __( 'Body Text Color', 'woo-filters' ) );
+		$this->register_color_field( 'muted_text_color', __( 'Muted Text Color', 'woo-filters' ) );
 		$this->register_color_field( 'chip_bg_color', __( 'Filter Chip Background', 'woo-filters' ) );
 		$this->register_color_field( 'chip_border_color', __( 'Filter Chip Border', 'woo-filters' ) );
 		$this->register_color_field( 'button_bg_color', __( 'Primary Button Background', 'woo-filters' ) );
 		$this->register_color_field( 'button_text_color', __( 'Primary Button Text', 'woo-filters' ) );
+		$this->register_color_field( 'input_bg_color', __( 'Input Background', 'woo-filters' ) );
+		$this->register_color_field( 'control_border_color', __( 'Input/Control Border', 'woo-filters' ) );
 		$this->register_text_field( 'font_family', __( 'Font Family', 'woo-filters' ) );
-		$this->register_text_field( 'font_size', __( 'Base Font Size (px)', 'woo-filters' ) );
+		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'woo-filters' ), 12, 24, 1 );
+		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'woo-filters' ), 220, 420, 1 );
+		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'woo-filters' ), 12, 48, 1 );
+		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'woo-filters' ), 6, 28, 1 );
+		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'woo-filters' ), 4, 18, 1 );
+		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'woo-filters' ), 6, 28, 1 );
+		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'woo-filters' ), 10, 32, 1 );
 
 		add_settings_field(
 			'custom_css',
@@ -184,6 +194,32 @@ final class StyleSettings {
 	}
 
 	/**
+	 * Register a number input field.
+	 *
+	 * @param string $key   Field key.
+	 * @param string $label Field label.
+	 * @param int    $min   Minimum value.
+	 * @param int    $max   Maximum value.
+	 * @param int    $step  Step value.
+	 * @return void
+	 */
+	private function register_number_field( string $key, string $label, int $min, int $max, int $step ): void {
+		add_settings_field(
+			$key,
+			$label,
+			array( $this, 'render_number_field' ),
+			self::PAGE_SLUG,
+			'wf_style_section_main',
+			array(
+				'key'  => $key,
+				'min'  => $min,
+				'max'  => $max,
+				'step' => $step,
+			)
+		);
+	}
+
+	/**
 	 * Render color input.
 	 *
 	 * @param array $args Field args.
@@ -209,6 +245,23 @@ final class StyleSettings {
 		$value   = isset( $options[ $key ] ) ? (string) $options[ $key ] : '';
 
 		echo '<input type="text" class="regular-text" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" />';
+	}
+
+	/**
+	 * Render number input.
+	 *
+	 * @param array $args Field args.
+	 * @return void
+	 */
+	public function render_number_field( array $args ): void {
+		$key     = isset( $args['key'] ) ? sanitize_key( (string) $args['key'] ) : '';
+		$min     = isset( $args['min'] ) ? absint( $args['min'] ) : 0;
+		$max     = isset( $args['max'] ) ? absint( $args['max'] ) : 999;
+		$step    = isset( $args['step'] ) ? absint( $args['step'] ) : 1;
+		$options = self::get_options();
+		$value   = isset( $options[ $key ] ) ? absint( (string) $options[ $key ] ) : '';
+
+		echo '<input type="number" class="small-text" min="' . esc_attr( (string) $min ) . '" max="' . esc_attr( (string) $max ) . '" step="' . esc_attr( (string) $step ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( (string) $value ) . '" />';
 	}
 
 	/**
@@ -241,10 +294,14 @@ final class StyleSettings {
 			'sidebar_bg_color',
 			'sidebar_border_color',
 			'heading_color',
+			'text_color',
+			'muted_text_color',
 			'chip_bg_color',
 			'chip_border_color',
 			'button_bg_color',
 			'button_text_color',
+			'input_bg_color',
+			'control_border_color',
 		);
 
 		foreach ( $colors as $key ) {
@@ -264,9 +321,21 @@ final class StyleSettings {
 			}
 		}
 
-		$font_size = isset( $raw['font_size'] ) ? absint( wp_unslash( (string) $raw['font_size'] ) ) : 0;
-		if ( $font_size >= 12 && $font_size <= 24 ) {
-			$sanitized['font_size'] = (string) $font_size;
+		$numeric_ranges = array(
+			'font_size'      => array( 12, 24 ),
+			'sidebar_width'  => array( 220, 420 ),
+			'layout_gap'     => array( 12, 48 ),
+			'sidebar_radius' => array( 6, 28 ),
+			'control_radius' => array( 4, 18 ),
+			'button_radius'  => array( 6, 28 ),
+			'section_spacing' => array( 10, 32 ),
+		);
+
+		foreach ( $numeric_ranges as $key => $range ) {
+			$value = isset( $raw[ $key ] ) ? absint( wp_unslash( (string) $raw[ $key ] ) ) : 0;
+			if ( $value >= $range[0] && $value <= $range[1] ) {
+				$sanitized[ $key ] = (string) $value;
+			}
 		}
 
 		$custom_css = isset( $raw['custom_css'] ) ? sanitize_textarea_field( wp_unslash( (string) $raw['custom_css'] ) ) : '';
@@ -310,12 +379,22 @@ final class StyleSettings {
 			'sidebar_bg_color'    => '#ffffff',
 			'sidebar_border_color' => '#e5e8ee',
 			'heading_color'       => '#1f2937',
+			'text_color'          => '#1f2937',
+			'muted_text_color'    => '#64748b',
 			'chip_bg_color'       => '#ffffff',
 			'chip_border_color'   => '#c7d5e3',
 			'button_bg_color'     => '#4b5563',
 			'button_text_color'   => '#ffffff',
+			'input_bg_color'      => '#ffffff',
+			'control_border_color' => '#cbd5e1',
 			'font_family'         => 'inherit',
 			'font_size'           => '16',
+			'sidebar_width'       => '280',
+			'layout_gap'          => '24',
+			'sidebar_radius'      => '14',
+			'control_radius'      => '10',
+			'button_radius'       => '12',
+			'section_spacing'     => '18',
 			'custom_css'          => '',
 		);
 	}
@@ -359,10 +438,14 @@ final class StyleSettings {
 					'sidebar_bg_color'     => '#f8fafc',
 					'sidebar_border_color' => '#d1d5db',
 					'heading_color'        => '#111827',
+					'text_color'           => '#111827',
+					'muted_text_color'     => '#475569',
 					'chip_bg_color'        => '#f9fafb',
 					'chip_border_color'    => '#94a3b8',
 					'button_bg_color'      => '#334155',
 					'button_text_color'    => '#f8fafc',
+					'input_bg_color'       => '#ffffff',
+					'control_border_color' => '#cbd5e1',
 				);
 			case 'sunrise':
 				return array(
@@ -370,10 +453,14 @@ final class StyleSettings {
 					'sidebar_bg_color'     => '#fffaf5',
 					'sidebar_border_color' => '#fed7aa',
 					'heading_color'        => '#7c2d12',
+					'text_color'           => '#7c2d12',
+					'muted_text_color'     => '#9a3412',
 					'chip_bg_color'        => '#fff7ed',
 					'chip_border_color'    => '#fdba74',
 					'button_bg_color'      => '#ea580c',
 					'button_text_color'    => '#ffffff',
+					'input_bg_color'       => '#ffffff',
+					'control_border_color' => '#fdba74',
 				);
 			case 'classic':
 			default:

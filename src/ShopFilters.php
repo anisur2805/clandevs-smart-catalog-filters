@@ -88,7 +88,6 @@ final class ShopFilters {
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_top_active_filters' ), 20 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_per_page_switcher' ), 25 );
 
-		add_filter( 'loop_shop_columns', array( $this, 'filter_loop_columns' ) );
 		add_filter( 'loop_shop_per_page', array( $this, 'filter_loop_per_page' ), 20 );
 
 		remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
@@ -163,12 +162,22 @@ final class ShopFilters {
 			'--wf-sidebar-bg'      => isset( $options['sidebar_bg_color'] ) ? (string) $options['sidebar_bg_color'] : '#ffffff',
 			'--wf-sidebar-border'  => isset( $options['sidebar_border_color'] ) ? (string) $options['sidebar_border_color'] : '#e5e8ee',
 			'--wf-heading-color'   => isset( $options['heading_color'] ) ? (string) $options['heading_color'] : '#1f2937',
+			'--wf-text-color'      => isset( $options['text_color'] ) ? (string) $options['text_color'] : '#1f2937',
+			'--wf-muted-text'      => isset( $options['muted_text_color'] ) ? (string) $options['muted_text_color'] : '#64748b',
 			'--wf-chip-bg'         => isset( $options['chip_bg_color'] ) ? (string) $options['chip_bg_color'] : '#ffffff',
 			'--wf-chip-border'     => isset( $options['chip_border_color'] ) ? (string) $options['chip_border_color'] : '#c7d5e3',
 			'--wf-button-bg'       => isset( $options['button_bg_color'] ) ? (string) $options['button_bg_color'] : '#4b5563',
 			'--wf-button-text'     => isset( $options['button_text_color'] ) ? (string) $options['button_text_color'] : '#ffffff',
+			'--wf-input-bg'        => isset( $options['input_bg_color'] ) ? (string) $options['input_bg_color'] : '#ffffff',
+			'--wf-control-border'  => isset( $options['control_border_color'] ) ? (string) $options['control_border_color'] : '#cbd5e1',
 			'--wf-font-family'     => isset( $options['font_family'] ) ? (string) $options['font_family'] : 'inherit',
 			'--wf-font-size'       => ( isset( $options['font_size'] ) ? absint( $options['font_size'] ) : 16 ) . 'px',
+			'--wf-sidebar-width'   => ( isset( $options['sidebar_width'] ) ? absint( $options['sidebar_width'] ) : 280 ) . 'px',
+			'--wf-layout-gap'      => ( isset( $options['layout_gap'] ) ? absint( $options['layout_gap'] ) : 24 ) . 'px',
+			'--wf-sidebar-radius'  => ( isset( $options['sidebar_radius'] ) ? absint( $options['sidebar_radius'] ) : 14 ) . 'px',
+			'--wf-control-radius'  => ( isset( $options['control_radius'] ) ? absint( $options['control_radius'] ) : 10 ) . 'px',
+			'--wf-button-radius'   => ( isset( $options['button_radius'] ) ? absint( $options['button_radius'] ) : 12 ) . 'px',
+			'--wf-section-spacing' => ( isset( $options['section_spacing'] ) ? absint( $options['section_spacing'] ) : 18 ) . 'px',
 		);
 
 		$declarations = array();
@@ -182,20 +191,6 @@ final class ShopFilters {
 		}
 
 		wp_add_inline_style( 'wf-shop-filters', $css );
-	}
-
-	/**
-	 * Force product columns for this layout.
-	 *
-	 * @param int $columns Existing column count.
-	 * @return int
-	 */
-	public function filter_loop_columns( int $columns ): int {
-		if ( ! $this->is_shop_archive() ) {
-			return $columns;
-		}
-
-		return 4;
 	}
 
 	/**
@@ -297,7 +292,7 @@ final class ShopFilters {
 		$skin_class                 = $this->get_layout_skin_class();
 
 		ob_start();
-		$layout_class = 'wf-shop-layout wf-shortcode-layout ' . $skin_class;
+		$layout_class = 'wf-shop-layout alignwide wf-shortcode-layout ' . $skin_class;
 		if ( ! $show_filters ) {
 			$layout_class .= ' wf-shortcode-no-sidebar';
 		}
@@ -306,12 +301,12 @@ final class ShopFilters {
 		if ( $show_filters ) {
 			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
 			echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-			echo '<aside class="wf-sidebar">';
+			echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'woo-filters' ) . '">';
 			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
 			$this->render_filter_form();
-			echo '</aside>';
+			echo '</div>';
 		}
-		echo '<section class="wf-products">';
+		echo '<div class="wf-products">';
 
 		if ( $query->have_posts() ) {
 			echo '<ul class="products columns-' . esc_attr( (string) $columns ) . '">';
@@ -327,7 +322,7 @@ final class ShopFilters {
 			$this->render_no_products_state();
 		}
 
-		echo '</section>';
+		echo '</div>';
 		echo '</div>';
 
 		wp_reset_postdata();
@@ -347,14 +342,14 @@ final class ShopFilters {
 			return;
 		}
 
-		echo '<div class="wf-shop-layout ' . esc_attr( $this->get_layout_skin_class() ) . '">';
+		echo '<div class="wf-shop-layout alignwide ' . esc_attr( $this->get_layout_skin_class() ) . '">';
 		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filters' ) . '</button>';
 		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-		echo '<aside class="wf-sidebar">';
+		echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'woo-filters' ) . '">';
 		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filters' ) . '">&times;</button>';
 		$this->render_filter_form();
-		echo '</aside>';
-		echo '<section class="wf-products">';
+		echo '</div>';
+		echo '<div class="wf-products">';
 	}
 
 	/**
@@ -367,7 +362,7 @@ final class ShopFilters {
 			return;
 		}
 
-		echo '</section>';
+		echo '</div>';
 		echo '</div>';
 	}
 
