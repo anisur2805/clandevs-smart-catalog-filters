@@ -539,14 +539,22 @@ final class ShopFilters {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Customer Rating', 'woo-filters' ) . '</h4>';
 			for ( $i = 5; $i >= 1; $i-- ) {
-				echo '<label class="wf-radio">';
+				echo '<label class="wf-rating">';
 				echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
-				echo '<span>' . esc_html( sprintf( __( '%d stars & up', 'woo-filters' ), $i ) ) . '</span>';
+				echo '<span class="wf-rating-stars">';
+				for ( $s = 0; $s < $i; $s++ ) {
+					echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+				}
+				for ( $s = $i; $s < 5; $s++ ) {
+					echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" class="wf-star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+				}
+				echo '</span>';
+				echo '<span class="wf-rating-text">' . esc_html__( '& up', 'woo-filters' ) . '</span>';
 				echo '</label>';
 			}
-			echo '<label class="wf-radio">';
+			echo '<label class="wf-rating">';
 			echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
-			echo '<span>' . esc_html__( 'Any', 'woo-filters' ) . '</span>';
+			echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'woo-filters' ) . '</span>';
 			echo '</label>';
 			echo '</div>';
 		}
