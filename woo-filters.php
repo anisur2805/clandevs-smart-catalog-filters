@@ -21,6 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( ! defined( 'WF_PLUGIN_URL' ) ) {
+	define( 'WF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+
+if ( ! defined( 'WF_VERSION' ) ) {
+	define( 'WF_VERSION', '0.11.9' );
+}
+
 require_once __DIR__ . '/src/Autoloader.php';
 
 \WooFilters\Autoloader::register( __DIR__ . '/src' );

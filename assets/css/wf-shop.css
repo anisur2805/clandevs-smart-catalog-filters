@@ -248,6 +248,7 @@ body.wf-no-scroll {
   padding-left: 36px;
   border: 1px solid var(--wf-control-border);
   border-radius: var(--wf-control-radius);
+  box-sizing: border-box;
   background: var(--wf-input-bg);
   color: var(--wf-text-color);
   font-size: 13px;
@@ -321,10 +322,11 @@ body.wf-no-scroll {
   height: 16px;
   border-radius: 50%;
   border: 2px solid var(--wf-accent);
-background: var(--wf-accent);
+  background: var(--wf-accent);
   pointer-events: auto;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.24);
+  box-sizing: border-box;
 }
 
 .wf-price-range::-moz-range-track {

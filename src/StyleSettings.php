@@ -29,6 +29,26 @@ final class StyleSettings {
 	public function register_hooks(): void {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+	}
+
+	/**
+	 * Enqueue admin assets for settings page.
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @return void
+	 */
+	public function enqueue_admin_assets( string $hook ): void {
+		if ( 'woo-filters_page_wf-style-settings' !== $hook ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wf-admin-styles',
+			WF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			array(),
+			WF_VERSION
+		);
 	}
 
 	/**
@@ -118,13 +138,309 @@ final class StyleSettings {
 			return;
 		}
 
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Woo Filters Styling', 'woo-filters' ) . '</h1>';
-		echo '<form action="options.php" method="post">';
-		settings_fields( 'wf_style_settings' );
-		do_settings_sections( self::PAGE_SLUG );
-		submit_button( __( 'Save Styles', 'woo-filters' ) );
-		echo '</form>';
+		?>
+		<div class="wf-admin-wrap">
+			<div class="wf-admin-header">
+				<div class="wf-admin-header-icon">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+				</div>
+				<div>
+					<h1><?php esc_html_e( 'Woo Filters Styling', 'woo-filters' ); ?></h1>
+					<p><?php esc_html_e( 'Customize the appearance of your shop filters', 'woo-filters' ); ?></p>
+				</div>
+			</div>
+
+			<div class="wf-admin-card">
+				<div class="wf-admin-card-header">
+					<h2><?php esc_html_e( 'Design Controls', 'woo-filters' ); ?></h2>
+					<p><?php esc_html_e( 'Choose a preset skin and fine-tune colors and typography.', 'woo-filters' ); ?></p>
+				</div>
+				<div class="wf-admin-card-body">
+					<form action="options.php" method="post">
+						<?php settings_fields( 'wf_style_settings' ); ?>
+						<table class="form-table">
+							<tr>
+								<th scope="row">
+									<label class="wf-admin-label"><?php esc_html_e( 'Default Skin', 'woo-filters' ); ?></label>
+								</th>
+								<td>
+									<select name="<?php echo esc_attr( self::OPTION_KEY ); ?>[preset_skin]" class="wf-admin-select">
+										<?php
+										$options      = self::get_options();
+										$current_skin = isset( $options['preset_skin'] ) ? self::sanitize_skin( (string) $options['preset_skin'] ) : 'classic';
+										foreach ( self::get_skin_choices() as $slug => $label ) :
+											?>
+											<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $current_skin, $slug ); ?>><?php echo esc_html( $label ); ?></option>
+										<?php endforeach; ?>
+									</select>
+								</td>
+							</tr>
+						</table>
+
+						<hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+						<h3 style="font-size: 14px; font-weight: 600; margin: 0 0 16px; color: #1e293b;"><?php esc_html_e( 'Colors', 'woo-filters' ); ?></h3>
+
+						<div class="wf-admin-grid-2">
+							<table class="form-table">
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Accent Color', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'accent_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Background', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'sidebar_bg_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Border', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'sidebar_border_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Heading Color', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'heading_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Body Text Color', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'text_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Muted Text Color', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'muted_text_color' ); ?>
+									</td>
+								</tr>
+							</table>
+							<table class="form-table">
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Background', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'chip_bg_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Border', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'chip_border_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Background', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'button_bg_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Text', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'button_text_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Input Background', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'input_bg_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Input/Control Border', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'control_border_color' ); ?>
+									</td>
+								</tr>
+							</table>
+						</div>
+
+						<hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+						<h3 style="font-size: 14px; font-weight: 600; margin: 0 0 16px; color: #1e293b;"><?php esc_html_e( 'Typography & Layout', 'woo-filters' ); ?></h3>
+
+						<table class="form-table">
+							<tr>
+								<th scope="row">
+									<label class="wf-admin-label"><?php esc_html_e( 'Font Family', 'woo-filters' ); ?></label>
+								</th>
+								<td>
+									<?php
+									$options = self::get_options();
+									$value   = isset( $options['font_family'] ) ? (string) $options['font_family'] : '';
+									?>
+									<input type="text" class="wf-admin-input" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[font_family]" value="<?php echo esc_attr( $value ); ?>" placeholder="inherit" />
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">
+									<label class="wf-admin-label"><?php esc_html_e( 'Base Font Size (px)', 'woo-filters' ); ?></label>
+								</th>
+								<td>
+									<?php
+									$options = self::get_options();
+									$value   = isset( $options['font_size'] ) ? absint( (string) $options['font_size'] ) : '';
+									?>
+									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[font_size]" value="<?php echo esc_attr( (string) $value ); ?>" min="12" max="24" step="1" />
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">
+									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Width (px)', 'woo-filters' ); ?></label>
+								</th>
+								<td>
+									<?php
+									$options = self::get_options();
+									$value   = isset( $options['sidebar_width'] ) ? absint( (string) $options['sidebar_width'] ) : '';
+									?>
+									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[sidebar_width]" value="<?php echo esc_attr( (string) $value ); ?>" min="220" max="420" step="1" />
+								</td>
+							</tr>
+							<tr>
+								<th scope="row">
+									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar/Product Gap (px)', 'woo-filters' ); ?></label>
+								</th>
+								<td>
+									<?php
+									$options = self::get_options();
+									$value   = isset( $options['layout_gap'] ) ? absint( (string) $options['layout_gap'] ) : '';
+									?>
+									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[layout_gap]" value="<?php echo esc_attr( (string) $value ); ?>" min="12" max="48" step="1" />
+								</td>
+							</tr>
+						</table>
+
+						<hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+						<h3 style="font-size: 14px; font-weight: 600; margin: 0 0 16px; color: #1e293b;"><?php esc_html_e( 'Border Radius', 'woo-filters' ); ?></h3>
+
+						<div class="wf-admin-grid-2">
+							<table class="form-table">
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Radius (px)', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php
+										$options = self::get_options();
+										$value   = isset( $options['sidebar_radius'] ) ? absint( (string) $options['sidebar_radius'] ) : '';
+										?>
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[sidebar_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="6" max="28" step="1" />
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Input Radius (px)', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php
+										$options = self::get_options();
+										$value   = isset( $options['control_radius'] ) ? absint( (string) $options['control_radius'] ) : '';
+										?>
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[control_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="4" max="18" step="1" />
+									</td>
+								</tr>
+							</table>
+							<table class="form-table">
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Button Radius (px)', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php
+										$options = self::get_options();
+										$value   = isset( $options['button_radius'] ) ? absint( (string) $options['button_radius'] ) : '';
+										?>
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[button_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="6" max="28" step="1" />
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'Section Spacing (px)', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php
+										$options = self::get_options();
+										$value   = isset( $options['section_spacing'] ) ? absint( (string) $options['section_spacing'] ) : '';
+										?>
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[section_spacing]" value="<?php echo esc_attr( (string) $value ); ?>" min="10" max="32" step="1" />
+									</td>
+								</tr>
+							</table>
+						</div>
+
+						<hr style="margin: 24px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+						<h3 style="font-size: 14px; font-weight: 600; margin: 0 0 16px; color: #1e293b;"><?php esc_html_e( 'Custom CSS', 'woo-filters' ); ?></h3>
+
+						<table class="form-table">
+							<tr>
+								<td colspan="2">
+									<?php
+									$options = self::get_options();
+									$value   = isset( $options['custom_css'] ) ? (string) $options['custom_css'] : '';
+									?>
+									<textarea class="wf-admin-textarea" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[custom_css]" rows="8" placeholder=".wf-shop-layout { /* your custom styles */ }"><?php echo esc_textarea( $value ); ?></textarea>
+									<p class="description" style="margin-top: 8px; font-size: 12px; color: #64748b;"><?php esc_html_e( 'CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt', 'woo-filters' ); ?></p>
+								</td>
+							</tr>
+						</table>
+
+						<div class="wf-admin-submit-wrap">
+							<button type="submit" class="wf-admin-submit">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+								<?php esc_html_e( 'Save Styles', 'woo-filters' ); ?>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render color field with preview.
+	 *
+	 * @param string $key Field key.
+	 * @return void
+	 */
+	public function render_color_field_with_preview( string $key ): void {
+		$options = self::get_options();
+		$value   = isset( $options[ $key ] ) ? (string) $options[ $key ] : '';
+
+		echo '<div class="wf-admin-color-row">';
+		echo '<input type="color" class="wf-admin-input wf-admin-input-color" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" />';
+		echo '<span class="wf-admin-color-hex">' . esc_html( $value ) . '</span>';
 		echo '</div>';
 	}
 

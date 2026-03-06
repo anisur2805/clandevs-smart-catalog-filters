@@ -29,6 +29,26 @@ final class FilterSettings {
 	public function register_hooks(): void {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+	}
+
+	/**
+	 * Enqueue admin assets for settings page.
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @return void
+	 */
+	public function enqueue_admin_assets( string $hook ): void {
+		if ( 'woo-filters_page_wf-filter-settings' !== $hook ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wf-admin-styles',
+			WF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			array(),
+			WF_VERSION
+		);
 	}
 
 	/**
@@ -88,14 +108,77 @@ final class FilterSettings {
 			return;
 		}
 
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Woo Filters Settings', 'woo-filters' ) . '</h1>';
-		echo '<form action="options.php" method="post">';
-		settings_fields( 'wf_filter_settings' );
-		do_settings_sections( self::PAGE_SLUG );
-		submit_button( __( 'Save Settings', 'woo-filters' ) );
-		echo '</form>';
-		echo '</div>';
+		$options = self::get_options();
+		?>
+		<div class="wf-admin-wrap">
+			<div class="wf-admin-header">
+				<div class="wf-admin-header-icon">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+				</div>
+				<div>
+					<h1><?php esc_html_e( 'Woo Filters Settings', 'woo-filters' ); ?></h1>
+					<p><?php esc_html_e( 'Configure which filters appear in your shop sidebar', 'woo-filters' ); ?></p>
+				</div>
+			</div>
+
+			<div class="wf-admin-card">
+				<div class="wf-admin-card-header">
+					<h2><?php esc_html_e( 'Filter Visibility', 'woo-filters' ); ?></h2>
+					<p><?php esc_html_e( 'Enable or disable individual filter blocks in the shop sidebar.', 'woo-filters' ); ?></p>
+				</div>
+				<div class="wf-admin-card-body">
+					<form action="options.php" method="post">
+						<?php settings_fields( 'wf_filter_settings' ); ?>
+
+						<div class="wf-admin-toggle-group" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+							<label class="wf-admin-toggle">
+								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_categories]" value="no" />
+								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_categories]" value="yes" <?php checked( isset( $options['show_categories'] ) && 'yes' === $options['show_categories'] ); ?> />
+								<span><?php esc_html_e( 'Show Categories', 'woo-filters' ); ?></span>
+							</label>
+
+							<label class="wf-admin-toggle">
+								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_brands]" value="no" />
+								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_brands]" value="yes" <?php checked( isset( $options['show_brands'] ) && 'yes' === $options['show_brands'] ); ?> />
+								<span><?php esc_html_e( 'Show Brands', 'woo-filters' ); ?></span>
+							</label>
+
+							<label class="wf-admin-toggle">
+								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_price]" value="no" />
+								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_price]" value="yes" <?php checked( isset( $options['show_price'] ) && 'yes' === $options['show_price'] ); ?> />
+								<span><?php esc_html_e( 'Show Price Range', 'woo-filters' ); ?></span>
+							</label>
+
+							<label class="wf-admin-toggle">
+								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_rating]" value="no" />
+								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_rating]" value="yes" <?php checked( isset( $options['show_rating'] ) && 'yes' === $options['show_rating'] ); ?> />
+								<span><?php esc_html_e( 'Show Customer Rating', 'woo-filters' ); ?></span>
+							</label>
+
+							<label class="wf-admin-toggle">
+								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_availability]" value="no" />
+								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_availability]" value="yes" <?php checked( isset( $options['show_availability'] ) && 'yes' === $options['show_availability'] ); ?> />
+								<span><?php esc_html_e( 'Show Availability', 'woo-filters' ); ?></span>
+							</label>
+
+							<label class="wf-admin-toggle">
+								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_colors]" value="no" />
+								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_colors]" value="yes" <?php checked( isset( $options['show_colors'] ) && 'yes' === $options['show_colors'] ); ?> />
+								<span><?php esc_html_e( 'Show Color Filter', 'woo-filters' ); ?></span>
+							</label>
+						</div>
+
+						<div class="wf-admin-submit-wrap">
+							<button type="submit" class="wf-admin-submit">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+								<?php esc_html_e( 'Save Settings', 'woo-filters' ); ?>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
