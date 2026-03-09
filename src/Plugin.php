@@ -41,7 +41,7 @@ final class Plugin {
 	 *
 	 * @var string
 	 */
-	private $version = '0.11.0';
+	private $version = '0.1.0';
 
 	/**
 	 * Shop filters service.

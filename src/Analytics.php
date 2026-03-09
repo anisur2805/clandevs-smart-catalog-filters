@@ -24,6 +24,9 @@ final class Analytics {
 	/** @var string */
 	private const RESET_ACTION = 'wf_reset_analytics';
 
+	/** @var int */
+	private const MAX_DISTINCT_VALUES_PER_TYPE = 500;
+
 	/**
 	 * Register hooks.
 	 *
@@ -32,7 +35,27 @@ final class Analytics {
 	public function register_hooks(): void {
 		add_action( 'pre_get_posts', array( $this, 'track_shop_filter_usage' ), 30 );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_post_' . self::RESET_ACTION, array( $this, 'handle_reset_request' ) );
+	}
+
+	/**
+	 * Enqueue admin assets for analytics page.
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @return void
+	 */
+	public function enqueue_admin_assets( string $hook ): void {
+		if ( 'woo-filters_page_wf-filter-analytics' !== $hook ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wf-admin-styles',
+			WF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			array(),
+			WF_VERSION
+		);
 	}
 
 	/**
@@ -120,56 +143,99 @@ final class Analytics {
 		$last_event_display = $this->format_timestamp_for_admin( isset( $stats['last_event_gmt'] ) ? (string) $stats['last_event_gmt'] : '' );
 		$rows               = $this->get_sorted_filter_rows( $stats );
 
-		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'Woo Filters Analytics', 'woo-filters' ) . '</h1>';
+		?>
+		<div class="wf-admin-wrap">
+			<div class="wf-admin-header">
+				<div class="wf-admin-header-icon">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+				</div>
+				<div>
+					<h1><?php esc_html_e( 'Woo Filters Analytics', 'woo-filters' ); ?></h1>
+					<p><?php esc_html_e( 'Track how customers use filters on your shop', 'woo-filters' ); ?></p>
+				</div>
+			</div>
 
-		if ( isset( $_GET['updated'] ) && '1' === sanitize_key( wp_unslash( (string) $_GET['updated'] ) ) ) {
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Analytics data has been reset.', 'woo-filters' ) . '</p></div>';
-		}
+			<?php if ( isset( $_GET['updated'] ) && '1' === sanitize_key( wp_unslash( (string) $_GET['updated'] ) ) ) : ?>
+				<div class="wf-admin-card" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-color: #6ee7b7;">
+					<div class="wf-admin-card-body" style="padding: 16px;">
+						<p style="margin: 0; color: #065f46; display: flex; align-items: center; gap: 8px;">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+							<?php esc_html_e( 'Analytics data has been reset.', 'woo-filters' ); ?>
+						</p>
+					</div>
+				</div>
+			<?php endif; ?>
 
-		echo '<p>' . esc_html__( 'Usage data updates when customers apply filters on the shop archive.', 'woo-filters' ) . '</p>';
-		echo '<table class="widefat striped" style="max-width: 820px; margin-bottom: 24px;">';
-		echo '<tbody>';
-		echo '<tr><th scope="row">' . esc_html__( 'Total Filter Events', 'woo-filters' ) . '</th><td>' . esc_html( (string) $total_events ) . '</td></tr>';
-		echo '<tr><th scope="row">' . esc_html__( 'Distinct Filter Values', 'woo-filters' ) . '</th><td>' . esc_html( (string) $distinct_filters ) . '</td></tr>';
-		echo '<tr><th scope="row">' . esc_html__( 'Last Event', 'woo-filters' ) . '</th><td>' . esc_html( $last_event_display ) . '</td></tr>';
-		echo '</tbody>';
-		echo '</table>';
+			<div class="wf-admin-stats-grid">
+				<div class="wf-admin-stat-card">
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Total Filter Events', 'woo-filters' ); ?></div>
+					<div class="wf-admin-stat-card-value"><?php echo esc_html( number_format_i18n( $total_events ) ); ?></div>
+				</div>
+				<div class="wf-admin-stat-card">
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Distinct Filter Values', 'woo-filters' ); ?></div>
+					<div class="wf-admin-stat-card-value"><?php echo esc_html( number_format_i18n( $distinct_filters ) ); ?></div>
+				</div>
+				<div class="wf-admin-stat-card">
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Last Event', 'woo-filters' ); ?></div>
+					<div class="wf-admin-stat-card-value" style="font-size: 16px;"><?php echo esc_html( $last_event_display ); ?></div>
+				</div>
+			</div>
 
-		echo '<h2>' . esc_html__( 'Top Used Filters', 'woo-filters' ) . '</h2>';
-		echo '<table class="widefat striped" style="max-width: 820px;">';
-		echo '<thead><tr><th>' . esc_html__( 'Filter Type', 'woo-filters' ) . '</th><th>' . esc_html__( 'Value', 'woo-filters' ) . '</th><th>' . esc_html__( 'Events', 'woo-filters' ) . '</th></tr></thead>';
-		echo '<tbody>';
+			<div class="wf-admin-card">
+				<div class="wf-admin-card-header">
+					<h2><?php esc_html_e( 'Top Used Filters', 'woo-filters' ); ?></h2>
+					<p><?php esc_html_e( 'Usage data updates when customers apply filters on the shop archive.', 'woo-filters' ); ?></p>
+				</div>
+				<div class="wf-admin-card-body" style="padding: 0;">
+					<?php if ( empty( $rows ) ) : ?>
+						<div class="wf-admin-empty">
+							<div class="wf-admin-empty-icon">
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+							</div>
+							<p><?php esc_html_e( 'No analytics data yet. Filter usage will appear here once customers start using the filters.', 'woo-filters' ); ?></p>
+						</div>
+					<?php else : ?>
+						<table class="wf-admin-table">
+							<thead>
+								<tr>
+									<th><?php esc_html_e( 'Filter Type', 'woo-filters' ); ?></th>
+									<th><?php esc_html_e( 'Value', 'woo-filters' ); ?></th>
+									<th><?php esc_html_e( 'Events', 'woo-filters' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( array_slice( $rows, 0, 100 ) as $row ) : ?>
+									<tr>
+										<td><span class="wf-admin-badge"><?php echo esc_html( (string) $row['type'] ); ?></span></td>
+										<td><?php echo esc_html( (string) $row['value'] ); ?></td>
+										<td><strong><?php echo esc_html( number_format_i18n( $row['count'] ) ); ?></strong></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					<?php endif; ?>
+				</div>
+			</div>
 
-		if ( empty( $rows ) ) {
-			echo '<tr><td colspan="3">' . esc_html__( 'No analytics data yet.', 'woo-filters' ) . '</td></tr>';
-		} else {
-			foreach ( array_slice( $rows, 0, 100 ) as $row ) {
-				echo '<tr>';
-				echo '<td>' . esc_html( (string) $row['type'] ) . '</td>';
-				echo '<td>' . esc_html( (string) $row['value'] ) . '</td>';
-				echo '<td>' . esc_html( (string) $row['count'] ) . '</td>';
-				echo '</tr>';
-			}
-		}
-
-		echo '</tbody>';
-		echo '</table>';
-
-		$reset_url = wp_nonce_url(
-			add_query_arg(
-				array(
-					'action' => self::RESET_ACTION,
-				),
-				admin_url( 'admin-post.php' )
-			),
-			self::RESET_ACTION
-		);
-
-		echo '<p style="margin-top: 16px;">';
-		echo '<a href="' . esc_url( $reset_url ) . '" class="button">' . esc_html__( 'Reset Analytics Data', 'woo-filters' ) . '</a>';
-		echo '</p>';
-		echo '</div>';
+			<div style="margin-top: 24px;">
+				<?php
+				$reset_url = wp_nonce_url(
+					add_query_arg(
+						array(
+							'action' => self::RESET_ACTION,
+						),
+						admin_url( 'admin-post.php' )
+					),
+					self::RESET_ACTION
+				);
+				?>
+				<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to reset all analytics data?', 'woo-filters' ); ?>');">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+					<?php esc_html_e( 'Reset Analytics Data', 'woo-filters' ); ?>
+				</a>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -193,12 +259,21 @@ final class Analytics {
 		}
 
 		if ( ! isset( $_GET['wf_nonce'] ) ) {
-			return false;
+			return true;
 		}
 
 		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
+		if ( '' === $nonce ) {
+			return true;
+		}
 
-		return (bool) wp_verify_nonce( $nonce, 'wf_filter_request' );
+		$verified = wp_verify_nonce( $nonce, 'wf_filter_request' );
+		if ( 1 === $verified || 2 === $verified ) {
+			return true;
+		}
+
+		// Analytics should continue for shareable URLs even when nonce is stale.
+		return true;
 	}
 
 	/**
@@ -210,6 +285,10 @@ final class Analytics {
 		foreach ( array_keys( $_GET ) as $key ) {
 			$normalized = sanitize_key( (string) $key );
 			if ( in_array( $normalized, $this->get_supported_filter_keys(), true ) ) {
+				return true;
+			}
+
+			if ( 0 === strpos( $normalized, 'wf_attr_' ) ) {
 				return true;
 			}
 		}
@@ -290,6 +369,25 @@ final class Analytics {
 			$filters['availability'][] = 'on_sale';
 		}
 
+		foreach ( array_keys( $_GET ) as $key ) {
+			$request_key = sanitize_key( (string) $key );
+			if ( 0 !== strpos( $request_key, 'wf_attr_' ) ) {
+				continue;
+			}
+
+			$taxonomy = substr( $request_key, strlen( 'wf_attr_' ) );
+			if ( '' === $taxonomy ) {
+				continue;
+			}
+
+			$values = $this->get_request_slug_list( (string) $key );
+			if ( empty( $values ) ) {
+				continue;
+			}
+
+			$filters[ 'attr_' . $taxonomy ] = $values;
+		}
+
 		return $filters;
 	}
 
@@ -326,6 +424,11 @@ final class Analytics {
 
 				$current_count                               = isset( $stats['filters'][ $type_key ][ $value_key ] ) ? absint( $stats['filters'][ $type_key ][ $value_key ] ) : 0;
 				$stats['filters'][ $type_key ][ $value_key ] = $current_count + 1;
+			}
+
+			if ( count( $stats['filters'][ $type_key ] ) > self::MAX_DISTINCT_VALUES_PER_TYPE ) {
+				arsort( $stats['filters'][ $type_key ] );
+				$stats['filters'][ $type_key ] = array_slice( $stats['filters'][ $type_key ], 0, self::MAX_DISTINCT_VALUES_PER_TYPE, true );
 			}
 		}
 
@@ -451,6 +554,19 @@ final class Analytics {
 
 		if ( isset( $labels[ $type_key ] ) ) {
 			return $labels[ $type_key ];
+		}
+
+		if ( 0 === strpos( $type_key, 'attr_' ) ) {
+			$taxonomy = substr( $type_key, strlen( 'attr_' ) );
+			if ( 0 === strpos( $taxonomy, 'pa_' ) ) {
+				$taxonomy = substr( $taxonomy, 3 );
+			}
+
+			return sprintf(
+				/* translators: %s: attribute taxonomy name */
+				__( 'Attribute: %s', 'woo-filters' ),
+				$this->humanize_key( $taxonomy )
+			);
 		}
 
 		return $this->humanize_key( $type_key );
