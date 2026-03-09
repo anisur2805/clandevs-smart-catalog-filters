@@ -94,6 +94,7 @@ final class ShopFilters {
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_top_active_filters' ), 20 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_per_page_switcher' ), 25 );
 		add_action( 'wp', array( $this, 'register_no_results_callback' ), 20 );
+		add_filter( 'render_block_woocommerce/product-collection-no-results', array( $this, 'filter_product_collection_no_results_block' ), 10, 2 );
 
 		add_filter( 'loop_shop_per_page', array( $this, 'filter_loop_per_page' ), 20 );
 	}
@@ -440,14 +441,41 @@ final class ShopFilters {
 			return;
 		}
 
-		echo '<div class="wf-no-results" role="status" aria-live="polite">';
-		echo '<h3>' . esc_html__( 'No products found', 'woo-filters' ) . '</h3>';
-		echo '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filters' ) . '</p>';
-		echo '<div class="wf-empty-actions">';
-		echo '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
-		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
-		echo '</div>';
-		echo '</div>';
+		echo $this->get_no_results_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is fully escaped in helper.
+	}
+
+	/**
+	 * Replace WooCommerce Product Collection "No results" block output.
+	 *
+	 * @param string $block_content Original block content.
+	 * @param array  $block         Parsed block data.
+	 * @return string
+	 */
+	public function filter_product_collection_no_results_block( string $block_content, array $block = array() ): string {
+		unset( $block );
+		if ( '' === trim( $block_content ) ) {
+			return $block_content;
+		}
+
+		return $this->get_no_results_markup();
+	}
+
+	/**
+	 * Build no-results card markup shared by classic and block templates.
+	 *
+	 * @return string
+	 */
+	private function get_no_results_markup(): string {
+		$html  = '<div class="wf-no-results wf-no-results-card" role="status" aria-live="polite">';
+		$html .= '<h3>' . esc_html__( 'No products found', 'woo-filters' ) . '</h3>';
+		$html .= '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filters' ) . '</p>';
+		$html .= '<div class="wf-empty-actions">';
+		$html .= '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
+		$html .= '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
+		$html .= '</div>';
+		$html .= '</div>';
+
+		return $html;
 	}
 
 	/**
