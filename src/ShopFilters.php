@@ -54,6 +54,9 @@ final class ShopFilters {
 	/** @var int */
 	private $filter_form_instance = 0;
 
+	/** @var bool */
+	private $assets_enqueued = false;
+
 	/**
 	 * Constructor.
 	 *
@@ -90,22 +93,32 @@ final class ShopFilters {
 		add_action( 'woocommerce_after_main_content', array( $this, 'render_layout_end' ), 5 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_top_active_filters' ), 20 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_per_page_switcher' ), 25 );
+		add_action( 'wp', array( $this, 'register_no_results_callback' ), 20 );
+		add_filter( 'render_block_woocommerce/product-collection-no-results', array( $this, 'filter_product_collection_no_results_block' ), 10, 2 );
 
 		add_filter( 'loop_shop_per_page', array( $this, 'filter_loop_per_page' ), 20 );
+	}
 
+	/**
+	 * Replace WooCommerce default no-products output with plugin card.
+	 *
+	 * @return void
+	 */
+	public function register_no_results_callback(): void {
 		remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
-		add_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ), 10 );
+		if ( false === has_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ) ) ) {
+			add_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ), 10 );
+		}
 	}
 
 	/**
 	 * Invalidate cached filter metadata keys.
 	 *
-	 * @param mixed ...$hook_args Hook arguments (unused).
+	 * @param mixed ...$args Hook callback arguments.
 	 * @return void
 	 */
-	public function invalidate_filter_cache( ...$hook_args ): void {
-		unset( $hook_args );
-
+	public function invalidate_filter_cache( ...$args ): void {
+		unset( $args );
 		update_option( 'wf_cache_last_changed', (string) microtime( true ), false );
 	}
 
@@ -126,7 +139,20 @@ final class ShopFilters {
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
-		if ( ! $this->is_shop_archive() && ! $this->has_shortcode_on_current_page() ) {
+		if ( ! $this->is_shop_archive() ) {
+			return;
+		}
+
+		$this->enqueue_frontend_assets();
+	}
+
+	/**
+	 * Enqueue frontend style/script once per request.
+	 *
+	 * @return void
+	 */
+	private function enqueue_frontend_assets(): void {
+		if ( $this->assets_enqueued ) {
 			return;
 		}
 
@@ -145,6 +171,8 @@ final class ShopFilters {
 			$this->asset_version,
 			true
 		);
+
+		$this->assets_enqueued = true;
 	}
 
 	/**
@@ -176,6 +204,9 @@ final class ShopFilters {
 			'--wf-control-radius'  => ( isset( $options['control_radius'] ) ? absint( $options['control_radius'] ) : 10 ) . 'px',
 			'--wf-button-radius'   => ( isset( $options['button_radius'] ) ? absint( $options['button_radius'] ) : 12 ) . 'px',
 			'--wf-section-spacing' => ( isset( $options['section_spacing'] ) ? absint( $options['section_spacing'] ) : 18 ) . 'px',
+			'--wf-empty-bg'        => isset( $options['no_results_bg_color'] ) ? (string) $options['no_results_bg_color'] : '#ffffff',
+			'--wf-empty-border'    => isset( $options['no_results_border_color'] ) ? (string) $options['no_results_border_color'] : '#dbe2ea',
+			'--wf-empty-shadow'    => $this->hex_to_rgba( isset( $options['no_results_shadow_color'] ) ? (string) $options['no_results_shadow_color'] : '#0f172a', 0.16 ),
 		);
 
 		$declarations = array();
@@ -189,6 +220,36 @@ final class ShopFilters {
 		}
 
 		wp_add_inline_style( 'wf-shop-filters', $css );
+	}
+
+	/**
+	 * Convert hex color to rgba() string.
+	 *
+	 * @param string $hex_color Hex color value.
+	 * @param float  $alpha     Alpha from 0 to 1.
+	 * @return string
+	 */
+	private function hex_to_rgba( string $hex_color, float $alpha ): string {
+		$safe_hex = sanitize_hex_color( $hex_color );
+		if ( ! is_string( $safe_hex ) || '' === $safe_hex ) {
+			return 'rgba(15, 23, 42, 0.16)';
+		}
+
+		$hex = ltrim( $safe_hex, '#' );
+		if ( 3 === strlen( $hex ) ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+
+		if ( 6 !== strlen( $hex ) ) {
+			return 'rgba(15, 23, 42, 0.16)';
+		}
+
+		$red   = hexdec( substr( $hex, 0, 2 ) );
+		$green = hexdec( substr( $hex, 2, 2 ) );
+		$blue  = hexdec( substr( $hex, 4, 2 ) );
+		$alpha = max( 0.0, min( 1.0, $alpha ) );
+
+		return sprintf( 'rgba(%d, %d, %d, %.2f)', $red, $green, $blue, $alpha );
 	}
 
 	/**
@@ -258,6 +319,8 @@ final class ShopFilters {
 	 * @return string
 	 */
 	public function render_shortcode( array $atts = array() ): string {
+		$this->enqueue_frontend_assets();
+
 		$atts = shortcode_atts(
 			array(
 				'per_page'        => '12',
@@ -379,14 +442,41 @@ final class ShopFilters {
 			return;
 		}
 
-		echo '<div class="wf-no-results" role="status" aria-live="polite">';
-		echo '<h3>' . esc_html__( 'No products found', 'woo-filters' ) . '</h3>';
-		echo '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filters' ) . '</p>';
-		echo '<div class="wf-empty-actions">';
-		echo '<a class="button alt" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
-		echo '<a class="button" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
-		echo '</div>';
-		echo '</div>';
+		echo $this->get_no_results_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is fully escaped in helper.
+	}
+
+	/**
+	 * Replace WooCommerce Product Collection "No results" block output.
+	 *
+	 * @param string $block_content Original block content.
+	 * @param array  $block         Parsed block data.
+	 * @return string
+	 */
+	public function filter_product_collection_no_results_block( string $block_content, array $block = array() ): string {
+		unset( $block );
+		if ( '' === trim( $block_content ) ) {
+			return $block_content;
+		}
+
+		return $this->get_no_results_markup();
+	}
+
+	/**
+	 * Build no-results card markup shared by classic and block templates.
+	 *
+	 * @return string
+	 */
+	private function get_no_results_markup(): string {
+		$html  = '<div class="wf-no-results wf-no-results-card" role="status" aria-live="polite">';
+		$html .= '<h3>' . esc_html__( 'No products found', 'woo-filters' ) . '</h3>';
+		$html .= '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filters' ) . '</p>';
+		$html .= '<div class="wf-empty-actions">';
+		$html .= '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
+		$html .= '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
+		$html .= '</div>';
+		$html .= '</div>';
+
+		return $html;
 	}
 
 	/**
@@ -445,14 +535,11 @@ final class ShopFilters {
 
 		echo '<div class="wf-per-page" aria-label="' . esc_attr__( 'Products per page', 'woo-filters' ) . '">';
 		foreach ( $choices as $value => $label ) {
-			$url    = $this->build_filter_url_for_per_page( (int) $value );
-			$active = ( 0 === (int) $value && $current >= $total && $total > 0 ) || ( (int) $value > 0 && $current === (int) $value );
+			$url        = $this->build_filter_url_for_per_page( (int) $value );
+			$active     = ( 0 === (int) $value && $current >= $total && $total > 0 ) || ( (int) $value > 0 && $current === (int) $value );
+			$class_name = $active ? 'is-active' : '';
 
-			echo '<a';
-			if ( $active ) {
-				echo ' class="is-active"';
-			}
-			echo ' href="' . esc_url( $url ) . '">' . esc_html( (string) $label ) . '</a>';
+			echo '<a class="' . esc_attr( $class_name ) . '" href="' . esc_url( $url ) . '">' . esc_html( (string) $label ) . '</a>';
 		}
 		echo '</div>';
 	}
@@ -605,8 +692,8 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-actions">';
-		echo '<button type="submit" class="button alt">' . esc_html__( 'Apply Filters', 'woo-filters' ) . '</button>';
-		echo '<a class="button" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'woo-filters' ) . '</a>';
+		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'woo-filters' ) . '</button>';
+		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'woo-filters' ) . '</a>';
 		echo '</div>';
 		echo '</form>';
 	}
@@ -648,7 +735,7 @@ final class ShopFilters {
 			$term = get_term_by( 'slug', $selected_category, 'product_cat' );
 			if ( $term instanceof \WP_Term ) {
 				$chips[] = array(
-					/* translators: %s: category name. */
+					/* translators: %s: product category name. */
 					'label' => sprintf( __( 'Category: %s', 'woo-filters' ), $term->name ),
 					'url'   => $this->build_remove_filter_url( 'wf_cat' ),
 				);
@@ -678,7 +765,7 @@ final class ShopFilters {
 		$min_price = $this->get_request_decimal( 'min_price' );
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $min_price ) {
 			$chips[] = array(
-				/* translators: %s: minimum formatted product price. */
+				/* translators: %s: minimum price with currency symbol. */
 				'label' => sprintf( __( 'Min: %s', 'woo-filters' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'min_price' ),
 			);
@@ -687,7 +774,7 @@ final class ShopFilters {
 		$max_price = $this->get_request_decimal( 'max_price' );
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $max_price ) {
 			$chips[] = array(
-				/* translators: %s: maximum formatted product price. */
+				/* translators: %s: maximum price with currency symbol. */
 				'label' => sprintf( __( 'Max: %s', 'woo-filters' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'max_price' ),
 			);
@@ -696,7 +783,7 @@ final class ShopFilters {
 		$rating = $this->get_request_absint( 'rating_filter' );
 		if ( isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] && $rating > 0 && $rating <= 5 ) {
 			$chips[] = array(
-				/* translators: %d: minimum star rating. */
+				/* translators: %d: star rating threshold. */
 				'label' => sprintf( __( '%d stars & up', 'woo-filters' ), $rating ),
 				'url'   => $this->build_remove_filter_url( 'rating_filter' ),
 			);
@@ -722,7 +809,7 @@ final class ShopFilters {
 	/**
 	 * Render category radio options.
 	 *
-	 * @param string $list_suffix Form instance suffix for unique IDs.
+	 * @param string $list_suffix Unique suffix for DOM list id.
 	 * @return void
 	 */
 	private function render_categories( string $list_suffix = '' ): void {
@@ -747,19 +834,12 @@ final class ShopFilters {
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-cat-list">';
 		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'woo-filters' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
-			$live_count = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
-			$is_active  = $selected === $term->slug;
-			$disabled   = ! $is_active && 0 === $live_count;
+			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
+			$is_active   = $selected === $term->slug;
+			$disabled    = ! $is_active && 0 === $live_count;
+			$label_class = $disabled ? 'is-disabled' : '';
 
-			echo '<li><label';
-			if ( $disabled ) {
-				echo ' class="is-disabled"';
-			}
-			echo '><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '"';
-			if ( $disabled ) {
-				echo ' disabled="disabled"';
-			}
-			echo ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
+			echo '<li><label class="' . esc_attr( $label_class ) . '"><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
 		}
 		echo '</ul>';
 	}
@@ -772,7 +852,7 @@ final class ShopFilters {
 	 * @param string $request_key        Request key.
 	 * @param array  $selected_values    Selected term slugs.
 	 * @param bool   $show_color_swatch  Whether to render color swatches.
-	 * @param string $list_suffix        Form instance suffix for unique IDs.
+	 * @param string $list_suffix        Unique suffix for DOM list id.
 	 * @return void
 	 */
 	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false, string $list_suffix = '' ): void {
@@ -802,21 +882,14 @@ final class ShopFilters {
 
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-term-list">';
 		foreach ( $terms as $term ) {
-			$live_count = $use_contextual_counts ? $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key ) : (int) $term->count;
-			$checked    = in_array( $term->slug, $selected_values, true );
-			$disabled   = ! $checked && 0 === $live_count;
+			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key ) : (int) $term->count;
+			$checked     = in_array( $term->slug, $selected_values, true );
+			$disabled    = ! $checked && 0 === $live_count;
+			$label_class = $disabled ? 'is-disabled' : '';
 
 			echo '<li>';
-			echo '<label';
-			if ( $disabled ) {
-				echo ' class="is-disabled"';
-			}
-			echo '>';
-			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"';
-			if ( $disabled ) {
-				echo ' disabled="disabled"';
-			}
-			echo ' ' . checked( $checked, true, false ) . ' />';
+			echo '<label class="' . esc_attr( $label_class ) . '">';
+			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $checked, true, false ) . ' />';
 			if ( $show_color_swatch ) {
 				$swatch_hex = $this->get_term_color_hex( $term );
 				if ( '' !== $swatch_hex ) {
@@ -940,7 +1013,7 @@ final class ShopFilters {
 	/**
 	 * Parse shortcode yes/no-style boolean attribute.
 	 *
-	 * @param string $value   Raw value.
+	 * @param string $value         Raw value.
 	 * @param bool   $default_value Default value.
 	 * @return bool
 	 */
@@ -1159,38 +1232,17 @@ final class ShopFilters {
 	}
 
 	/**
-	 * Return unslashed request value for a known key.
-	 *
-	 * @param string $key Query key.
-	 * @return mixed|null
-	 */
-	private function get_unslashed_request_value( string $key ) {
-		if ( ! isset( $_GET[ $key ] ) ) {
-			return null;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Public filtering URLs are intentionally shareable.
-		$raw_value = $_GET[ $key ];
-		if ( is_array( $raw_value ) ) {
-			return array_map( 'wp_unslash', $raw_value );
-		}
-
-		return wp_unslash( (string) $raw_value );
-	}
-
-	/**
 	 * Parse slug request value.
 	 *
 	 * @param string $key Query key.
 	 * @return string
 	 */
 	private function get_request_slug( string $key ): string {
-		$raw_value = $this->get_unslashed_request_value( $key );
-		if ( null === $raw_value || is_array( $raw_value ) ) {
+		if ( ! isset( $_GET[ $key ] ) ) {
 			return '';
 		}
 
-		return sanitize_title( (string) $raw_value );
+		return sanitize_title( wp_unslash( (string) $_GET[ $key ] ) );
 	}
 
 	/**
@@ -1200,12 +1252,11 @@ final class ShopFilters {
 	 * @return int
 	 */
 	private function get_request_absint( string $key ): int {
-		$raw_value = $this->get_unslashed_request_value( $key );
-		if ( null === $raw_value || is_array( $raw_value ) ) {
+		if ( ! isset( $_GET[ $key ] ) ) {
 			return 0;
 		}
 
-		return absint( sanitize_text_field( (string) $raw_value ) );
+		return absint( wp_unslash( (string) $_GET[ $key ] ) );
 	}
 
 	/**
@@ -1224,12 +1275,11 @@ final class ShopFilters {
 	 * @return string
 	 */
 	private function get_request_multiselect_mode(): string {
-		$raw_value = $this->get_unslashed_request_value( 'wf_logic' );
-		if ( null === $raw_value || is_array( $raw_value ) ) {
+		if ( ! isset( $_GET['wf_logic'] ) ) {
 			return 'or';
 		}
 
-		$value = sanitize_key( (string) $raw_value );
+		$value = sanitize_key( wp_unslash( (string) $_GET['wf_logic'] ) );
 
 		return 'and' === $value ? 'and' : 'or';
 	}
@@ -1241,12 +1291,12 @@ final class ShopFilters {
 	 * @return float|null
 	 */
 	private function get_request_decimal( string $key ): ?float {
-		$raw_value = $this->get_unslashed_request_value( $key );
-		if ( null === $raw_value || is_array( $raw_value ) ) {
+		if ( ! isset( $_GET[ $key ] ) ) {
 			return null;
 		}
 
-		$raw = wc_format_decimal( sanitize_text_field( (string) $raw_value ) );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Dynamic key is validated and unslashed in this helper.
+		$raw = wc_format_decimal( wp_unslash( (string) $_GET[ $key ] ) );
 		if ( '' === (string) $raw ) {
 			return null;
 		}
@@ -1266,20 +1316,21 @@ final class ShopFilters {
 	 * @return array
 	 */
 	private function get_request_slug_list( string $key ): array {
-		$raw = $this->get_unslashed_request_value( $key );
-		if ( null === $raw ) {
+		if ( ! isset( $_GET[ $key ] ) ) {
 			return array();
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Dynamic key is validated and each item is unslashed in this helper.
+		$raw = $_GET[ $key ];
 		if ( is_array( $raw ) ) {
 			$values = array_map(
 				static function ( $item ) {
-					return sanitize_title( sanitize_text_field( (string) $item ) );
+					return sanitize_title( wp_unslash( (string) $item ) );
 				},
 				$raw
 			);
 		} else {
-			$values = array_map( 'sanitize_title', explode( ',', sanitize_text_field( (string) $raw ) ) );
+			$values = array_map( 'sanitize_title', explode( ',', sanitize_text_field( wp_unslash( (string) $raw ) ) ) );
 		}
 
 		$values = array_values(
@@ -1489,10 +1540,10 @@ final class ShopFilters {
 	 * Merge query clauses with existing tax/meta clauses.
 	 *
 	 * @param array $existing Existing query data.
-	 * @param array $new_clauses New clauses.
+	 * @param array $incoming New clauses.
 	 * @return array
 	 */
-	private function merge_query_clauses( array $existing, array $new_clauses ): array {
+	private function merge_query_clauses( array $existing, array $incoming ): array {
 		$clauses = array();
 
 		foreach ( $existing as $key => $clause ) {
@@ -1505,7 +1556,7 @@ final class ShopFilters {
 			}
 		}
 
-		foreach ( $new_clauses as $clause ) {
+		foreach ( $incoming as $clause ) {
 			$clauses[] = $clause;
 		}
 
@@ -1521,13 +1572,13 @@ final class ShopFilters {
 	/**
 	 * Merge post inclusion IDs while preserving existing query restrictions.
 	 *
-	 * @param mixed          $existing Existing post__in value.
-	 * @param array<int,int> $new_values New post IDs to include.
+	 * @param mixed          $existing     Existing post__in value.
+	 * @param array<int,int> $incoming_ids New post IDs to include.
 	 * @return array<int,int>
 	 */
-	private function merge_post_in_values( $existing, array $new_values ): array {
+	private function merge_post_in_values( $existing, array $incoming_ids ): array {
 		$existing_ids = is_array( $existing ) ? array_map( 'absint', $existing ) : array();
-		$new_ids      = array_map( 'absint', $new_values );
+		$new_ids      = array_map( 'absint', $incoming_ids );
 
 		$existing_ids = array_values( array_unique( $existing_ids ) );
 		$new_ids      = array_values( array_unique( $new_ids ) );
@@ -1755,24 +1806,6 @@ final class ShopFilters {
 	}
 
 	/**
-	 * Determine whether current singular page has shortcode usage.
-	 *
-	 * @return bool
-	 */
-	private function has_shortcode_on_current_page(): bool {
-		if ( ! is_singular() ) {
-			return false;
-		}
-
-		$post = get_post();
-		if ( ! $post instanceof \WP_Post ) {
-			return false;
-		}
-
-		return has_shortcode( (string) $post->post_content, 'woo_filters' );
-	}
-
-	/**
 	 * Validate filter request payload.
 	 *
 	 * @return bool
@@ -1824,7 +1857,7 @@ final class ShopFilters {
 			}
 		}
 
-		foreach ( array_keys( $_GET ) as $key ) {
+		foreach ( $_GET as $key => $value ) {
 			if ( 0 === strpos( sanitize_key( (string) $key ), 'wf_attr_' ) ) {
 				return true;
 			}

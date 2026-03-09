@@ -94,6 +94,9 @@ final class StyleSettings {
 		$this->register_color_field( 'button_text_color', __( 'Primary Button Text', 'woo-filters' ) );
 		$this->register_color_field( 'input_bg_color', __( 'Input Background', 'woo-filters' ) );
 		$this->register_color_field( 'control_border_color', __( 'Input/Control Border', 'woo-filters' ) );
+		$this->register_color_field( 'no_results_bg_color', __( 'No Results Background', 'woo-filters' ) );
+		$this->register_color_field( 'no_results_border_color', __( 'No Results Border', 'woo-filters' ) );
+		$this->register_color_field( 'no_results_shadow_color', __( 'No Results Shadow', 'woo-filters' ) );
 		$this->register_text_field( 'font_family', __( 'Font Family', 'woo-filters' ) );
 		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'woo-filters' ), 12, 24, 1 );
 		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'woo-filters' ), 220, 420, 1 );
@@ -281,6 +284,30 @@ final class StyleSettings {
 										<?php $this->render_color_field_with_preview( 'control_border_color' ); ?>
 									</td>
 								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Background', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'no_results_bg_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Border', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'no_results_border_color' ); ?>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Shadow', 'woo-filters' ); ?></label>
+									</th>
+									<td>
+										<?php $this->render_color_field_with_preview( 'no_results_shadow_color' ); ?>
+									</td>
+								</tr>
 							</table>
 						</div>
 
@@ -410,7 +437,7 @@ final class StyleSettings {
 									$value   = isset( $options['custom_css'] ) ? (string) $options['custom_css'] : '';
 									?>
 									<textarea class="wf-admin-textarea" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[custom_css]" rows="8" placeholder=".wf-shop-layout { /* your custom styles */ }"><?php echo esc_textarea( $value ); ?></textarea>
-									<p class="description" style="margin-top: 8px; font-size: 12px; color: #64748b;"><?php esc_html_e( 'CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt', 'woo-filters' ); ?></p>
+									<p class="description" style="margin-top: 8px; font-size: 12px; color: #64748b;"><?php esc_html_e( 'CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results', 'woo-filters' ); ?></p>
 								</td>
 							</tr>
 						</table>
@@ -450,7 +477,7 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function render_section_intro(): void {
-		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt.', 'woo-filters' ) . '</p>';
+		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results.', 'woo-filters' ) . '</p>';
 	}
 
 	/**
@@ -618,6 +645,9 @@ final class StyleSettings {
 			'button_text_color',
 			'input_bg_color',
 			'control_border_color',
+			'no_results_bg_color',
+			'no_results_border_color',
+			'no_results_shadow_color',
 		);
 
 		foreach ( $colors as $key ) {
@@ -690,28 +720,31 @@ final class StyleSettings {
 	 */
 	private static function get_defaults(): array {
 		return array(
-			'preset_skin'          => 'classic',
-			'accent_color'         => '#0b6a78',
-			'sidebar_bg_color'     => '#ffffff',
-			'sidebar_border_color' => '#e5e8ee',
-			'heading_color'        => '#1f2937',
-			'text_color'           => '#1f2937',
-			'muted_text_color'     => '#64748b',
-			'chip_bg_color'        => '#ffffff',
-			'chip_border_color'    => '#c7d5e3',
-			'button_bg_color'      => '#4b5563',
-			'button_text_color'    => '#ffffff',
-			'input_bg_color'       => '#ffffff',
-			'control_border_color' => '#cbd5e1',
-			'font_family'          => 'inherit',
-			'font_size'            => '16',
-			'sidebar_width'        => '280',
-			'layout_gap'           => '24',
-			'sidebar_radius'       => '14',
-			'control_radius'       => '10',
-			'button_radius'        => '12',
-			'section_spacing'      => '18',
-			'custom_css'           => '',
+			'preset_skin'             => 'classic',
+			'accent_color'            => '#0b6a78',
+			'sidebar_bg_color'        => '#ffffff',
+			'sidebar_border_color'    => '#e5e8ee',
+			'heading_color'           => '#1f2937',
+			'text_color'              => '#1f2937',
+			'muted_text_color'        => '#64748b',
+			'chip_bg_color'           => '#ffffff',
+			'chip_border_color'       => '#c7d5e3',
+			'button_bg_color'         => '#4b5563',
+			'button_text_color'       => '#ffffff',
+			'input_bg_color'          => '#ffffff',
+			'control_border_color'    => '#cbd5e1',
+			'no_results_bg_color'     => '#ffffff',
+			'no_results_border_color' => '#dbe2ea',
+			'no_results_shadow_color' => '#0f172a',
+			'font_family'             => 'inherit',
+			'font_size'               => '16',
+			'sidebar_width'           => '280',
+			'layout_gap'              => '24',
+			'sidebar_radius'          => '14',
+			'control_radius'          => '10',
+			'button_radius'           => '12',
+			'section_spacing'         => '18',
+			'custom_css'              => '',
 		);
 	}
 
@@ -750,33 +783,39 @@ final class StyleSettings {
 		switch ( self::sanitize_skin( $skin ) ) {
 			case 'graphite':
 				return array(
-					'accent_color'         => '#0f766e',
-					'sidebar_bg_color'     => '#f8fafc',
-					'sidebar_border_color' => '#d1d5db',
-					'heading_color'        => '#111827',
-					'text_color'           => '#111827',
-					'muted_text_color'     => '#475569',
-					'chip_bg_color'        => '#f9fafb',
-					'chip_border_color'    => '#94a3b8',
-					'button_bg_color'      => '#334155',
-					'button_text_color'    => '#f8fafc',
-					'input_bg_color'       => '#ffffff',
-					'control_border_color' => '#cbd5e1',
+					'accent_color'            => '#0f766e',
+					'sidebar_bg_color'        => '#f8fafc',
+					'sidebar_border_color'    => '#d1d5db',
+					'heading_color'           => '#111827',
+					'text_color'              => '#111827',
+					'muted_text_color'        => '#475569',
+					'chip_bg_color'           => '#f9fafb',
+					'chip_border_color'       => '#94a3b8',
+					'button_bg_color'         => '#334155',
+					'button_text_color'       => '#f8fafc',
+					'input_bg_color'          => '#ffffff',
+					'control_border_color'    => '#cbd5e1',
+					'no_results_bg_color'     => '#f8fafc',
+					'no_results_border_color' => '#d1d5db',
+					'no_results_shadow_color' => '#0f172a',
 				);
 			case 'sunrise':
 				return array(
-					'accent_color'         => '#c2410c',
-					'sidebar_bg_color'     => '#fffaf5',
-					'sidebar_border_color' => '#fed7aa',
-					'heading_color'        => '#7c2d12',
-					'text_color'           => '#7c2d12',
-					'muted_text_color'     => '#9a3412',
-					'chip_bg_color'        => '#fff7ed',
-					'chip_border_color'    => '#fdba74',
-					'button_bg_color'      => '#ea580c',
-					'button_text_color'    => '#ffffff',
-					'input_bg_color'       => '#ffffff',
-					'control_border_color' => '#fdba74',
+					'accent_color'            => '#c2410c',
+					'sidebar_bg_color'        => '#fffaf5',
+					'sidebar_border_color'    => '#fed7aa',
+					'heading_color'           => '#7c2d12',
+					'text_color'              => '#7c2d12',
+					'muted_text_color'        => '#9a3412',
+					'chip_bg_color'           => '#fff7ed',
+					'chip_border_color'       => '#fdba74',
+					'button_bg_color'         => '#ea580c',
+					'button_text_color'       => '#ffffff',
+					'input_bg_color'          => '#ffffff',
+					'control_border_color'    => '#fdba74',
+					'no_results_bg_color'     => '#fffaf5',
+					'no_results_border_color' => '#fed7aa',
+					'no_results_shadow_color' => '#7c2d12',
 				);
 			case 'classic':
 			default:

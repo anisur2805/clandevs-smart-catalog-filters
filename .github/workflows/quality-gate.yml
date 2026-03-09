@@ -1,0 +1,70 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-gate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Unit Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - "7.4"
+          - "8.1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate --no-check-lock --strict
+
+      - name: Install Dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run Unit Tests
+        run: composer run test
+
+  coding-standards:
+    name: PHPCS/WPCS (PHP 8.1)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate --no-check-lock --strict
+
+      - name: Install Dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPCS/WPCS
+        run: composer run phpcs
