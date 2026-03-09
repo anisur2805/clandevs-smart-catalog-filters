@@ -192,6 +192,9 @@ final class ShopFilters {
 			'--wf-control-radius'  => ( isset( $options['control_radius'] ) ? absint( $options['control_radius'] ) : 10 ) . 'px',
 			'--wf-button-radius'   => ( isset( $options['button_radius'] ) ? absint( $options['button_radius'] ) : 12 ) . 'px',
 			'--wf-section-spacing' => ( isset( $options['section_spacing'] ) ? absint( $options['section_spacing'] ) : 18 ) . 'px',
+			'--wf-empty-bg'        => isset( $options['no_results_bg_color'] ) ? (string) $options['no_results_bg_color'] : '#ffffff',
+			'--wf-empty-border'    => isset( $options['no_results_border_color'] ) ? (string) $options['no_results_border_color'] : '#dbe2ea',
+			'--wf-empty-shadow'    => $this->hex_to_rgba( isset( $options['no_results_shadow_color'] ) ? (string) $options['no_results_shadow_color'] : '#0f172a', 0.16 ),
 		);
 
 		$declarations = array();
@@ -205,6 +208,36 @@ final class ShopFilters {
 		}
 
 		wp_add_inline_style( 'wf-shop-filters', $css );
+	}
+
+	/**
+	 * Convert hex color to rgba() string.
+	 *
+	 * @param string $hex_color Hex color value.
+	 * @param float  $alpha     Alpha from 0 to 1.
+	 * @return string
+	 */
+	private function hex_to_rgba( string $hex_color, float $alpha ): string {
+		$safe_hex = sanitize_hex_color( $hex_color );
+		if ( ! is_string( $safe_hex ) || '' === $safe_hex ) {
+			return 'rgba(15, 23, 42, 0.16)';
+		}
+
+		$hex = ltrim( $safe_hex, '#' );
+		if ( 3 === strlen( $hex ) ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+
+		if ( 6 !== strlen( $hex ) ) {
+			return 'rgba(15, 23, 42, 0.16)';
+		}
+
+		$red   = hexdec( substr( $hex, 0, 2 ) );
+		$green = hexdec( substr( $hex, 2, 2 ) );
+		$blue  = hexdec( substr( $hex, 4, 2 ) );
+		$alpha = max( 0.0, min( 1.0, $alpha ) );
+
+		return sprintf( 'rgba(%d, %d, %d, %.2f)', $red, $green, $blue, $alpha );
 	}
 
 	/**
