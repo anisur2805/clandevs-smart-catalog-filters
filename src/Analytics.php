@@ -398,8 +398,8 @@ final class Analytics {
 	 * @return void
 	 */
 	private function persist_filter_event( array $filters ): void {
-		$stats                 = $this->get_stats();
-		$stats['total_events'] = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
+		$stats                   = $this->get_stats();
+		$stats['total_events']   = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
 		$stats['last_event_gmt'] = gmdate( 'Y-m-d H:i:s' );
 
 		if ( ! isset( $stats['filters'] ) || ! is_array( $stats['filters'] ) ) {
@@ -628,6 +628,7 @@ final class Analytics {
 			return array();
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Dynamic key is validated and each item is unslashed in this helper.
 		$raw = $_GET[ $key ];
 		if ( is_array( $raw ) ) {
 			$values = array_map(
@@ -705,6 +706,7 @@ final class Analytics {
 			return null;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Dynamic key is validated and unslashed in this helper.
 		$raw = wc_format_decimal( wp_unslash( (string) $_GET[ $key ] ) );
 		if ( '' === (string) $raw ) {
 			return null;

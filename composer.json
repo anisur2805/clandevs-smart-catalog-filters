@@ -2,10 +2,25 @@
   "name": "anisur2805/woo-filters",
   "description": "Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).",
   "type": "wordpress-plugin",
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
   "require-dev": {
-    "phpunit/phpunit": "^9.6"
+    "phpunit/phpunit": "^9.6",
+    "squizlabs/php_codesniffer": "^3.13",
+    "wp-coding-standards/wpcs": "^3.2",
+    "phpcsstandards/phpcsutils": "^1.2",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1"
   },
   "scripts": {
-    "test": "phpunit -c phpunit.xml.dist"
+    "test": "phpunit -c phpunit.xml.dist",
+    "phpcs": "phpcs --standard=phpcs.xml.dist",
+    "phpcbf": "phpcbf --standard=phpcs.xml.dist",
+    "check": [
+      "@test",
+      "@phpcs"
+    ]
   }
 }

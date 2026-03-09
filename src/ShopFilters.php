@@ -102,7 +102,8 @@ final class ShopFilters {
 	 *
 	 * @return void
 	 */
-	public function invalidate_filter_cache( ...$unused ): void {
+	public function invalidate_filter_cache( ...$args ): void {
+		unset( $args );
 		update_option( 'wf_cache_last_changed', (string) microtime( true ), false );
 	}
 
@@ -112,8 +113,8 @@ final class ShopFilters {
 	 * @return void
 	 */
 	public function bootstrap_taxonomies(): void {
-		$this->brand_taxonomy = $this->resolve_taxonomy( array( 'pa_brand', 'product_brand', 'brand' ) );
-		$this->color_taxonomy = $this->resolve_taxonomy( array( 'pa_color', 'color' ) );
+		$this->brand_taxonomy              = $this->resolve_taxonomy( array( 'pa_brand', 'product_brand', 'brand' ) );
+		$this->color_taxonomy              = $this->resolve_taxonomy( array( 'pa_color', 'color' ) );
 		$this->custom_attribute_taxonomies = $this->get_filterable_attribute_taxonomies();
 	}
 
@@ -442,11 +443,11 @@ final class ShopFilters {
 
 		echo '<div class="wf-per-page" aria-label="' . esc_attr__( 'Products per page', 'woo-filters' ) . '">';
 		foreach ( $choices as $value => $label ) {
-			$url    = $this->build_filter_url_for_per_page( (int) $value );
-			$active = ( 0 === (int) $value && $current >= $total && $total > 0 ) || ( (int) $value > 0 && $current === (int) $value );
-			$class  = $active ? ' class="is-active"' : '';
+			$url        = $this->build_filter_url_for_per_page( (int) $value );
+			$active     = ( 0 === (int) $value && $current >= $total && $total > 0 ) || ( (int) $value > 0 && $current === (int) $value );
+			$class_name = $active ? 'is-active' : '';
 
-			echo '<a' . $class . ' href="' . esc_url( $url ) . '">' . esc_html( (string) $label ) . '</a>';
+			echo '<a class="' . esc_attr( $class_name ) . '" href="' . esc_url( $url ) . '">' . esc_html( (string) $label ) . '</a>';
 		}
 		echo '</div>';
 	}
@@ -465,24 +466,24 @@ final class ShopFilters {
 		$show_stock      = isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'];
 		$show_colors     = isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'];
 
-		$action          = $this->get_archive_url();
-		$selected_brands  = $this->get_request_slug_list( 'wf_brand' );
-		$selected_colors  = $this->get_request_slug_list( 'wf_color' );
+		$action              = $this->get_archive_url();
+		$selected_brands     = $this->get_request_slug_list( 'wf_brand' );
+		$selected_colors     = $this->get_request_slug_list( 'wf_color' );
 		$selected_attributes = array();
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
-			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
+			$request_key                         = $this->get_attribute_request_key( $attribute_taxonomy );
 			$selected_attributes[ $request_key ] = $this->get_request_slug_list( $request_key );
 		}
 		$multiselect_mode = $this->get_request_multiselect_mode();
-		$selected_rating = $this->get_request_absint( 'rating_filter' );
-		$in_stock_only   = $this->get_request_flag( 'wf_in_stock' );
-		$on_sale_only    = $this->get_request_flag( 'wf_on_sale' );
-		$min_price       = null;
-		$max_price       = null;
-		$slider_min      = 0.0;
-		$slider_max      = 0.0;
-		$current_min     = 0.0;
-		$current_max     = 0.0;
+		$selected_rating  = $this->get_request_absint( 'rating_filter' );
+		$in_stock_only    = $this->get_request_flag( 'wf_in_stock' );
+		$on_sale_only     = $this->get_request_flag( 'wf_on_sale' );
+		$min_price        = null;
+		$max_price        = null;
+		$slider_min       = 0.0;
+		$slider_max       = 0.0;
+		$current_min      = 0.0;
+		$current_max      = 0.0;
 
 		if ( $show_price ) {
 			$min_price    = $this->get_request_decimal( 'min_price' );
@@ -587,9 +588,9 @@ final class ShopFilters {
 		}
 
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
-			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
-			$field_name  = $request_key . '[]';
-			$selected    = isset( $selected_attributes[ $request_key ] ) && is_array( $selected_attributes[ $request_key ] ) ? $selected_attributes[ $request_key ] : array();
+			$request_key        = $this->get_attribute_request_key( $attribute_taxonomy );
+			$field_name         = $request_key . '[]';
+			$selected           = isset( $selected_attributes[ $request_key ] ) && is_array( $selected_attributes[ $request_key ] ) ? $selected_attributes[ $request_key ] : array();
 			$is_color_attribute = $this->is_color_like_taxonomy( $attribute_taxonomy );
 
 			echo '<div class="wf-filter-block">';
@@ -635,13 +636,14 @@ final class ShopFilters {
 	 */
 	private function get_active_filter_chips(): array {
 		$filter_options = FilterSettings::get_options();
-		$chips = array();
+		$chips          = array();
 
 		$selected_category = $this->get_request_slug( 'wf_cat' );
 		if ( isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'] && '' !== $selected_category ) {
 			$term = get_term_by( 'slug', $selected_category, 'product_cat' );
 			if ( $term instanceof \WP_Term ) {
 				$chips[] = array(
+					/* translators: %s: product category name. */
 					'label' => sprintf( __( 'Category: %s', 'woo-filters' ), $term->name ),
 					'url'   => $this->build_remove_filter_url( 'wf_cat' ),
 				);
@@ -671,6 +673,7 @@ final class ShopFilters {
 		$min_price = $this->get_request_decimal( 'min_price' );
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $min_price ) {
 			$chips[] = array(
+				/* translators: %s: minimum price with currency symbol. */
 				'label' => sprintf( __( 'Min: %s', 'woo-filters' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'min_price' ),
 			);
@@ -679,6 +682,7 @@ final class ShopFilters {
 		$max_price = $this->get_request_decimal( 'max_price' );
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $max_price ) {
 			$chips[] = array(
+				/* translators: %s: maximum price with currency symbol. */
 				'label' => sprintf( __( 'Max: %s', 'woo-filters' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'max_price' ),
 			);
@@ -687,6 +691,7 @@ final class ShopFilters {
 		$rating = $this->get_request_absint( 'rating_filter' );
 		if ( isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] && $rating > 0 && $rating <= 5 ) {
 			$chips[] = array(
+				/* translators: %d: star rating threshold. */
 				'label' => sprintf( __( '%d stars & up', 'woo-filters' ), $rating ),
 				'url'   => $this->build_remove_filter_url( 'rating_filter' ),
 			);
@@ -715,9 +720,9 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_categories( string $list_suffix = '' ): void {
-		$selected = $this->get_request_slug( 'wf_cat' );
+		$selected              = $this->get_request_slug( 'wf_cat' );
 		$use_contextual_counts = $this->has_filter_query_args() && $this->is_valid_filter_request();
-		$terms    = $this->get_terms_cached(
+		$terms                 = $this->get_terms_cached(
 			array(
 				'taxonomy'   => 'product_cat',
 				'hide_empty' => true,
@@ -736,13 +741,12 @@ final class ShopFilters {
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-cat-list">';
 		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'woo-filters' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
-			$live_count = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
-			$is_active  = $selected === $term->slug;
-			$disabled   = ! $is_active && 0 === $live_count;
-			$disabled_a = $disabled ? ' disabled="disabled"' : '';
-			$label_c    = $disabled ? ' class="is-disabled"' : '';
+			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
+			$is_active   = $selected === $term->slug;
+			$disabled    = ! $is_active && 0 === $live_count;
+			$label_class = $disabled ? 'is-disabled' : '';
 
-			echo '<li><label' . $label_c . '><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '"' . $disabled_a . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
+			echo '<li><label class="' . esc_attr( $label_class ) . '"><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
 		}
 		echo '</ul>';
 	}
@@ -759,7 +763,7 @@ final class ShopFilters {
 	 */
 	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false, string $list_suffix = '' ): void {
 		$use_contextual_counts = $this->has_filter_query_args() && $this->is_valid_filter_request();
-		$terms = $this->get_terms_cached(
+		$terms                 = $this->get_terms_cached(
 			array(
 				'taxonomy'   => $taxonomy,
 				'hide_empty' => true,
@@ -784,15 +788,14 @@ final class ShopFilters {
 
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-term-list">';
 		foreach ( $terms as $term ) {
-			$live_count = $use_contextual_counts ? $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key ) : (int) $term->count;
-			$checked    = in_array( $term->slug, $selected_values, true );
-			$disabled   = ! $checked && 0 === $live_count;
-			$disabled_a = $disabled ? ' disabled="disabled"' : '';
-			$label_c    = $disabled ? ' class="is-disabled"' : '';
+			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key ) : (int) $term->count;
+			$checked     = in_array( $term->slug, $selected_values, true );
+			$disabled    = ! $checked && 0 === $live_count;
+			$label_class = $disabled ? 'is-disabled' : '';
 
 			echo '<li>';
-			echo '<label' . $label_c . '>';
-			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"' . $disabled_a . ' ' . checked( $checked, true, false ) . ' />';
+			echo '<label class="' . esc_attr( $label_class ) . '">';
+			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $checked, true, false ) . ' />';
 			if ( $show_color_swatch ) {
 				$swatch_hex = $this->get_term_color_hex( $term );
 				if ( '' !== $swatch_hex ) {
@@ -916,14 +919,14 @@ final class ShopFilters {
 	/**
 	 * Parse shortcode yes/no-style boolean attribute.
 	 *
-	 * @param string $value   Raw value.
-	 * @param bool   $default Default value.
+	 * @param string $value         Raw value.
+	 * @param bool   $default_value Default value.
 	 * @return bool
 	 */
-	private function parse_shortcode_bool( string $value, bool $default ): bool {
+	private function parse_shortcode_bool( string $value, bool $default_value ): bool {
 		$normalized = strtolower( trim( $value ) );
 		if ( '' === $normalized ) {
-			return $default;
+			return $default_value;
 		}
 
 		if ( in_array( $normalized, array( '1', 'true', 'yes', 'on' ), true ) ) {
@@ -934,7 +937,7 @@ final class ShopFilters {
 			return false;
 		}
 
-		return $default;
+		return $default_value;
 	}
 
 	/**
@@ -1198,6 +1201,7 @@ final class ShopFilters {
 			return null;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Dynamic key is validated and unslashed in this helper.
 		$raw = wc_format_decimal( wp_unslash( (string) $_GET[ $key ] ) );
 		if ( '' === (string) $raw ) {
 			return null;
@@ -1222,6 +1226,7 @@ final class ShopFilters {
 			return array();
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Dynamic key is validated and each item is unslashed in this helper.
 		$raw = $_GET[ $key ];
 		if ( is_array( $raw ) ) {
 			$values = array_map(
@@ -1256,9 +1261,9 @@ final class ShopFilters {
 	 */
 	private function get_request_filter_clauses( array $exclude_keys = array() ): array {
 		$filter_options = FilterSettings::get_options();
-		$excluded = array_fill_keys( $exclude_keys, true );
-		$logic_mode = $this->get_request_multiselect_mode();
-		$tax_operator = 'and' === $logic_mode ? 'AND' : 'IN';
+		$excluded       = array_fill_keys( $exclude_keys, true );
+		$logic_mode     = $this->get_request_multiselect_mode();
+		$tax_operator   = 'and' === $logic_mode ? 'AND' : 'IN';
 
 		$tax_clauses  = array();
 		$meta_clauses = array();
@@ -1380,19 +1385,25 @@ final class ShopFilters {
 	 * @return int
 	 */
 	private function get_contextual_term_count( string $taxonomy, string $term_slug, string $source_key ): int {
-		$cache_key = $this->build_cache_key( 'ctx_count_' . md5( wp_json_encode( array(
-			'taxonomy' => $taxonomy,
-			'slug'     => $term_slug,
-			'source'   => $source_key,
-			'query'    => $this->get_current_query_args(),
-		) ) ) );
+		$cache_key = $this->build_cache_key(
+			'ctx_count_' . md5(
+				wp_json_encode(
+					array(
+						'taxonomy' => $taxonomy,
+						'slug'     => $term_slug,
+						'source'   => $source_key,
+						'query'    => $this->get_current_query_args(),
+					)
+				)
+			)
+		);
 		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( false !== $cached ) {
 			return (int) $cached;
 		}
 
-		$clauses = $this->get_request_filter_clauses( array( $source_key ) );
+		$clauses          = $this->get_request_filter_clauses( array( $source_key ) );
 		$clauses['tax'][] = array(
 			'taxonomy' => $taxonomy,
 			'field'    => 'slug',
@@ -1435,10 +1446,10 @@ final class ShopFilters {
 	 * Merge query clauses with existing tax/meta clauses.
 	 *
 	 * @param array $existing Existing query data.
-	 * @param array $new      New clauses.
+	 * @param array $incoming New clauses.
 	 * @return array
 	 */
-	private function merge_query_clauses( array $existing, array $new ): array {
+	private function merge_query_clauses( array $existing, array $incoming ): array {
 		$clauses = array();
 
 		foreach ( $existing as $key => $clause ) {
@@ -1451,7 +1462,7 @@ final class ShopFilters {
 			}
 		}
 
-		foreach ( $new as $clause ) {
+		foreach ( $incoming as $clause ) {
 			$clauses[] = $clause;
 		}
 
@@ -1467,13 +1478,13 @@ final class ShopFilters {
 	/**
 	 * Merge post inclusion IDs while preserving existing query restrictions.
 	 *
-	 * @param mixed          $existing Existing post__in value.
-	 * @param array<int,int> $new      New post IDs to include.
+	 * @param mixed          $existing     Existing post__in value.
+	 * @param array<int,int> $incoming_ids New post IDs to include.
 	 * @return array<int,int>
 	 */
-	private function merge_post_in_values( $existing, array $new ): array {
+	private function merge_post_in_values( $existing, array $incoming_ids ): array {
 		$existing_ids = is_array( $existing ) ? array_map( 'absint', $existing ) : array();
-		$new_ids      = array_map( 'absint', $new );
+		$new_ids      = array_map( 'absint', $incoming_ids );
 
 		$existing_ids = array_values( array_unique( $existing_ids ) );
 		$new_ids      = array_values( array_unique( $new_ids ) );
@@ -1828,22 +1839,23 @@ final class ShopFilters {
 
 		global $wpdb;
 
-		$sql = $wpdb->prepare(
-			"SELECT
-				MIN(CAST(pm.meta_value AS DECIMAL(20, 4))) AS min_price,
-				MAX(CAST(pm.meta_value AS DECIMAL(20, 4))) AS max_price
-			FROM {$wpdb->posts} AS p
-			INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
-			WHERE pm.meta_key = %s
-				AND pm.meta_value <> ''
-				AND p.post_type = %s
-				AND p.post_status = %s",
-			'_price',
-			'product',
-			'publish'
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT
+					MIN(CAST(pm.meta_value AS DECIMAL(20, 4))) AS min_price,
+					MAX(CAST(pm.meta_value AS DECIMAL(20, 4))) AS max_price
+				FROM {$wpdb->posts} AS p
+				INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
+				WHERE pm.meta_key = %s
+					AND pm.meta_value <> ''
+					AND p.post_type = %s
+					AND p.post_status = %s",
+				'_price',
+				'product',
+				'publish'
+			),
+			ARRAY_A
 		);
-
-		$row = $wpdb->get_row( $sql, ARRAY_A );
 
 		$min = isset( $row['min_price'] ) ? (float) $row['min_price'] : 0.0;
 		$max = isset( $row['max_price'] ) ? (float) $row['max_price'] : 0.0;
