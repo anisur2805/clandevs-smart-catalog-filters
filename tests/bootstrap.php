@@ -88,3 +88,4 @@ if (!function_exists('wc_attribute_taxonomy_name')) {
 
 require_once dirname(__DIR__) . '/src/FilterSettings.php';
 require_once dirname(__DIR__) . '/src/ShopFilters.php';
+require_once dirname(__DIR__) . '/src/Analytics.php';

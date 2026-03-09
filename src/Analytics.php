@@ -275,6 +275,10 @@ final class Analytics {
 			if ( in_array( $normalized, $this->get_supported_filter_keys(), true ) ) {
 				return true;
 			}
+
+			if ( 0 === strpos( $normalized, 'wf_attr_' ) ) {
+				return true;
+			}
 		}
 
 		return false;
@@ -351,6 +355,25 @@ final class Analytics {
 				$filters['availability'] = array();
 			}
 			$filters['availability'][] = 'on_sale';
+		}
+
+		foreach ( array_keys( $_GET ) as $key ) {
+			$request_key = sanitize_key( (string) $key );
+			if ( 0 !== strpos( $request_key, 'wf_attr_' ) ) {
+				continue;
+			}
+
+			$taxonomy = substr( $request_key, strlen( 'wf_attr_' ) );
+			if ( '' === $taxonomy ) {
+				continue;
+			}
+
+			$values = $this->get_request_slug_list( (string) $key );
+			if ( empty( $values ) ) {
+				continue;
+			}
+
+			$filters[ 'attr_' . $taxonomy ] = $values;
 		}
 
 		return $filters;
@@ -514,6 +537,19 @@ final class Analytics {
 
 		if ( isset( $labels[ $type_key ] ) ) {
 			return $labels[ $type_key ];
+		}
+
+		if ( 0 === strpos( $type_key, 'attr_' ) ) {
+			$taxonomy = substr( $type_key, strlen( 'attr_' ) );
+			if ( 0 === strpos( $taxonomy, 'pa_' ) ) {
+				$taxonomy = substr( $taxonomy, 3 );
+			}
+
+			return sprintf(
+				/* translators: %s: attribute taxonomy name */
+				__( 'Attribute: %s', 'woo-filters' ),
+				$this->humanize_key( $taxonomy )
+			);
 		}
 
 		return $this->humanize_key( $type_key );

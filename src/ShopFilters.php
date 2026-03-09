@@ -475,20 +475,29 @@ final class ShopFilters {
 		}
 		$multiselect_mode = $this->get_request_multiselect_mode();
 		$selected_rating = $this->get_request_absint( 'rating_filter' );
-		$min_price       = $this->get_request_decimal( 'min_price' );
-		$max_price       = $this->get_request_decimal( 'max_price' );
 		$in_stock_only   = $this->get_request_flag( 'wf_in_stock' );
 		$on_sale_only    = $this->get_request_flag( 'wf_on_sale' );
-		$price_bounds    = $this->get_price_bounds();
-		$slider_min      = $price_bounds['min'];
-		$slider_max      = $price_bounds['max'];
-		$current_min     = null !== $min_price ? $min_price : $slider_min;
-		$current_max     = null !== $max_price ? $max_price : $slider_max;
+		$min_price       = null;
+		$max_price       = null;
+		$slider_min      = 0.0;
+		$slider_max      = 0.0;
+		$current_min     = 0.0;
+		$current_max     = 0.0;
 
-		if ( $current_min > $current_max ) {
-			$tmp         = $current_min;
-			$current_min = $current_max;
-			$current_max = $tmp;
+		if ( $show_price ) {
+			$min_price    = $this->get_request_decimal( 'min_price' );
+			$max_price    = $this->get_request_decimal( 'max_price' );
+			$price_bounds = $this->get_price_bounds();
+			$slider_min   = $price_bounds['min'];
+			$slider_max   = $price_bounds['max'];
+			$current_min  = null !== $min_price ? $min_price : $slider_min;
+			$current_max  = null !== $max_price ? $max_price : $slider_max;
+
+			if ( $current_min > $current_max ) {
+				$tmp         = $current_min;
+				$current_min = $current_max;
+				$current_max = $tmp;
+			}
 		}
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
@@ -520,20 +529,22 @@ final class ShopFilters {
 		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'woo-filters' ) . '</span></label>';
 		echo '</div>';
 
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Price', 'woo-filters' ) . '</h4>';
-		echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
-		echo '<div class="wf-price-range-inputs">';
-		echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
-		echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
-		echo '</div>';
-		echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
-		echo '</div>';
-		echo '<div class="wf-price-grid">';
-		echo '<label><span>' . esc_html__( 'Min', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
-		echo '<label><span>' . esc_html__( 'Max', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
-		echo '</div>';
-		echo '</div>';
+		if ( $show_price ) {
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html__( 'Price', 'woo-filters' ) . '</h4>';
+			echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
+			echo '<div class="wf-price-range-inputs">';
+			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
+			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'woo-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
+			echo '</div>';
+			echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
+			echo '</div>';
+			echo '<div class="wf-price-grid">';
+			echo '<label><span>' . esc_html__( 'Min', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
+			echo '<label><span>' . esc_html__( 'Max', 'woo-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
+			echo '</div>';
+			echo '</div>';
+		}
 
 		if ( $show_rating ) {
 			echo '<div class="wf-filter-block">';
@@ -704,6 +715,7 @@ final class ShopFilters {
 	 */
 	private function render_categories(): void {
 		$selected = $this->get_request_slug( 'wf_cat' );
+		$use_contextual_counts = $this->has_filter_query_args() && $this->is_valid_filter_request();
 		$terms    = $this->get_terms_cached(
 			array(
 				'taxonomy'   => 'product_cat',
@@ -721,7 +733,7 @@ final class ShopFilters {
 		echo '<ul class="wf-cat-list">';
 		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'woo-filters' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
-			$live_count = $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' );
+			$live_count = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
 			$is_active  = $selected === $term->slug;
 			$disabled   = ! $is_active && 0 === $live_count;
 			$disabled_a = $disabled ? ' disabled="disabled"' : '';
@@ -743,6 +755,7 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false ): void {
+		$use_contextual_counts = $this->has_filter_query_args() && $this->is_valid_filter_request();
 		$terms = $this->get_terms_cached(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -768,7 +781,7 @@ final class ShopFilters {
 
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-term-list">';
 		foreach ( $terms as $term ) {
-			$live_count = $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key );
+			$live_count = $use_contextual_counts ? $this->get_contextual_term_count( $taxonomy, $term->slug, $request_key ) : (int) $term->count;
 			$checked    = in_array( $term->slug, $selected_values, true );
 			$disabled   = ! $checked && 0 === $live_count;
 			$disabled_a = $disabled ? ' disabled="disabled"' : '';
