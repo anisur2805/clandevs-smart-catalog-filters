@@ -93,11 +93,21 @@ final class ShopFilters {
 		add_action( 'woocommerce_after_main_content', array( $this, 'render_layout_end' ), 5 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_top_active_filters' ), 20 );
 		add_action( 'woocommerce_before_shop_loop', array( $this, 'render_per_page_switcher' ), 25 );
+		add_action( 'wp', array( $this, 'register_no_results_callback' ), 20 );
 
 		add_filter( 'loop_shop_per_page', array( $this, 'filter_loop_per_page' ), 20 );
+	}
 
+	/**
+	 * Replace WooCommerce default no-products output with plugin card.
+	 *
+	 * @return void
+	 */
+	public function register_no_results_callback(): void {
 		remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
-		add_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ), 10 );
+		if ( false === has_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ) ) ) {
+			add_action( 'woocommerce_no_products_found', array( $this, 'render_no_products_state' ), 10 );
+		}
 	}
 
 	/**
@@ -434,8 +444,8 @@ final class ShopFilters {
 		echo '<h3>' . esc_html__( 'No products found', 'woo-filters' ) . '</h3>';
 		echo '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filters' ) . '</p>';
 		echo '<div class="wf-empty-actions">';
-		echo '<a class="button alt" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
-		echo '<a class="button" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
+		echo '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filters' ) . '</a>';
+		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filters' ) . '</a>';
 		echo '</div>';
 		echo '</div>';
 	}
@@ -653,8 +663,8 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-actions">';
-		echo '<button type="submit" class="button alt">' . esc_html__( 'Apply Filters', 'woo-filters' ) . '</button>';
-		echo '<a class="button" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'woo-filters' ) . '</a>';
+		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'woo-filters' ) . '</button>';
+		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'woo-filters' ) . '</a>';
 		echo '</div>';
 		echo '</form>';
 	}
