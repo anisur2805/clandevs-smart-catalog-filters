@@ -15,6 +15,8 @@
  * Text Domain: woo-filters
  * Requires Plugins: woocommerce
  * Domain Path: /languages
+ *
+ * @package WooFilters
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
