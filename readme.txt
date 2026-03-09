@@ -4,7 +4,8 @@ Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: trunk
+Requires Plugins: woocommerce
+Stable tag: 0.11.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +51,13 @@ Yes. Supported interactions update the filter and product sections without full 
 
 == Changelog ==
 
+= 0.11.9 =
+* Improved shortcode and archive filter-query consistency.
+* Improved on-sale filtering behavior by using WooCommerce sale product IDs.
+* Improved filter URL stability for share/bookmark usage.
+* Improved multi-layout frontend behavior and filter option search scoping.
+* Improved analytics coverage for dynamic attributes and capped value cardinality.
+
 = 0.11.0 =
 * Added analytics dashboard for filter usage.
 * Added stronger nonce validation for filter-bearing requests.
@@ -57,6 +65,9 @@ Yes. Supported interactions update the filter and product sections without full 
 * Added automated test bootstrap and query sync tests.
 
 == Upgrade Notice ==
+
+= 0.11.9 =
+Improves filter accuracy, URL shareability, and analytics robustness.
 
 = 0.11.0 =
 This release introduces analytics and security hardening for filter requests.

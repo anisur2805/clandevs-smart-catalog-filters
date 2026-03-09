@@ -86,6 +86,12 @@ if (!function_exists('wc_attribute_taxonomy_name')) {
     }
 }
 
+if (!function_exists('untrailingslashit')) {
+    function untrailingslashit(string $value): string {
+        return rtrim($value, "/\\");
+    }
+}
+
 if (!function_exists('wc_get_product_ids_on_sale')) {
     function wc_get_product_ids_on_sale(): array {
         return array(10, 20);
