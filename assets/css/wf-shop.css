@@ -476,8 +476,8 @@ body.wf-no-scroll {
 
 .wf-actions {
   margin-top: 20px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
+  justify-content: space-between;
   align-items: stretch;
   gap: 8px;
 }
@@ -506,7 +506,7 @@ body.wf-no-scroll {
   min-height: 44px;
   padding: 0 18px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.2;
   white-space: nowrap;
   border-radius: var(--wf-button-radius);
@@ -521,11 +521,23 @@ body.wf-no-scroll {
 }
 
 .wf-actions .wf-btn {
-  width: 100%;
+  width: auto;
   height: 44px;
   min-height: 44px;
   margin: 0;
   box-sizing: border-box;
+}
+
+.wf-actions .wf-btn-primary {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wf-actions .wf-btn-secondary {
+  flex: 0 0 auto;
+  min-width: 74px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .wf-actions .button.alt,
