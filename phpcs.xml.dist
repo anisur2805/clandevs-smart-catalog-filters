@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<ruleset name="Woo Filters WPCS">
+	<description>WordPress coding standards for the Woo Filters plugin.</description>
+
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<file>woo-filters.php</file>
+	<file>src</file>
+
+	<rule ref="WordPress">
+		<!-- PSR-4 class filenames are intentional for this codebase. -->
+		<exclude name="WordPress.Files.FileName"/>
+
+		<!-- Keep docs lean while still enforcing functional correctness/security. -->
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+
+		<!-- Frontend filter URLs are intentionally public and shareable. -->
+		<exclude name="WordPress.Security.NonceVerification.Recommended"/>
+
+		<!-- Query shape is a core feature of this plugin; keep as explicit exceptions. -->
+		<exclude name="WordPress.DB.SlowDBQuery"/>
+		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery"/>
+	</rule>
+
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+			</property>
+		</properties>
+	</rule>
+
+</ruleset>

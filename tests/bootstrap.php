@@ -31,8 +31,12 @@ if (!function_exists('sanitize_title')) {
 }
 
 if (!function_exists('wp_unslash')) {
-    function wp_unslash(string $value): string {
-        return stripslashes($value);
+    function wp_unslash($value) {
+        if (is_array($value)) {
+            return array_map('wp_unslash', $value);
+        }
+
+        return stripslashes((string) $value);
     }
 }
 

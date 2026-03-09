@@ -605,7 +605,7 @@ final class StyleSettings {
 
 		$sanitized                = array();
 		$sanitized['preset_skin'] = self::sanitize_skin( isset( $raw['preset_skin'] ) ? (string) $raw['preset_skin'] : 'classic' );
-		$colors    = array(
+		$colors                   = array(
 			'accent_color',
 			'sidebar_bg_color',
 			'sidebar_border_color',
@@ -638,12 +638,12 @@ final class StyleSettings {
 		}
 
 		$numeric_ranges = array(
-			'font_size'      => array( 12, 24 ),
-			'sidebar_width'  => array( 220, 420 ),
-			'layout_gap'     => array( 12, 48 ),
-			'sidebar_radius' => array( 6, 28 ),
-			'control_radius' => array( 4, 18 ),
-			'button_radius'  => array( 6, 28 ),
+			'font_size'       => array( 12, 24 ),
+			'sidebar_width'   => array( 220, 420 ),
+			'layout_gap'      => array( 12, 48 ),
+			'sidebar_radius'  => array( 6, 28 ),
+			'control_radius'  => array( 4, 18 ),
+			'button_radius'   => array( 6, 28 ),
 			'section_spacing' => array( 10, 32 ),
 		);
 
@@ -691,27 +691,27 @@ final class StyleSettings {
 	private static function get_defaults(): array {
 		return array(
 			'preset_skin'          => 'classic',
-			'accent_color'        => '#0b6a78',
-			'sidebar_bg_color'    => '#ffffff',
+			'accent_color'         => '#0b6a78',
+			'sidebar_bg_color'     => '#ffffff',
 			'sidebar_border_color' => '#e5e8ee',
-			'heading_color'       => '#1f2937',
-			'text_color'          => '#1f2937',
-			'muted_text_color'    => '#64748b',
-			'chip_bg_color'       => '#ffffff',
-			'chip_border_color'   => '#c7d5e3',
-			'button_bg_color'     => '#4b5563',
-			'button_text_color'   => '#ffffff',
-			'input_bg_color'      => '#ffffff',
+			'heading_color'        => '#1f2937',
+			'text_color'           => '#1f2937',
+			'muted_text_color'     => '#64748b',
+			'chip_bg_color'        => '#ffffff',
+			'chip_border_color'    => '#c7d5e3',
+			'button_bg_color'      => '#4b5563',
+			'button_text_color'    => '#ffffff',
+			'input_bg_color'       => '#ffffff',
 			'control_border_color' => '#cbd5e1',
-			'font_family'         => 'inherit',
-			'font_size'           => '16',
-			'sidebar_width'       => '280',
-			'layout_gap'          => '24',
-			'sidebar_radius'      => '14',
-			'control_radius'      => '10',
-			'button_radius'       => '12',
-			'section_spacing'     => '18',
-			'custom_css'          => '',
+			'font_family'          => 'inherit',
+			'font_size'            => '16',
+			'sidebar_width'        => '280',
+			'layout_gap'           => '24',
+			'sidebar_radius'       => '14',
+			'control_radius'       => '10',
+			'button_radius'        => '12',
+			'section_spacing'      => '18',
+			'custom_css'           => '',
 		);
 	}
 

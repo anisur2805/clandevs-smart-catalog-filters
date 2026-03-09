@@ -398,8 +398,8 @@ final class Analytics {
 	 * @return void
 	 */
 	private function persist_filter_event( array $filters ): void {
-		$stats                 = $this->get_stats();
-		$stats['total_events'] = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
+		$stats                   = $this->get_stats();
+		$stats['total_events']   = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
 		$stats['last_event_gmt'] = gmdate( 'Y-m-d H:i:s' );
 
 		if ( ! isset( $stats['filters'] ) || ! is_array( $stats['filters'] ) ) {
@@ -604,17 +604,38 @@ final class Analytics {
 	}
 
 	/**
+	 * Return unslashed request value for a known key.
+	 *
+	 * @param string $key Query key.
+	 * @return mixed|null
+	 */
+	private function get_unslashed_request_value( string $key ) {
+		if ( ! isset( $_GET[ $key ] ) ) {
+			return null;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Public filtering URLs are intentionally shareable.
+		$raw_value = $_GET[ $key ];
+		if ( is_array( $raw_value ) ) {
+			return array_map( 'wp_unslash', $raw_value );
+		}
+
+		return wp_unslash( (string) $raw_value );
+	}
+
+	/**
 	 * Parse request slug.
 	 *
 	 * @param string $key Query key.
 	 * @return string
 	 */
 	private function get_request_slug( string $key ): string {
-		if ( ! isset( $_GET[ $key ] ) ) {
+		$raw_value = $this->get_unslashed_request_value( $key );
+		if ( null === $raw_value || is_array( $raw_value ) ) {
 			return '';
 		}
 
-		return sanitize_title( wp_unslash( (string) $_GET[ $key ] ) );
+		return sanitize_title( (string) $raw_value );
 	}
 
 	/**
@@ -624,22 +645,22 @@ final class Analytics {
 	 * @return array
 	 */
 	private function get_request_slug_list( string $key ): array {
-		if ( ! isset( $_GET[ $key ] ) ) {
+		$raw = $this->get_unslashed_request_value( $key );
+		if ( null === $raw ) {
 			return array();
 		}
 
-		$raw = $_GET[ $key ];
 		if ( is_array( $raw ) ) {
 			$values = array_map(
 				static function ( $item ) {
-					return sanitize_title( wp_unslash( (string) $item ) );
+					return sanitize_title( sanitize_text_field( (string) $item ) );
 				},
 				$raw
 			);
 		} else {
 			$values = array_map(
 				'sanitize_title',
-				explode( ',', sanitize_text_field( wp_unslash( (string) $raw ) ) )
+				explode( ',', sanitize_text_field( (string) $raw ) )
 			);
 		}
 
@@ -662,11 +683,12 @@ final class Analytics {
 	 * @return int
 	 */
 	private function get_request_absint( string $key ): int {
-		if ( ! isset( $_GET[ $key ] ) ) {
+		$raw_value = $this->get_unslashed_request_value( $key );
+		if ( null === $raw_value || is_array( $raw_value ) ) {
 			return 0;
 		}
 
-		return absint( wp_unslash( (string) $_GET[ $key ] ) );
+		return absint( sanitize_text_field( (string) $raw_value ) );
 	}
 
 	/**
@@ -685,11 +707,12 @@ final class Analytics {
 	 * @return string
 	 */
 	private function get_request_logic_mode(): string {
-		if ( ! isset( $_GET['wf_logic'] ) ) {
+		$raw_value = $this->get_unslashed_request_value( 'wf_logic' );
+		if ( null === $raw_value || is_array( $raw_value ) ) {
 			return 'or';
 		}
 
-		$value = sanitize_key( wp_unslash( (string) $_GET['wf_logic'] ) );
+		$value = sanitize_key( (string) $raw_value );
 
 		return 'and' === $value ? 'and' : 'or';
 	}
@@ -701,11 +724,12 @@ final class Analytics {
 	 * @return float|null
 	 */
 	private function get_request_decimal( string $key ): ?float {
-		if ( ! isset( $_GET[ $key ] ) ) {
+		$raw_value = $this->get_unslashed_request_value( $key );
+		if ( null === $raw_value || is_array( $raw_value ) ) {
 			return null;
 		}
 
-		$raw = wc_format_decimal( wp_unslash( (string) $_GET[ $key ] ) );
+		$raw = wc_format_decimal( sanitize_text_field( (string) $raw_value ) );
 		if ( '' === (string) $raw ) {
 			return null;
 		}
