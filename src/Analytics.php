@@ -24,6 +24,9 @@ final class Analytics {
 	/** @var string */
 	private const RESET_ACTION = 'wf_reset_analytics';
 
+	/** @var int */
+	private const MAX_DISTINCT_VALUES_PER_TYPE = 500;
+
 	/**
 	 * Register hooks.
 	 *
@@ -256,12 +259,21 @@ final class Analytics {
 		}
 
 		if ( ! isset( $_GET['wf_nonce'] ) ) {
-			return false;
+			return true;
 		}
 
 		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
+		if ( '' === $nonce ) {
+			return true;
+		}
 
-		return (bool) wp_verify_nonce( $nonce, 'wf_filter_request' );
+		$verified = wp_verify_nonce( $nonce, 'wf_filter_request' );
+		if ( 1 === $verified || 2 === $verified ) {
+			return true;
+		}
+
+		// Analytics should continue for shareable URLs even when nonce is stale.
+		return true;
 	}
 
 	/**
@@ -412,6 +424,11 @@ final class Analytics {
 
 				$current_count                               = isset( $stats['filters'][ $type_key ][ $value_key ] ) ? absint( $stats['filters'][ $type_key ][ $value_key ] ) : 0;
 				$stats['filters'][ $type_key ][ $value_key ] = $current_count + 1;
+			}
+
+			if ( count( $stats['filters'][ $type_key ] ) > self::MAX_DISTINCT_VALUES_PER_TYPE ) {
+				arsort( $stats['filters'][ $type_key ] );
+				$stats['filters'][ $type_key ] = array_slice( $stats['filters'][ $type_key ], 0, self::MAX_DISTINCT_VALUES_PER_TYPE, true );
 			}
 		}
 

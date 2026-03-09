@@ -86,6 +86,12 @@ if (!function_exists('wc_attribute_taxonomy_name')) {
     }
 }
 
+if (!function_exists('wc_get_product_ids_on_sale')) {
+    function wc_get_product_ids_on_sale(): array {
+        return array(10, 20);
+    }
+}
+
 require_once dirname(__DIR__) . '/src/FilterSettings.php';
 require_once dirname(__DIR__) . '/src/ShopFilters.php';
 require_once dirname(__DIR__) . '/src/Analytics.php';

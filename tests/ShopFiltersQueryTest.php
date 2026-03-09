@@ -96,6 +96,23 @@ final class ShopFiltersQueryTest extends TestCase {
         self::assertArrayNotHasKey('_ignored', $args);
     }
 
+    public function test_valid_filter_request_allows_missing_nonce(): void {
+        $_GET['wf_brand'] = array('apple');
+
+        $isValid = $this->invokePrivate('is_valid_filter_request');
+
+        self::assertTrue($isValid);
+    }
+
+    public function test_on_sale_filter_uses_post_in_ids(): void {
+        $_GET['wf_on_sale'] = '1';
+
+        $clauses = $this->invokePrivate('get_request_filter_clauses');
+
+        self::assertArrayHasKey('post_in', $clauses);
+        self::assertSame(array(10, 20), $clauses['post_in']);
+    }
+
     /**
      * @param string $method
      * @param mixed  ...$args

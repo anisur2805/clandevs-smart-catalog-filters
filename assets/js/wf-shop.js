@@ -7,10 +7,6 @@
   }
 
   var mobileBreakpoint = window.matchMedia('(max-width: 860px)');
-  var requestNonce =
-    typeof window.wfShopFilters === 'object' && window.wfShopFilters && window.wfShopFilters.nonce
-      ? String(window.wfShopFilters.nonce)
-      : '';
   var controllers = [];
 
   function isPrimaryClick(event) {
@@ -75,9 +71,6 @@
 
     query.delete('paged');
     query.delete('product-page');
-    if (requestNonce && !query.get('wf_nonce')) {
-      query.set('wf_nonce', requestNonce);
-    }
 
     destination.search = query.toString();
     return destination.toString();
@@ -98,6 +91,21 @@
   function syncBodyScrollState() {
     var hasOpenDrawer = document.querySelector('.wf-shop-layout.wf-drawer-open') !== null;
     document.body.classList.toggle('wf-no-scroll', hasOpenDrawer);
+  }
+
+  function findListWithinLayout(layout, listId) {
+    if (!listId) {
+      return null;
+    }
+
+    var lists = layout.querySelectorAll('.wf-term-list, .wf-cat-list');
+    for (var i = 0; i < lists.length; i += 1) {
+      if (lists[i].id === listId) {
+        return lists[i];
+      }
+    }
+
+    return null;
   }
 
   function initLayout(layout, layoutIndex) {
@@ -154,7 +162,7 @@
       var searchInputs = layout.querySelectorAll('.wf-option-search');
       searchInputs.forEach(function (input) {
         var listId = input.getAttribute('data-list-id') || '';
-        var list = listId ? document.getElementById(listId) : null;
+        var list = findListWithinLayout(layout, listId);
         if (!list) {
           return;
         }
@@ -297,12 +305,7 @@
 
     function requestAndSwap(url, options) {
       var opts = options || {};
-      var requestedUrl = new URL(url, window.location.origin);
-
-      if (requestNonce && !requestedUrl.searchParams.get('wf_nonce')) {
-        requestedUrl.searchParams.set('wf_nonce', requestNonce);
-      }
-      url = requestedUrl.toString();
+      url = new URL(url, window.location.origin).toString();
 
       if (!isSameOriginUrl(url)) {
         window.location.href = url;
@@ -457,9 +460,6 @@
     initMobileDrawer();
 
     return {
-      reload: function () {
-        return requestAndSwap(window.location.href, { pushState: false });
-      },
       close: closeDrawer
     };
   }
@@ -469,9 +469,7 @@
   });
 
   window.addEventListener('popstate', function () {
-    controllers.forEach(function (controller) {
-      controller.reload();
-    });
+    window.location.reload();
   });
 
   document.addEventListener('keydown', function (event) {
