@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Woo Filters
  * Description: Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).
- * Version: 0.11.9
+ * Version: 0.1.0
  * Author: Anisur Rahman
  * Author URI: https://github.com/anisur2805
  * Requires at least: 6.0
@@ -26,7 +26,7 @@ if ( ! defined( 'WF_PLUGIN_URL' ) ) {
 }
 
 if ( ! defined( 'WF_VERSION' ) ) {
-	define( 'WF_VERSION', '0.11.9' );
+	define( 'WF_VERSION', '0.1.0' );
 }
 
 require_once __DIR__ . '/src/Autoloader.php';

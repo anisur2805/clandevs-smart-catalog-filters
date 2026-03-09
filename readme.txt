@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 0.11.9
+Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,7 +17,7 @@ Woo Filters helps shoppers quickly find products using category, brand, color, a
 
 Core capabilities:
 
-* AJAX filtering with nonce-validated requests.
+* AJAX filtering with shareable URL support.
 * Category, brand, color, and custom attribute filtering.
 * Price range slider with synced min/max inputs.
 * Rating and stock/sale availability filters.
@@ -51,23 +51,19 @@ Yes. Supported interactions update the filter and product sections without full 
 
 == Changelog ==
 
-= 0.11.9 =
+= 0.1.0 =
+* Initial public release.
+* Added AJAX product filtering with category, brand, color, attribute, price, rating, and availability filters.
+* Added shortcode support for embedding filters on custom pages.
+* Added active filter chips, clear-all actions, and per-page controls.
+* Added admin pages for filter visibility, styling controls, and analytics.
 * Improved shortcode and archive filter-query consistency.
 * Improved on-sale filtering behavior by using WooCommerce sale product IDs.
 * Improved filter URL stability for share/bookmark usage.
 * Improved multi-layout frontend behavior and filter option search scoping.
 * Improved analytics coverage for dynamic attributes and capped value cardinality.
 
-= 0.11.0 =
-* Added analytics dashboard for filter usage.
-* Added stronger nonce validation for filter-bearing requests.
-* Added shortcode and dynamic attribute filtering improvements.
-* Added automated test bootstrap and query sync tests.
-
 == Upgrade Notice ==
 
-= 0.11.9 =
-Improves filter accuracy, URL shareability, and analytics robustness.
-
-= 0.11.0 =
-This release introduces analytics and security hardening for filter requests.
+= 0.1.0 =
+Initial public release of Woo Filters.
