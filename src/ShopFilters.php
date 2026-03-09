@@ -54,6 +54,9 @@ final class ShopFilters {
 	/** @var int */
 	private $filter_form_instance = 0;
 
+	/** @var bool */
+	private $assets_enqueued = false;
+
 	/**
 	 * Constructor.
 	 *
@@ -124,7 +127,20 @@ final class ShopFilters {
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
-		if ( ! $this->is_shop_archive() && ! $this->has_shortcode_on_current_page() ) {
+		if ( ! $this->is_shop_archive() ) {
+			return;
+		}
+
+		$this->enqueue_frontend_assets();
+	}
+
+	/**
+	 * Enqueue frontend style/script once per request.
+	 *
+	 * @return void
+	 */
+	private function enqueue_frontend_assets(): void {
+		if ( $this->assets_enqueued ) {
 			return;
 		}
 
@@ -143,6 +159,8 @@ final class ShopFilters {
 			$this->asset_version,
 			true
 		);
+
+		$this->assets_enqueued = true;
 	}
 
 	/**
@@ -256,6 +274,8 @@ final class ShopFilters {
 	 * @return string
 	 */
 	public function render_shortcode( array $atts = array() ): string {
+		$this->enqueue_frontend_assets();
+
 		$atts = shortcode_atts(
 			array(
 				'per_page'        => '12',
@@ -1709,24 +1729,6 @@ final class ShopFilters {
 	 */
 	private function get_shop_page_url(): string {
 		return wc_get_page_permalink( 'shop' );
-	}
-
-	/**
-	 * Determine whether current singular page has shortcode usage.
-	 *
-	 * @return bool
-	 */
-	private function has_shortcode_on_current_page(): bool {
-		if ( ! is_singular() ) {
-			return false;
-		}
-
-		$post = get_post();
-		if ( ! $post instanceof \WP_Post ) {
-			return false;
-		}
-
-		return has_shortcode( (string) $post->post_content, 'woo_filters' );
 	}
 
 	/**
