@@ -41,6 +41,11 @@
   display: none;
 }
 
+/* Elementor (Hello Elementor) can re-enable button display; keep the close control hidden until drawer mode. */
+.wf-sidebar .wf-sidebar-close {
+  display: none !important;
+}
+
 .wf-sidebar {
   background: linear-gradient(180deg, var(--wf-sidebar-bg) 0%, #f8f9fb 100%);
   border: 1px solid var(--wf-sidebar-border);
@@ -638,6 +643,14 @@ body.wf-no-scroll {
   background: linear-gradient(180deg, #fafbfd 0%, #f5f7fa 100%);
 }
 
+.wf-top-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+
 .wf-active-filters h5 {
   margin: 0 0 10px;
   font-size: 13px;
@@ -647,10 +660,22 @@ body.wf-no-scroll {
   text-transform: uppercase;
 }
 
+/* Elementor (Hello Elementor) applies a float on the WooCommerce result count.
+   Unset it so the active filters bar aligns and wraps correctly. */
+.wf-shop-layout .woocommerce-result-count {
+  float: none;
+  display: block;
+}
+
 .wf-chip-list {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.wf-top-active-filters .wf-chip-list {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .wf-chip {
@@ -689,7 +714,7 @@ body.wf-no-scroll {
   border: 1px solid var(--wf-control-border);
   border-radius: 999px;
   background: #ffffff;
-  margin-top: 10px;
+  margin-top: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--wf-accent);
@@ -820,11 +845,24 @@ body.wf-no-scroll {
   .wf-shop-layout {
     grid-template-columns: minmax(230px, 260px) minmax(0, 1fr) !important;
   }
+
+  /* Elementor (Hello Elementor) constrains .site-main width on small screens.
+     Disable alignwide breakout to avoid overflow and cramped layouts. */
+  .wf-shop-layout.alignwide {
+    max-width: 100%;
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }
 
 @media (max-width: 860px) {
   .wf-shop-layout {
     grid-template-columns: 1fr !important;
+  }
+
+  .wf-shop-layout > .wf-products {
+    grid-column: 1;
   }
 
 .wf-filter-toggle {
@@ -884,7 +922,12 @@ body.wf-no-scroll {
     transform: translateX(-105%);
     transition: transform 0.24s ease;
     box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
-  }
+}
+
+.admin-bar .wf-sidebar {
+	top: 32px;
+	height: calc(100dvh - 64px);
+}
 
 .wf-sidebar-close {
   display: inline-flex;
@@ -901,6 +944,10 @@ body.wf-no-scroll {
   line-height: 1;
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.wf-sidebar .wf-sidebar-close {
+  display: inline-flex !important;
 }
 
 .wf-sidebar-close:hover {
