@@ -665,12 +665,81 @@ body.wf-no-scroll {
 .wf-shop-layout .woocommerce-result-count {
   float: none;
   display: block;
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wf-heading-color);
+}
+
+.wp-block-woocommerce-product-results-count .woocommerce-result-count {
+  float: none;
+  display: block;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wf-heading-color, #1f2937);
+}
+
+.wf-shop-layout .wc-block-product-results-count {
+  margin: 0 0 12px;
+}
+
+.wp-block-group.is-layout-flex .wp-block-woocommerce-product-results-count {
+  margin: 0;
+}
+
+.wf-shop-layout .woocommerce-ordering {
+  margin: 0 0 20px;
+}
+
+.wf-shop-layout .woocommerce-ordering .orderby {
+  height: 40px;
+  padding: 10px;
+  border: 1px solid var(--wf-control-border);
+  border-radius: var(--wf-control-radius);
+  background: var(--wf-input-bg);
+  color: var(--wf-text-color);
+  font-size: 14px;
+  line-height: 1.2;
+  min-width: 220px;
+}
+
+.wp-block-woocommerce-catalog-sorting .woocommerce-ordering {
+  margin: 0;
+}
+
+.wp-block-woocommerce-catalog-sorting .woocommerce-ordering .orderby {
+  height: 40px;
+  padding: 10px;
+  border: 1px solid var(--wf-control-border, #cbd5e1);
+  border-radius: var(--wf-control-radius, 10px);
+  background: var(--wf-input-bg, #ffffff);
+  color: var(--wf-text-color, #1f2937);
+  font-size: 14px;
+  line-height: 1.2;
+  min-width: 220px;
+}
+
+.wp-block-woocommerce-catalog-sorting .woocommerce-ordering .orderby:focus {
+  outline: none;
+  border-color: var(--wf-accent, #0b6a78);
+  box-shadow: 0 0 0 3px rgba(11, 106, 120, 0.15);
+}
+
+.wf-shop-layout .woocommerce-ordering .orderby:focus {
+  outline: none;
+  border-color: var(--wf-accent);
+  box-shadow: 0 0 0 3px rgba(11, 106, 120, 0.15);
 }
 
 .wf-chip-list {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.wf-active-filters .wf-chip-list {
+  margin: 0 5px 5px 0;
 }
 
 .wf-top-active-filters .wf-chip-list {
@@ -881,6 +950,7 @@ body.wf-no-scroll {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .wf-filter-toggle:hover {
@@ -897,6 +967,10 @@ body.wf-no-scroll {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'%3E%3C/polygon%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+  margin-left: -22px;
 }
 
   .wf-sidebar-overlay {
