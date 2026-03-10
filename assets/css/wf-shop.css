@@ -300,14 +300,16 @@ body.wf-no-scroll {
   z-index: 1;
 }
 
-.wf-sidebar :focus {
-	outline: 0;
+.wf-sidebar input:focus {
+	outline: 0 !important;
+	border: 0 !important;
 }
 
-.wf-price-range::-webkit-slider-thumb {
+.wf-filter-block .wf-price-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
+  box-sizing: border-box;
   height: 16px;
   border-radius: 50%;
   border: 2px solid var(--wf-accent);
@@ -317,12 +319,14 @@ body.wf-no-scroll {
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.24);
 }
 
-.wf-price-range::-webkit-slider-runnable-track {
+.wf-filter-block .wf-price-range::-webkit-slider-runnable-track {
   height: 4px;
   background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
-.wf-price-range::-moz-range-thumb {
+.wf-filter-block .wf-price-range::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -334,12 +338,14 @@ body.wf-no-scroll {
   box-sizing: border-box;
 }
 
-.wf-price-range::-moz-range-track {
+.wf-filter-block .wf-price-range::-moz-range-track {
   height: 4px;
   background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
-.wf-price-track {
+.wf-filter-block .wf-price-track {
   position: absolute;
   left: 8px;
   right: 8px;
@@ -934,7 +940,7 @@ body.wf-no-scroll {
     grid-column: 1;
   }
 
-.wf-filter-toggle {
+.wf-shop-layout .wf-filter-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -951,6 +957,7 @@ body.wf-no-scroll {
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  box-sizing: border-box;
 }
 
 .wf-filter-toggle:hover {
@@ -967,10 +974,6 @@ body.wf-no-scroll {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'%3E%3C/polygon%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
-  top: 50%;
-  transform: translateY(-50%);
-  position: absolute;
-  margin-left: -22px;
 }
 
   .wf-sidebar-overlay {
@@ -998,9 +1001,14 @@ body.wf-no-scroll {
     box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
 }
 
+/* Theme-specific admin bar offsets for the drawer sidebar on small screens. */
 .admin-bar .wf-sidebar {
 	top: 32px;
 	height: calc(100dvh - 64px);
+}
+
+body.theme-astra.admin-bar .wf-sidebar {
+	height: calc(100dvh - 32px);
 }
 
 .wf-sidebar-close {
@@ -1038,4 +1046,15 @@ body.wf-no-scroll {
     opacity: 1;
     visibility: visible;
   }
+}
+
+@media (max-width: 600px) {
+	.admin-bar .wf-sidebar {
+		top: 46px;
+		height: calc(100dvh - 86px);
+	}
+
+	body.theme-astra.admin-bar .wf-sidebar {
+		height: calc(100dvh - 46px);
+	}
 }
