@@ -284,12 +284,12 @@ final class FilterSettings {
 	 */
 	private static function get_defaults(): array {
 		return array(
-			'show_categories'   => 'yes',
-			'show_brands'       => 'yes',
-			'show_price'        => 'yes',
-			'show_rating'       => 'yes',
-			'show_availability' => 'yes',
-			'show_colors'       => 'yes',
+			'show_categories'          => 'yes',
+			'show_brands'              => 'yes',
+			'show_price'               => 'yes',
+			'show_rating'              => 'yes',
+			'show_availability'        => 'yes',
+			'show_colors'              => 'yes',
 			'delete_data_on_uninstall' => 'no',
 		);
 	}
