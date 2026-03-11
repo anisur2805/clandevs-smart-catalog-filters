@@ -1,5 +1,5 @@
 {
-  "name": "anisur2805/woo-filters",
+  "name": "anisur2805/woo-filter-studio",
   "description": "Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",

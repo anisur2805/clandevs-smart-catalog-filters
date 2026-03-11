@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Woo Filters WPCS">
-	<description>WordPress coding standards for the Woo Filters plugin.</description>
+<ruleset name="Woo Filter Studio WPCS">
+	<description>WordPress coding standards for the Woo Filter Studio plugin.</description>
 
 	<arg name="extensions" value="php"/>
 	<arg name="basepath" value="."/>
@@ -8,7 +8,7 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
 
-	<file>woo-filters.php</file>
+	<file>woo-filter-studio.php</file>
 	<file>src</file>
 
 	<rule ref="WordPress">

@@ -232,6 +232,12 @@
   flex-wrap: wrap;
 }
 
+.wf-admin-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
 .wf-admin-toggle {
   display: flex;
   align-items: center;
@@ -287,6 +293,10 @@
   color: var(--wf-admin-text);
 }
 
+.wf-admin-stat-card-value--small {
+  font-size: 16px;
+}
+
 .wf-admin-table {
   width: 100%;
   border-collapse: collapse;
@@ -335,6 +345,50 @@
   font-size: 48px;
   margin-bottom: 12px;
   opacity: 0.5;
+}
+
+.wf-admin-card-body-tight {
+  padding: 0;
+}
+
+.wf-admin-card-body-compact {
+  padding: 16px;
+}
+
+.wf-admin-success-card {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #6ee7b7;
+}
+
+.wf-admin-success-text {
+  margin: 0;
+  color: #065f46;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wf-admin-section-spacer {
+  margin-top: 24px;
+}
+
+.wf-admin-divider {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid var(--wf-admin-border);
+}
+
+.wf-admin-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--wf-admin-text);
+}
+
+.wf-admin-help {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--wf-admin-text-muted);
 }
 
 .wf-admin-reset-btn {

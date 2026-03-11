@@ -7,7 +7,7 @@
   failOnWarning="true"
 >
   <testsuites>
-    <testsuite name="Woo Filters Unit Tests">
+    <testsuite name="Woo Filter Studio Unit Tests">
       <directory>tests</directory>
     </testsuite>
   </testsuites>

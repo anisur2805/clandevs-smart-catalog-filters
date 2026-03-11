@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Woo Filters
+ * Plugin Name: Woo Filter Studio
  * Description: Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).
  * Version: 0.1.0
  * Author: Anisur Rahman
@@ -12,7 +12,7 @@
  * WC tested up to: 10.0
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: woo-filters
+ * Text Domain: woo-filter-studio
  * Requires Plugins: woocommerce
  * Domain Path: /languages
  *
@@ -39,9 +39,9 @@ add_filter(
 	'plugin_action_links_' . plugin_basename( __FILE__ ),
 	static function ( array $links ): array {
 		$custom_links = array(
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filters' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'woo-filters' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'woo-filters' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filter-studio' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'woo-filter-studio' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'woo-filter-studio' ) . '</a>',
 		);
 
 		return array_merge( $custom_links, $links );
@@ -63,7 +63,7 @@ add_action(
 add_action(
 	'plugins_loaded',
 	static function () {
-		load_plugin_textdomain( 'woo-filters', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'woo-filter-studio', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return;

@@ -39,7 +39,7 @@ final class FilterSettings {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'woo-filters_page_wf-filter-settings' !== $hook ) {
+		if ( 'woo-filter-studio_page_wf-filter-settings' !== $hook ) {
 			return;
 		}
 
@@ -69,17 +69,17 @@ final class FilterSettings {
 
 		add_settings_section(
 			'wf_filter_section_main',
-			__( 'Filter Visibility', 'woo-filters' ),
+			__( 'Filter Visibility', 'woo-filter-studio' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
 		);
 
-		$this->register_checkbox_field( 'show_categories', __( 'Show Categories', 'woo-filters' ) );
-		$this->register_checkbox_field( 'show_brands', __( 'Show Brands', 'woo-filters' ) );
-		$this->register_checkbox_field( 'show_price', __( 'Show Price', 'woo-filters' ) );
-		$this->register_checkbox_field( 'show_rating', __( 'Show Customer Rating', 'woo-filters' ) );
-		$this->register_checkbox_field( 'show_availability', __( 'Show Availability', 'woo-filters' ) );
-		$this->register_checkbox_field( 'show_colors', __( 'Show Color', 'woo-filters' ) );
+		$this->register_checkbox_field( 'show_categories', __( 'Show Categories', 'woo-filter-studio' ) );
+		$this->register_checkbox_field( 'show_brands', __( 'Show Brands', 'woo-filter-studio' ) );
+		$this->register_checkbox_field( 'show_price', __( 'Show Price', 'woo-filter-studio' ) );
+		$this->register_checkbox_field( 'show_rating', __( 'Show Customer Rating', 'woo-filter-studio' ) );
+		$this->register_checkbox_field( 'show_availability', __( 'Show Availability', 'woo-filter-studio' ) );
+		$this->register_checkbox_field( 'show_colors', __( 'Show Color', 'woo-filter-studio' ) );
 	}
 
 	/**
@@ -90,8 +90,8 @@ final class FilterSettings {
 	public function register_menu(): void {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
-			__( 'Woo Filters Settings', 'woo-filters' ),
-			__( 'Woo Filters Settings', 'woo-filters' ),
+			__( 'Woo Filter Studio Settings', 'woo-filter-studio' ),
+			__( 'Woo Filter Studio Settings', 'woo-filter-studio' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -116,67 +116,82 @@ final class FilterSettings {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
 				</div>
 				<div>
-					<h1><?php esc_html_e( 'Woo Filters Settings', 'woo-filters' ); ?></h1>
-					<p><?php esc_html_e( 'Configure which filters appear in your shop sidebar', 'woo-filters' ); ?></p>
+					<h1><?php esc_html_e( 'Woo Filter Studio Settings', 'woo-filter-studio' ); ?></h1>
+					<p><?php esc_html_e( 'Configure which filters appear in your shop sidebar', 'woo-filter-studio' ); ?></p>
 				</div>
 			</div>
 
-			<div class="wf-admin-card">
-				<div class="wf-admin-card-header">
-					<h2><?php esc_html_e( 'Filter Visibility', 'woo-filters' ); ?></h2>
-					<p><?php esc_html_e( 'Enable or disable individual filter blocks in the shop sidebar.', 'woo-filters' ); ?></p>
-				</div>
-				<div class="wf-admin-card-body">
-					<form action="options.php" method="post">
-						<?php settings_fields( 'wf_filter_settings' ); ?>
+			<form action="options.php" method="post">
+				<?php settings_fields( 'wf_filter_settings' ); ?>
 
-						<div class="wf-admin-toggle-group" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+				<div class="wf-admin-card">
+					<div class="wf-admin-card-header">
+						<h2><?php esc_html_e( 'Filter Visibility', 'woo-filter-studio' ); ?></h2>
+						<p><?php esc_html_e( 'Enable or disable individual filter blocks in the shop sidebar.', 'woo-filter-studio' ); ?></p>
+					</div>
+					<div class="wf-admin-card-body">
+						<div class="wf-admin-toggle-group wf-admin-toggle-grid">
 							<label class="wf-admin-toggle">
 								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_categories]" value="no" />
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_categories]" value="yes" <?php checked( isset( $options['show_categories'] ) && 'yes' === $options['show_categories'] ); ?> />
-								<span><?php esc_html_e( 'Show Categories', 'woo-filters' ); ?></span>
+								<span><?php esc_html_e( 'Show Categories', 'woo-filter-studio' ); ?></span>
 							</label>
 
 							<label class="wf-admin-toggle">
 								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_brands]" value="no" />
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_brands]" value="yes" <?php checked( isset( $options['show_brands'] ) && 'yes' === $options['show_brands'] ); ?> />
-								<span><?php esc_html_e( 'Show Brands', 'woo-filters' ); ?></span>
+								<span><?php esc_html_e( 'Show Brands', 'woo-filter-studio' ); ?></span>
 							</label>
 
 							<label class="wf-admin-toggle">
 								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_price]" value="no" />
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_price]" value="yes" <?php checked( isset( $options['show_price'] ) && 'yes' === $options['show_price'] ); ?> />
-								<span><?php esc_html_e( 'Show Price Range', 'woo-filters' ); ?></span>
+								<span><?php esc_html_e( 'Show Price Range', 'woo-filter-studio' ); ?></span>
 							</label>
 
 							<label class="wf-admin-toggle">
 								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_rating]" value="no" />
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_rating]" value="yes" <?php checked( isset( $options['show_rating'] ) && 'yes' === $options['show_rating'] ); ?> />
-								<span><?php esc_html_e( 'Show Customer Rating', 'woo-filters' ); ?></span>
+								<span><?php esc_html_e( 'Show Customer Rating', 'woo-filter-studio' ); ?></span>
 							</label>
 
 							<label class="wf-admin-toggle">
 								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_availability]" value="no" />
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_availability]" value="yes" <?php checked( isset( $options['show_availability'] ) && 'yes' === $options['show_availability'] ); ?> />
-								<span><?php esc_html_e( 'Show Availability', 'woo-filters' ); ?></span>
+								<span><?php esc_html_e( 'Show Availability', 'woo-filter-studio' ); ?></span>
 							</label>
 
 							<label class="wf-admin-toggle">
 								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_colors]" value="no" />
 								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_colors]" value="yes" <?php checked( isset( $options['show_colors'] ) && 'yes' === $options['show_colors'] ); ?> />
-								<span><?php esc_html_e( 'Show Color Filter', 'woo-filters' ); ?></span>
+								<span><?php esc_html_e( 'Show Color Filter', 'woo-filter-studio' ); ?></span>
 							</label>
 						</div>
-
-						<div class="wf-admin-submit-wrap">
-							<button type="submit" class="wf-admin-submit">
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-								<?php esc_html_e( 'Save Settings', 'woo-filters' ); ?>
-							</button>
-						</div>
-					</form>
+					</div>
 				</div>
-			</div>
+
+				<div class="wf-admin-card">
+					<div class="wf-admin-card-header">
+						<h2><?php esc_html_e( 'Data Management', 'woo-filter-studio' ); ?></h2>
+						<p><?php esc_html_e( 'Control what happens to Woo Filter Studio data when the plugin is removed.', 'woo-filter-studio' ); ?></p>
+					</div>
+					<div class="wf-admin-card-body">
+						<label class="wf-admin-toggle">
+							<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[delete_data_on_uninstall]" value="no" />
+							<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[delete_data_on_uninstall]" value="yes" <?php checked( isset( $options['delete_data_on_uninstall'] ) && 'yes' === $options['delete_data_on_uninstall'] ); ?> />
+							<span><?php esc_html_e( 'Delete plugin data on uninstall', 'woo-filter-studio' ); ?></span>
+						</label>
+						<p class="wf-admin-help"><?php esc_html_e( 'If enabled, plugin options and analytics data will be removed when Woo Filter Studio is uninstalled.', 'woo-filter-studio' ); ?></p>
+					</div>
+				</div>
+
+				<div class="wf-admin-submit-wrap">
+					<button type="submit" class="wf-admin-submit">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+						<?php esc_html_e( 'Save Settings', 'woo-filter-studio' ); ?>
+					</button>
+				</div>
+			</form>
 		</div>
 		<?php
 	}
@@ -187,7 +202,7 @@ final class FilterSettings {
 	 * @return void
 	 */
 	public function render_section_intro(): void {
-		echo '<p>' . esc_html__( 'Enable or disable individual filter blocks in the shop sidebar.', 'woo-filters' ) . '</p>';
+		echo '<p>' . esc_html__( 'Enable or disable individual filter blocks in the shop sidebar.', 'woo-filter-studio' ) . '</p>';
 	}
 
 	/**
@@ -223,7 +238,7 @@ final class FilterSettings {
 
 		echo '<label>';
 		echo '<input type="checkbox" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="yes" ' . checked( $checked, true, false ) . ' />';
-		echo ' ' . esc_html__( 'Enabled', 'woo-filters' );
+		echo ' ' . esc_html__( 'Enabled', 'woo-filter-studio' );
 		echo '</label>';
 	}
 
@@ -275,6 +290,7 @@ final class FilterSettings {
 			'show_rating'       => 'yes',
 			'show_availability' => 'yes',
 			'show_colors'       => 'yes',
+			'delete_data_on_uninstall' => 'no',
 		);
 	}
 }

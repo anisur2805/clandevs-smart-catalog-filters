@@ -1,4 +1,4 @@
-=== Woo Filters ===
+=== Woo Filter Studio ===
 Contributors: anisur2805
 Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
@@ -13,7 +13,7 @@ Filter WooCommerce products by category, attributes, price, rating, stock, and m
 
 == Description ==
 
-Woo Filters helps shoppers quickly find products using category, brand, color, attribute, price, rating, and availability filters with AJAX-powered updates.
+Woo Filter Studio helps shoppers quickly find products using category, brand, color, attribute, price, rating, and availability filters with AJAX-powered updates.
 
 Core capabilities:
 
@@ -29,17 +29,18 @@ Core capabilities:
 
 == Installation ==
 
-1. Upload the `woo-filters` folder to the `/wp-content/plugins/` directory.
+1. Upload the `woo-filter-studio` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the "Plugins" menu in WordPress.
 3. Ensure WooCommerce is installed and activated.
-4. Configure filter visibility under `WooCommerce > Woo Filters Settings`.
-5. Configure styles under `WooCommerce > Woo Filters Styling`.
+4. Configure filter visibility under `Woo Filter Studio > Settings`.
+5. Configure styles under `Woo Filter Studio > Styling`.
+6. Optional: Enable data deletion on uninstall under the Data Management section.
 
 == Frequently Asked Questions ==
 
 = Does this work without WooCommerce? =
 
-No. Woo Filters requires WooCommerce and only runs when WooCommerce is active.
+No. Woo Filter Studio requires WooCommerce and only runs when WooCommerce is active.
 
 = Can I use the filters on a custom page? =
 
@@ -48,6 +49,10 @@ Yes. Use the shortcode `[woo_filters]` with optional attributes such as `per_pag
 = Is the filtering AJAX-based? =
 
 Yes. Supported interactions update the filter and product sections without full page refresh.
+
+= Does uninstall remove data? =
+
+By default, data is retained. Enable "Delete plugin data on uninstall" in Woo Filter Studio Settings to remove options and analytics on uninstall.
 
 == Changelog ==
 
@@ -66,4 +71,4 @@ Yes. Supported interactions update the filter and product sections without full 
 == Upgrade Notice ==
 
 = 0.1.0 =
-Initial public release of Woo Filters.
+Initial public release of Woo Filter Studio.
