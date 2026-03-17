@@ -41,7 +41,7 @@ final class Plugin {
 	 *
 	 * @var string
 	 */
-	private $version = '0.1.0';
+	private $version = '';
 
 	/**
 	 * Shop filters service.
@@ -86,6 +86,7 @@ final class Plugin {
 	private function __construct( string $plugin_file ) {
 		$this->plugin_file = $plugin_file;
 		$this->plugin_url  = plugin_dir_url( $plugin_file );
+		$this->version     = defined( 'WF_VERSION' ) ? WF_VERSION : '1.0.0';
 	}
 
 	/**

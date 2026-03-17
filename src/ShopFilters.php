@@ -43,7 +43,7 @@ final class ShopFilters {
 	private $plugin_url = '';
 
 	/** @var string */
-	private $asset_version = '0.4.0';
+	private $asset_version = '1.0.0';
 
 	/** @var bool */
 	private $is_shortcode_context = false;
@@ -606,6 +606,10 @@ final class ShopFilters {
 			$excluded_preserved[] = $this->get_attribute_request_key( $attribute_taxonomy );
 		}
 		$this->render_preserved_fields( $excluded_preserved );
+		$nonce = $this->get_filter_request_nonce();
+		if ( '' !== $nonce ) {
+			echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $nonce ) . '" />';
+		}
 		$this->render_active_filters();
 
 		if ( $show_categories ) {
@@ -1236,7 +1240,27 @@ final class ShopFilters {
 	 * @return array
 	 */
 	private function with_security_args( array $args ): array {
+		if ( ! isset( $args['wf_nonce'] ) ) {
+			$nonce = $this->get_filter_request_nonce();
+			if ( '' !== $nonce ) {
+				$args['wf_nonce'] = $nonce;
+			}
+		}
+
 		return $args;
+	}
+
+	/**
+	 * Build a nonce for filter requests.
+	 *
+	 * @return string
+	 */
+	private function get_filter_request_nonce(): string {
+		if ( ! function_exists( 'wp_create_nonce' ) ) {
+			return '';
+		}
+
+		return wp_create_nonce( self::NONCE_ACTION );
 	}
 
 	/**

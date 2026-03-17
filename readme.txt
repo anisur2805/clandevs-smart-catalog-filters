@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 0.1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,7 +44,7 @@ No. Woo Filter Studio requires WooCommerce and only runs when WooCommerce is act
 
 = Can I use the filters on a custom page? =
 
-Yes. Use the shortcode `[woo_filters]` with optional attributes such as `per_page` and `columns`.
+Yes. Use the shortcode `[woo_filters]` with optional attributes such as `per_page`, `columns`, `category`, `show_filters`, and `show_pagination`.
 
 = Is the filtering AJAX-based? =
 
@@ -56,7 +56,7 @@ By default, data is retained. Enable "Delete plugin data on uninstall" in Woo Fi
 
 == Changelog ==
 
-= 0.1.0 =
+= 1.0.0 =
 * Initial public release.
 * Added AJAX product filtering with category, brand, color, attribute, price, rating, and availability filters.
 * Added shortcode support for embedding filters on custom pages.
@@ -68,7 +68,17 @@ By default, data is retained. Enable "Delete plugin data on uninstall" in Woo Fi
 * Improved multi-layout frontend behavior and filter option search scoping.
 * Improved analytics coverage for dynamic attributes and capped value cardinality.
 
+== Screenshots ==
+
+1. Filter-rich shop archive layout with AJAX updates and active filter chips.
+2. Styling controls for colors, spacing, typography, and preset skins.
+3. Analytics dashboard for tracking shopper filter usage.
+
+== Credits ==
+
+Inline admin icons are based on Feather Icons (MIT License).
+
 == Upgrade Notice ==
 
-= 0.1.0 =
+= 1.0.0 =
 Initial public release of Woo Filter Studio.

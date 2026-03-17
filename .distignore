@@ -1,17 +1,23 @@
 # VCS and local metadata
-/.git
-/.gitignore
-/.distignore
-/.DS_Store
-/.idea
-/.vscode
+.git
+.github
+.gitignore
+.distignore
+.DS_Store
+__MACOSX
+.idea
+.vscode
 
-# Development / test files
-/tests
-/phpunit.xml.dist
-/.phpunit.result.cache
+# Build output
+dist
+node_modules
 
-# Composer dev dependencies and metadata
-/vendor
-/composer.json
-/composer.lock
+# Development and test files
+tests
+vendor
+scripts
+phpcs.xml.dist
+phpunit.xml.dist
+.phpunit.result.cache
+composer.json
+composer.lock

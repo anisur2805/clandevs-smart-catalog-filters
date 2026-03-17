@@ -1,10 +1,11 @@
 <?php
 /**
  * Plugin Name: Woo Filter Studio
+ * Plugin URI: https://woo-filter-studio.clandevs.com/
  * Description: Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).
- * Version: 0.1.0
+ * Version: 1.0.0
  * Author: Anisur Rahman
- * Author URI: https://github.com/anisur2805
+ * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
  * Tested up to: 6.8
  * Requires PHP: 7.4
@@ -28,7 +29,7 @@ if ( ! defined( 'WF_PLUGIN_URL' ) ) {
 }
 
 if ( ! defined( 'WF_VERSION' ) ) {
-	define( 'WF_VERSION', '0.1.0' );
+	define( 'WF_VERSION', '1.0.0' );
 }
 
 require_once __DIR__ . '/src/Autoloader.php';
@@ -66,6 +67,15 @@ add_action(
 		load_plugin_textdomain( 'woo-filter-studio', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 		if ( ! class_exists( 'WooCommerce' ) ) {
+			add_action(
+				'admin_notices',
+				static function () {
+					if ( ! current_user_can( 'activate_plugins' ) ) {
+						return;
+					}
+					echo '<div class="notice notice-error"><p>' . esc_html__( 'Woo Filter Studio requires WooCommerce to be installed and active.', 'woo-filter-studio' ) . '</p></div>';
+				}
+			);
 			return;
 		}
 
