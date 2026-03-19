@@ -184,6 +184,8 @@ final class StyleSettings {
 				</div>
 			</div>
 
+			<?php settings_errors( self::OPTION_KEY ); ?>
+
 			<?php
 			if ( get_transient( 'wf_styles_reset_notice' ) ) :
 				delete_transient( 'wf_styles_reset_notice' );
@@ -487,29 +489,26 @@ final class StyleSettings {
 							</tr>
 						</table>
 
-						<div class="wf-admin-submit-wrap">
+						<?php
+						$reset_url = wp_nonce_url(
+							add_query_arg(
+								array( 'action' => self::RESET_ACTION ),
+								admin_url( 'admin-post.php' )
+							),
+							self::RESET_ACTION
+						);
+						?>
+						<div class="wf-admin-submit-wrap" style="display: flex; align-items: center; gap: 16px;">
 							<button type="submit" class="wf-admin-submit">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
 								<?php esc_html_e( 'Save Styles', 'woo-filter-studio' ); ?>
 							</button>
+							<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'woo-filter-studio' ); ?>">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+								<?php esc_html_e( 'Reset to Defaults', 'woo-filter-studio' ); ?>
+							</a>
 						</div>
 					</form>
-
-					<?php
-					$reset_url = wp_nonce_url(
-						add_query_arg(
-							array( 'action' => self::RESET_ACTION ),
-							admin_url( 'admin-post.php' )
-						),
-						self::RESET_ACTION
-					);
-					?>
-					<div class="wf-admin-submit-wrap" style="margin-top: 0;">
-						<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'woo-filter-studio' ); ?>">
-							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-							<?php esc_html_e( 'Reset to Defaults', 'woo-filter-studio' ); ?>
-						</a>
-					</div>
 				</div>
 			</div>
 		</div>
