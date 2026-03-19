@@ -9,7 +9,8 @@ __MACOSX
 .vscode
 
 # Build output
-dist
+/dist
+/_dist
 node_modules
 
 # Development and test files
@@ -21,3 +22,4 @@ phpunit.xml.dist
 .phpunit.result.cache
 composer.json
 composer.lock
+.editorconfig
