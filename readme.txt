@@ -44,7 +44,7 @@ No. Woo Filter Studio requires WooCommerce and only runs when WooCommerce is act
 
 = Can I use the filters on a custom page? =
 
-Yes. Use the shortcode `[woo_filters]` with optional attributes such as `per_page`, `columns`, `category`, `show_filters`, and `show_pagination`.
+Yes. Use the shortcode `[woo_filters]` in a standard WordPress page or post content area, with optional attributes such as `per_page`, `columns`, `category`, `show_filters`, and `show_pagination`. The plugin will load its WooCommerce frontend assets for shortcode pages automatically.
 
 = Is the filtering AJAX-based? =
 

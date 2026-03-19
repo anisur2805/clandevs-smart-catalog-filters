@@ -481,7 +481,7 @@ body.wf-no-scroll {
 
 .wf-rating input[type="radio"]:checked + .wf-rating-stars + .wf-rating-text,
 .wf-rating input[type="radio"]:checked ~ .wf-rating-text {
-  color: var(--wf-text-color);
+  color: inherit;
   font-weight: 500;
 }
 
@@ -828,6 +828,21 @@ body.wf-no-scroll {
   background: var(--wf-accent);
   color: var(--wf-button-text);
   font-weight: 500;
+}
+
+.wf-shop-layout.wf-skin-graphite {
+  --wf-accent: #22c1d6;
+  --wf-sidebar-bg: #1f2937;
+  --wf-sidebar-border: #374151;
+  --wf-heading-color: #f9fafb;
+  --wf-text-color: #e5e7eb;
+  --wf-muted-text: #9ca3af;
+  --wf-chip-bg: #374151;
+  --wf-chip-border: #4b5563;
+  --wf-button-bg: #4b5563;
+  --wf-button-text: #ffffff;
+  --wf-input-bg: #374151;
+  --wf-control-border: #4b5563;
 }
 
 .wf-shop-layout.wf-skin-graphite .wf-sidebar {
