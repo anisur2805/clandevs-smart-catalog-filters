@@ -121,7 +121,7 @@ final class FilterSettings {
 				</div>
 			</div>
 
-			<?php settings_errors( self::OPTION_KEY ); ?>
+			<?php settings_errors(); ?>
 
 			<form action="options.php" method="post">
 				<?php settings_fields( 'wf_filter_settings' ); ?>

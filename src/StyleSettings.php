@@ -184,7 +184,7 @@ final class StyleSettings {
 				</div>
 			</div>
 
-			<?php settings_errors( self::OPTION_KEY ); ?>
+			<?php settings_errors(); ?>
 
 			<?php
 			if ( get_transient( 'wf_styles_reset_notice' ) ) :
