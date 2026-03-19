@@ -121,7 +121,16 @@ final class FilterSettings {
 				</div>
 			</div>
 
-			<?php settings_errors(); ?>
+			<?php if ( isset( $_GET['settings-updated'] ) && 'true' === $_GET['settings-updated'] ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<div class="wf-admin-card wf-admin-success-card">
+					<div class="wf-admin-card-body wf-admin-card-body-compact">
+						<p class="wf-admin-success-text">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+							<?php esc_html_e( 'Filter settings saved.', 'woo-filter-studio' ); ?>
+						</p>
+					</div>
+				</div>
+			<?php endif; ?>
 
 			<form action="options.php" method="post">
 				<?php settings_fields( 'wf_filter_settings' ); ?>
