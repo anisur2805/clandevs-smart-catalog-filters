@@ -15,9 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles WooCommerce archive filters and UI rendering.
  */
 final class ShopFilters {
-	/** @var string */
-	private const NONCE_ACTION = 'wf_filter_request';
-
 	/** @var int */
 	private const MAX_PER_PAGE = 9999;
 
@@ -57,6 +54,9 @@ final class ShopFilters {
 	/** @var bool */
 	private $assets_enqueued = false;
 
+	/** @var bool|null */
+	private $has_shortcode_page_context = null;
+
 	/**
 	 * Constructor.
 	 *
@@ -77,6 +77,7 @@ final class ShopFilters {
 		add_action( 'init', array( $this, 'bootstrap_taxonomies' ), 20 );
 		add_shortcode( 'woo_filters', array( $this, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_filter( 'body_class', array( $this, 'filter_body_classes' ) );
 		add_action( 'pre_get_posts', array( $this, 'apply_filters_to_main_query' ) );
 		add_action( 'save_post_product', array( $this, 'invalidate_filter_cache' ), 10, 3 );
 		add_action( 'deleted_post', array( $this, 'invalidate_filter_cache' ), 10, 2 );
@@ -139,11 +140,30 @@ final class ShopFilters {
 	 * @return void
 	 */
 	public function enqueue_assets(): void {
-		if ( ! $this->is_shop_archive() ) {
+		if ( ! $this->is_shop_archive() && ! $this->has_shortcode_page_context() ) {
 			return;
 		}
 
+		$this->enqueue_woocommerce_frontend_assets();
 		$this->enqueue_frontend_assets();
+	}
+
+	/**
+	 * Add WooCommerce body classes when shortcode renders on a normal page.
+	 *
+	 * @param array $classes Existing body classes.
+	 * @return array
+	 */
+	public function filter_body_classes( array $classes ): array {
+		if ( ! $this->has_shortcode_page_context() ) {
+			return $classes;
+		}
+
+		$classes[] = 'woocommerce';
+		$classes[] = 'woocommerce-page';
+		$classes[] = 'wf-shortcode-page';
+
+		return array_values( array_unique( $classes ) );
 	}
 
 	/**
@@ -156,10 +176,12 @@ final class ShopFilters {
 			return;
 		}
 
+		$style_dependencies = wp_style_is( 'woocommerce-general', 'registered' ) ? array( 'woocommerce-general' ) : array();
+
 		wp_enqueue_style(
 			'wf-shop-filters',
 			$this->plugin_url . 'assets/css/wf-shop.css',
-			array(),
+			$style_dependencies,
 			$this->asset_version
 		);
 		$this->enqueue_inline_styles();
@@ -173,6 +195,27 @@ final class ShopFilters {
 		);
 
 		$this->assets_enqueued = true;
+	}
+
+	/**
+	 * Ensure WooCommerce frontend styles/scripts are available for shortcode pages.
+	 *
+	 * @return void
+	 */
+	private function enqueue_woocommerce_frontend_assets(): void {
+		if ( $this->is_shop_archive() ) {
+			return;
+		}
+
+		if ( ! $this->has_shortcode_page_context() ) {
+			return;
+		}
+
+		if ( ! class_exists( '\WC_Frontend_Scripts' ) ) {
+			return;
+		}
+
+		\WC_Frontend_Scripts::load_scripts();
 	}
 
 	/**
@@ -268,7 +311,7 @@ final class ShopFilters {
 			return $per_page;
 		}
 
-		if ( ! $this->is_valid_filter_request() ) {
+		if ( ! $this->has_filter_query_args() ) {
 			return $per_page;
 		}
 
@@ -295,7 +338,7 @@ final class ShopFilters {
 			return;
 		}
 
-		if ( ! $this->is_valid_filter_request() ) {
+		if ( ! $this->has_filter_query_args() ) {
 			return;
 		}
 
@@ -324,6 +367,7 @@ final class ShopFilters {
 	 * @return string
 	 */
 	public function render_shortcode( array $atts = array() ): string {
+		$this->enqueue_woocommerce_frontend_assets();
 		$this->enqueue_frontend_assets();
 
 		$atts = shortcode_atts(
@@ -361,9 +405,10 @@ final class ShopFilters {
 		$this->is_shortcode_context = true;
 		$this->shortcode_action_url = get_permalink();
 		$skin_class                 = $this->get_layout_skin_class();
+		$this->setup_shortcode_loop( $query, $columns, $per_page );
 
 		ob_start();
-		$layout_class = 'wf-shop-layout alignwide wf-shortcode-layout ' . $skin_class;
+		$layout_class = 'woocommerce wf-shop-layout alignwide wf-shortcode-layout ' . $skin_class;
 		if ( ! $show_filters ) {
 			$layout_class .= ' wf-shortcode-no-sidebar';
 		}
@@ -397,10 +442,52 @@ final class ShopFilters {
 		echo '</div>';
 
 		wp_reset_postdata();
+		$this->reset_shortcode_loop();
 		$this->is_shortcode_context = false;
 		$this->shortcode_action_url = '';
 
 		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Initialize WooCommerce loop state for shortcode rendering.
+	 *
+	 * @param \WP_Query $query    Product query.
+	 * @param int       $columns  Requested grid columns.
+	 * @param int       $per_page Products per page.
+	 * @return void
+	 */
+	private function setup_shortcode_loop( \WP_Query $query, int $columns, int $per_page ): void {
+		if ( function_exists( 'wc_setup_loop' ) ) {
+			wc_setup_loop(
+				array(
+					'name'         => 'wf_shortcode',
+					'is_shortcode' => true,
+					'is_paginated' => $query->max_num_pages > 1,
+					'total'        => (int) $query->found_posts,
+					'total_pages'  => (int) $query->max_num_pages,
+					'per_page'     => $per_page,
+					'current_page' => max( 1, (int) $query->get( 'paged' ) ),
+					'columns'      => $columns,
+				)
+			);
+			return;
+		}
+
+		if ( function_exists( 'wc_set_loop_prop' ) ) {
+			wc_set_loop_prop( 'columns', $columns );
+		}
+	}
+
+	/**
+	 * Reset WooCommerce loop state after shortcode rendering.
+	 *
+	 * @return void
+	 */
+	private function reset_shortcode_loop(): void {
+		if ( function_exists( 'wc_reset_loop' ) ) {
+			wc_reset_loop();
+		}
 	}
 
 	/**
@@ -606,10 +693,6 @@ final class ShopFilters {
 			$excluded_preserved[] = $this->get_attribute_request_key( $attribute_taxonomy );
 		}
 		$this->render_preserved_fields( $excluded_preserved );
-		$nonce = $this->get_filter_request_nonce();
-		if ( '' !== $nonce ) {
-			echo '<input type="hidden" name="wf_nonce" value="' . esc_attr( $nonce ) . '" />';
-		}
 		$this->render_active_filters();
 
 		if ( $show_categories ) {
@@ -823,7 +906,7 @@ final class ShopFilters {
 	 */
 	private function render_categories( string $list_suffix = '' ): void {
 		$selected              = $this->get_request_slug( 'wf_cat' );
-		$use_contextual_counts = $this->has_filter_query_args() && $this->is_valid_filter_request();
+		$use_contextual_counts = $this->has_filter_query_args();
 		$terms                 = $this->get_terms_cached(
 			array(
 				'taxonomy'   => 'product_cat',
@@ -865,7 +948,7 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false, string $list_suffix = '' ): void {
-		$use_contextual_counts = $this->has_filter_query_args() && $this->is_valid_filter_request();
+		$use_contextual_counts = $this->has_filter_query_args();
 		$terms                 = $this->get_terms_cached(
 			array(
 				'taxonomy'   => $taxonomy,
@@ -954,7 +1037,7 @@ final class ShopFilters {
 		unset( $args['paged'], $args['product-page'] );
 		$args['wf_per_page'] = 0 === $value ? self::MAX_PER_PAGE : $value;
 
-		$args = $this->with_security_args( $args );
+		$args = $args;
 
 		return add_query_arg( $args, $this->get_archive_url() );
 	}
@@ -981,7 +1064,7 @@ final class ShopFilters {
 			$forced_taxonomy = $forced_category;
 		}
 
-		if ( ! $this->is_valid_filter_request() ) {
+		if ( ! $this->has_filter_query_args() ) {
 			if ( '' !== $forced_taxonomy ) {
 				$query_args['tax_query'] = $this->merge_query_clauses(
 					array(),
@@ -1059,7 +1142,7 @@ final class ShopFilters {
 
 		$current_url = $this->get_archive_url();
 		$page_base   = remove_query_arg( array( 'paged', 'product-page' ), $current_url );
-		$base_args   = $this->with_security_args( array() );
+		$base_args   = array();
 
 		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'woo-filter-studio' ) . '">';
 		echo wp_kses_post(
@@ -1131,12 +1214,12 @@ final class ShopFilters {
 		unset( $args['paged'], $args['product-page'] );
 
 		if ( ! isset( $args[ $key ] ) ) {
-			return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
+			return add_query_arg( $args, $this->get_archive_url() );
 		}
 
 		if ( '' === $value_to_remove || ! is_array( $args[ $key ] ) ) {
 			unset( $args[ $key ] );
-			return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
+			return add_query_arg( $args, $this->get_archive_url() );
 		}
 
 		$remaining = array_values(
@@ -1154,7 +1237,7 @@ final class ShopFilters {
 			$args[ $key ] = $remaining;
 		}
 
-		return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
+		return add_query_arg( $args, $this->get_archive_url() );
 	}
 
 	/**
@@ -1181,7 +1264,7 @@ final class ShopFilters {
 			unset( $args[ $this->get_attribute_request_key( $attribute_taxonomy ) ] );
 		}
 
-		return add_query_arg( $this->with_security_args( $args ), $this->get_archive_url() );
+		return add_query_arg( $args, $this->get_archive_url() );
 	}
 
 	/**
@@ -1231,36 +1314,6 @@ final class ShopFilters {
 		}
 
 		return $args;
-	}
-
-	/**
-	 * Normalize generated query args.
-	 *
-	 * @param array $args Existing args.
-	 * @return array
-	 */
-	private function with_security_args( array $args ): array {
-		if ( ! isset( $args['wf_nonce'] ) ) {
-			$nonce = $this->get_filter_request_nonce();
-			if ( '' !== $nonce ) {
-				$args['wf_nonce'] = $nonce;
-			}
-		}
-
-		return $args;
-	}
-
-	/**
-	 * Build a nonce for filter requests.
-	 *
-	 * @return string
-	 */
-	private function get_filter_request_nonce(): string {
-		if ( ! function_exists( 'wp_create_nonce' ) ) {
-			return '';
-		}
-
-		return wp_create_nonce( self::NONCE_ACTION );
 	}
 
 	/**
@@ -1474,20 +1527,34 @@ final class ShopFilters {
 		if ( ! isset( $excluded['rating_filter'] ) && isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] ) {
 			$rating = $this->get_request_absint( 'rating_filter' );
 			if ( $rating > 0 && $rating <= 5 ) {
-				$meta_clauses[] = array(
-					'key'     => '_wc_average_rating',
-					'value'   => (float) $rating,
-					'compare' => '>=',
-					'type'    => 'DECIMAL(10,2)',
+				add_filter(
+					'posts_where',
+					function ( string $where ) use ( $rating ): string {
+						global $wpdb;
+						$where .= $wpdb->prepare(
+							" AND {$wpdb->posts}.ID IN (
+								SELECT product_id FROM {$wpdb->prefix}wc_product_meta_lookup
+								WHERE average_rating >= %f
+							)",
+							(float) $rating
+						);
+						return $where;
+					}
 				);
 			}
 		}
 
 		if ( ! isset( $excluded['wf_in_stock'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
-			$meta_clauses[] = array(
-				'key'     => '_stock_status',
-				'value'   => 'instock',
-				'compare' => '=',
+			add_filter(
+				'posts_where',
+				function ( string $where ): string {
+					global $wpdb;
+					$where .= " AND {$wpdb->posts}.ID IN (
+						SELECT product_id FROM {$wpdb->prefix}wc_product_meta_lookup
+						WHERE stock_status = 'instock'
+					)";
+					return $where;
+				}
 			);
 		}
 
@@ -1896,34 +1963,6 @@ final class ShopFilters {
 	}
 
 	/**
-	 * Validate filter request payload.
-	 *
-	 * @return bool
-	 */
-	private function is_valid_filter_request(): bool {
-		if ( ! $this->has_filter_query_args() ) {
-			return true;
-		}
-
-		if ( ! isset( $_GET['wf_nonce'] ) ) {
-			return true;
-		}
-
-		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
-		if ( '' === $nonce ) {
-			return true;
-		}
-
-		$verified = wp_verify_nonce( $nonce, self::NONCE_ACTION );
-		if ( 1 === $verified || 2 === $verified ) {
-			return true;
-		}
-
-		// Filtering is read-only; stale or missing nonce should not break shareable URLs.
-		return true;
-	}
-
-	/**
 	 * Determine whether current request includes filter-bearing query args.
 	 *
 	 * @return bool
@@ -1966,6 +2005,36 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Determine whether the current singular page contains the shortcode.
+	 *
+	 * @return bool
+	 */
+	private function has_shortcode_page_context(): bool {
+		if ( null !== $this->has_shortcode_page_context ) {
+			return $this->has_shortcode_page_context;
+		}
+
+		$this->has_shortcode_page_context = false;
+
+		if ( is_admin() || ! is_singular() ) {
+			return $this->has_shortcode_page_context;
+		}
+
+		$post = get_post( get_queried_object_id() );
+		if ( ! $post instanceof \WP_Post ) {
+			return $this->has_shortcode_page_context;
+		}
+
+		if ( ! is_string( $post->post_content ) || '' === $post->post_content ) {
+			return $this->has_shortcode_page_context;
+		}
+
+		$this->has_shortcode_page_context = has_shortcode( $post->post_content, 'woo_filters' );
+
+		return $this->has_shortcode_page_context;
+	}
+
+	/**
 	 * Determine whether query is a product archive query.
 	 *
 	 * @param \WP_Query $query Query object.
@@ -2005,21 +2074,15 @@ final class ShopFilters {
 
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- result is cached by the caller.
 		$row = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT
-					MIN(CAST(pm.meta_value AS DECIMAL(20, 4))) AS min_price,
-					MAX(CAST(pm.meta_value AS DECIMAL(20, 4))) AS max_price
-				FROM {$wpdb->posts} AS p
-				INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
-				WHERE pm.meta_key = %s
-					AND pm.meta_value <> ''
-					AND p.post_type = %s
-					AND p.post_status = %s",
-				'_price',
-				'product',
-				'publish'
-			),
+			"SELECT
+				MIN(lookup.min_price) AS min_price,
+				MAX(lookup.max_price) AS max_price
+			FROM {$wpdb->prefix}wc_product_meta_lookup AS lookup
+			INNER JOIN {$wpdb->posts} AS p ON p.ID = lookup.product_id
+			WHERE p.post_type = 'product'
+				AND p.post_status = 'publish'",
 			ARRAY_A
 		);
 

@@ -102,6 +102,26 @@ if (!function_exists('wc_get_product_ids_on_sale')) {
     }
 }
 
+if (!function_exists('wp_strip_all_tags')) {
+    function wp_strip_all_tags(string $value, bool $remove_breaks = false): string {
+        $value = strip_tags($value);
+        if ($remove_breaks) {
+            $value = preg_replace('/[\r\n\t ]+/', ' ', $value);
+        }
+        return trim($value);
+    }
+}
+
+if (!function_exists('sanitize_hex_color')) {
+    function sanitize_hex_color(string $color): ?string {
+        if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
+            return $color;
+        }
+        return null;
+    }
+}
+
 require_once dirname(__DIR__) . '/src/FilterSettings.php';
+require_once dirname(__DIR__) . '/src/StyleSettings.php';
 require_once dirname(__DIR__) . '/src/ShopFilters.php';
 require_once dirname(__DIR__) . '/src/Analytics.php';

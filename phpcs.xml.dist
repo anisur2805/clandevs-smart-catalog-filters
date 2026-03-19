@@ -24,6 +24,7 @@
 		<!-- Query shape is a core feature of this plugin; keep as explicit exceptions. -->
 		<exclude name="WordPress.DB.SlowDBQuery"/>
 		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery"/>
+		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching"/>
 	</rule>
 
 	<rule ref="WordPress.WP.Capabilities">

@@ -47,14 +47,6 @@ final class AnalyticsRequestTest extends TestCase {
 		self::assertSame( 'Attribute: Size', $label );
 	}
 
-	public function test_nonce_validation_allows_missing_nonce_for_filter_urls(): void {
-		$_GET['wf_brand'] = array( 'apple' );
-
-		$is_valid = $this->invokePrivate( 'is_filter_request_nonce_valid' );
-
-		self::assertTrue( $is_valid );
-	}
-
 	/**
 	 * @param string $method
 	 * @param mixed  ...$args

@@ -37,6 +37,7 @@ final class Analytics {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_post_' . self::RESET_ACTION, array( $this, 'handle_reset_request' ) );
+		add_action( 'wf_flush_analytics_buffer', array( $this, 'flush_analytics_buffer' ) );
 	}
 
 	/**
@@ -102,10 +103,6 @@ final class Analytics {
 			return;
 		}
 
-		if ( ! $this->is_filter_request_nonce_valid() ) {
-			return;
-		}
-
 		$this->persist_filter_event( $filters );
 	}
 
@@ -123,11 +120,12 @@ final class Analytics {
 
 		delete_option( self::OPTION_KEY );
 
+		set_transient( 'wf_analytics_reset_notice', '1', 30 );
+
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'    => self::PAGE_SLUG,
-					'updated' => '1',
+					'page' => self::PAGE_SLUG,
 				),
 				admin_url( 'admin.php' )
 			)
@@ -163,7 +161,10 @@ final class Analytics {
 				</div>
 			</div>
 
-			<?php if ( isset( $_GET['updated'] ) && '1' === sanitize_key( wp_unslash( (string) $_GET['updated'] ) ) ) : ?>
+				<?php
+				if ( get_transient( 'wf_analytics_reset_notice' ) ) :
+					delete_transient( 'wf_analytics_reset_notice' );
+					?>
 				<div class="wf-admin-card wf-admin-success-card">
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
@@ -172,7 +173,7 @@ final class Analytics {
 						</p>
 					</div>
 				</div>
-			<?php endif; ?>
+				<?php endif; ?>
 
 			<div class="wf-admin-stats-grid">
 				<div class="wf-admin-stat-card">
@@ -254,34 +255,6 @@ final class Analytics {
 	 */
 	private function is_product_archive_query( \WP_Query $query ): bool {
 		return (bool) ( $query->is_post_type_archive( 'product' ) || $query->is_tax( get_object_taxonomies( 'product' ) ) );
-	}
-
-	/**
-	 * Determine whether current filter request carries a valid nonce.
-	 *
-	 * @return bool
-	 */
-	private function is_filter_request_nonce_valid(): bool {
-		if ( ! $this->has_filter_parameters() ) {
-			return true;
-		}
-
-		if ( ! isset( $_GET['wf_nonce'] ) ) {
-			return true;
-		}
-
-		$nonce = sanitize_text_field( wp_unslash( (string) $_GET['wf_nonce'] ) );
-		if ( '' === $nonce ) {
-			return true;
-		}
-
-		$verified = wp_verify_nonce( $nonce, 'wf_filter_request' );
-		if ( 1 === $verified || 2 === $verified ) {
-			return true;
-		}
-
-		// Analytics should continue for shareable URLs even when nonce is stale.
-		return true;
 	}
 
 	/**
@@ -400,43 +373,92 @@ final class Analytics {
 	}
 
 	/**
-	 * Persist one filter event.
+	 * Persist one filter event using a transient buffer to reduce DB writes.
+	 *
+	 * Events are batched into a transient and flushed to the main option
+	 * once the buffer reaches a threshold or on a scheduled flush.
 	 *
 	 * @param array $filters Filter payload.
 	 * @return void
 	 */
 	private function persist_filter_event( array $filters ): void {
-		$stats                   = $this->get_stats();
-		$stats['total_events']   = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
-		$stats['last_event_gmt'] = gmdate( 'Y-m-d H:i:s' );
-
-		if ( ! isset( $stats['filters'] ) || ! is_array( $stats['filters'] ) ) {
-			$stats['filters'] = array();
+		$buffer_key = 'wf_analytics_buffer';
+		$buffer     = get_transient( $buffer_key );
+		if ( ! is_array( $buffer ) ) {
+			$buffer = array();
 		}
 
-		foreach ( $filters as $type => $values ) {
-			$type_key = sanitize_key( (string) $type );
-			if ( '' === $type_key ) {
+		$buffer[] = array(
+			'filters'   => $filters,
+			'timestamp' => gmdate( 'Y-m-d H:i:s' ),
+		);
+
+		if ( count( $buffer ) >= 10 ) {
+			$this->flush_analytics_buffer( $buffer );
+			delete_transient( $buffer_key );
+		} else {
+			set_transient( $buffer_key, $buffer, 300 );
+
+			if ( ! wp_next_scheduled( 'wf_flush_analytics_buffer' ) ) {
+				wp_schedule_single_event( time() + 60, 'wf_flush_analytics_buffer' );
+			}
+		}
+	}
+
+	/**
+	 * Flush buffered analytics events into the main option.
+	 *
+	 * @param array|null $buffer Events to flush. If null, reads from transient.
+	 * @return void
+	 */
+	public function flush_analytics_buffer( ?array $buffer = null ): void {
+		$buffer_key = 'wf_analytics_buffer';
+		if ( null === $buffer ) {
+			$buffer = get_transient( $buffer_key );
+			if ( ! is_array( $buffer ) || empty( $buffer ) ) {
+				return;
+			}
+			delete_transient( $buffer_key );
+		}
+
+		$stats = $this->get_stats();
+
+		foreach ( $buffer as $event ) {
+			if ( ! isset( $event['filters'] ) || ! is_array( $event['filters'] ) ) {
 				continue;
 			}
 
-			if ( ! isset( $stats['filters'][ $type_key ] ) || ! is_array( $stats['filters'][ $type_key ] ) ) {
-				$stats['filters'][ $type_key ] = array();
+			$stats['total_events']   = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
+			$stats['last_event_gmt'] = isset( $event['timestamp'] ) ? (string) $event['timestamp'] : gmdate( 'Y-m-d H:i:s' );
+
+			if ( ! isset( $stats['filters'] ) || ! is_array( $stats['filters'] ) ) {
+				$stats['filters'] = array();
 			}
 
-			foreach ( $values as $value ) {
-				$value_key = sanitize_title( (string) $value );
-				if ( '' === $value_key ) {
+			foreach ( $event['filters'] as $type => $values ) {
+				$type_key = sanitize_key( (string) $type );
+				if ( '' === $type_key ) {
 					continue;
 				}
 
-				$current_count                               = isset( $stats['filters'][ $type_key ][ $value_key ] ) ? absint( $stats['filters'][ $type_key ][ $value_key ] ) : 0;
-				$stats['filters'][ $type_key ][ $value_key ] = $current_count + 1;
-			}
+				if ( ! isset( $stats['filters'][ $type_key ] ) || ! is_array( $stats['filters'][ $type_key ] ) ) {
+					$stats['filters'][ $type_key ] = array();
+				}
 
-			if ( count( $stats['filters'][ $type_key ] ) > self::MAX_DISTINCT_VALUES_PER_TYPE ) {
-				arsort( $stats['filters'][ $type_key ] );
-				$stats['filters'][ $type_key ] = array_slice( $stats['filters'][ $type_key ], 0, self::MAX_DISTINCT_VALUES_PER_TYPE, true );
+				foreach ( $values as $value ) {
+					$value_key = sanitize_title( (string) $value );
+					if ( '' === $value_key ) {
+						continue;
+					}
+
+					$current_count                               = isset( $stats['filters'][ $type_key ][ $value_key ] ) ? absint( $stats['filters'][ $type_key ][ $value_key ] ) : 0;
+					$stats['filters'][ $type_key ][ $value_key ] = $current_count + 1;
+				}
+
+				if ( count( $stats['filters'][ $type_key ] ) > self::MAX_DISTINCT_VALUES_PER_TYPE ) {
+					arsort( $stats['filters'][ $type_key ] );
+					$stats['filters'][ $type_key ] = array_slice( $stats['filters'][ $type_key ], 0, self::MAX_DISTINCT_VALUES_PER_TYPE, true );
+				}
 			}
 		}
 

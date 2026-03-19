@@ -661,7 +661,7 @@ final class StyleSettings {
 
 		$font_family = isset( $raw['font_family'] ) ? sanitize_text_field( wp_unslash( (string) $raw['font_family'] ) ) : '';
 		if ( '' !== $font_family ) {
-			$safe_font = preg_replace( '/[^a-zA-Z0-9,\-\'\"\s]/', '', $font_family );
+			$safe_font = preg_replace( '/[^a-zA-Z0-9,\-\s]/', '', $font_family );
 			if ( is_string( $safe_font ) && '' !== $safe_font ) {
 				$sanitized['font_family'] = $safe_font;
 			}
@@ -684,7 +684,8 @@ final class StyleSettings {
 			}
 		}
 
-		$custom_css = isset( $raw['custom_css'] ) ? sanitize_textarea_field( wp_unslash( (string) $raw['custom_css'] ) ) : '';
+		$custom_css = isset( $raw['custom_css'] ) ? wp_unslash( (string) $raw['custom_css'] ) : '';
+		$custom_css = wp_strip_all_tags( $custom_css );
 		if ( '' !== $custom_css ) {
 			$sanitized['custom_css'] = $custom_css;
 		}
