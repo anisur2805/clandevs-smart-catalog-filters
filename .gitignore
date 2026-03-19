@@ -9,6 +9,8 @@ vendor/
 node_modules/
 
 # Build / test artifacts
+dist/
+_dist/
 .phpunit.result.cache
 coverage/
 

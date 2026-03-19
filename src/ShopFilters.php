@@ -1143,13 +1143,12 @@ final class ShopFilters {
 
 		$current_url = $this->get_archive_url();
 		$page_base   = remove_query_arg( array( 'paged', 'product-page' ), $current_url );
-		$base_args   = array();
 
 		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'woo-filter-studio' ) . '">';
 		echo wp_kses_post(
 			paginate_links(
 				array(
-					'base'      => esc_url_raw( add_query_arg( array_merge( $base_args, array( 'paged' => '%#%' ) ), $page_base ) ),
+					'base'      => esc_url_raw( add_query_arg( array( 'paged' => '%#%' ), $page_base ) ),
 					'format'    => '',
 					'current'   => max( 1, $query->get( 'paged' ) ),
 					'total'     => max( 1, (int) $query->max_num_pages ),
@@ -1545,7 +1544,11 @@ final class ShopFilters {
 		}
 
 		if ( ! isset( $excluded['wf_on_sale'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
-			$post_in = $this->get_on_sale_product_ids();
+			$sale_ids = $this->get_on_sale_product_ids();
+			$post_in  = empty( $post_in ) ? $sale_ids : array_intersect( $post_in, $sale_ids );
+			if ( empty( $post_in ) ) {
+				$post_in = array( 0 );
+			}
 		}
 
 		return array(
@@ -2121,13 +2124,17 @@ final class ShopFilters {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- result is cached by the caller.
 		$row = $wpdb->get_row(
-			"SELECT
-				MIN(lookup.min_price) AS min_price,
-				MAX(lookup.max_price) AS max_price
-			FROM {$wpdb->prefix}wc_product_meta_lookup AS lookup
-			INNER JOIN {$wpdb->posts} AS p ON p.ID = lookup.product_id
-			WHERE p.post_type = 'product'
-				AND p.post_status = 'publish'",
+			$wpdb->prepare(
+				"SELECT
+					MIN(lookup.min_price) AS min_price,
+					MAX(lookup.max_price) AS max_price
+				FROM {$wpdb->prefix}wc_product_meta_lookup AS lookup
+				INNER JOIN {$wpdb->posts} AS p ON p.ID = lookup.product_id
+				WHERE p.post_type = %s
+					AND p.post_status = %s",
+				'product',
+				'publish'
+			),
 			ARRAY_A
 		);
 

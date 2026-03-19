@@ -9,21 +9,21 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-17T17:07:20+00:00\n"
+"POT-Creation-Date: 2026-03-19T17:50:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: woo-filter-studio\n"
 
 #. Plugin Name of the plugin
 #: woo-filter-studio.php
-#: src/AdminMenu.php:47
 #: src/AdminMenu.php:48
+#: src/AdminMenu.php:49
 msgid "Woo Filter Studio"
 msgstr ""
 
 #. Plugin URI of the plugin
 #: woo-filter-studio.php
-msgid "https://zone7.co/woo-filter-studio"
+msgid "https://woo-filter-studio.clandevs.com/"
 msgstr ""
 
 #. Description of the plugin
@@ -38,149 +38,149 @@ msgstr ""
 
 #. Author URI of the plugin
 #: woo-filter-studio.php
-msgid "https://zone7.co"
+msgid "https://portfolio.clandevs.com"
 msgstr ""
 
-#: src/Analytics.php:77
 #: src/Analytics.php:78
-#: src/Analytics.php:161
+#: src/Analytics.php:79
+#: src/Analytics.php:159
 msgid "Woo Filter Studio Analytics"
 msgstr ""
 
-#: src/Analytics.php:119
+#: src/Analytics.php:116
 msgid "You are not allowed to manage Woo Filter Studio analytics."
 msgstr ""
 
-#: src/Analytics.php:162
+#: src/Analytics.php:160
 msgid "Track how customers use filters on your shop"
 msgstr ""
 
-#: src/Analytics.php:171
+#: src/Analytics.php:172
 msgid "Analytics data has been reset."
 msgstr ""
 
-#: src/Analytics.php:179
+#: src/Analytics.php:180
 msgid "Total Filter Events"
 msgstr ""
 
-#: src/Analytics.php:183
+#: src/Analytics.php:184
 msgid "Distinct Filter Values"
 msgstr ""
 
-#: src/Analytics.php:187
+#: src/Analytics.php:188
 msgid "Last Event"
 msgstr ""
 
-#: src/Analytics.php:194
+#: src/Analytics.php:195
 msgid "Top Used Filters"
 msgstr ""
 
-#: src/Analytics.php:195
+#: src/Analytics.php:196
 msgid "Usage data updates when customers apply filters on the shop archive."
 msgstr ""
 
-#: src/Analytics.php:203
+#: src/Analytics.php:204
 msgid "No analytics data yet. Filter usage will appear here once customers start using the filters."
 msgstr ""
 
-#: src/Analytics.php:209
+#: src/Analytics.php:210
 msgid "Filter Type"
 msgstr ""
 
-#: src/Analytics.php:210
+#: src/Analytics.php:211
 msgid "Value"
 msgstr ""
 
-#: src/Analytics.php:211
+#: src/Analytics.php:212
 msgid "Events"
 msgstr ""
 
-#: src/Analytics.php:240
+#: src/Analytics.php:241
 msgid "Are you sure you want to reset all analytics data?"
 msgstr ""
 
-#: src/Analytics.php:242
+#: src/Analytics.php:243
 msgid "Reset Analytics Data"
 msgstr ""
 
-#: src/Analytics.php:531
+#: src/Analytics.php:553
 msgid "No data yet"
 msgstr ""
 
-#: src/Analytics.php:536
+#: src/Analytics.php:558
 msgid "Unknown"
 msgstr ""
 
-#: src/Analytics.php:553
+#: src/Analytics.php:575
 msgid "Category"
 msgstr ""
 
-#: src/Analytics.php:554
-#: src/ShopFilters.php:755
+#: src/Analytics.php:576
+#: src/ShopFilters.php:841
 msgid "Brand"
 msgstr ""
 
-#: src/Analytics.php:555
-#: src/ShopFilters.php:686
-#: src/ShopFilters.php:758
+#: src/Analytics.php:577
+#: src/ShopFilters.php:772
+#: src/ShopFilters.php:844
 msgid "Color"
 msgstr ""
 
-#: src/Analytics.php:556
+#: src/Analytics.php:578
 msgid "Logic"
 msgstr ""
 
-#: src/Analytics.php:557
+#: src/Analytics.php:579
 msgid "Rating"
 msgstr ""
 
-#: src/Analytics.php:558
+#: src/Analytics.php:580
 msgid "Minimum Price"
 msgstr ""
 
-#: src/Analytics.php:559
+#: src/Analytics.php:581
 msgid "Maximum Price"
 msgstr ""
 
-#: src/Analytics.php:560
-#: src/ShopFilters.php:678
+#: src/Analytics.php:582
+#: src/ShopFilters.php:764
 msgid "Availability"
 msgstr ""
 
 #. translators: %s: attribute taxonomy name
-#: src/Analytics.php:575
+#: src/Analytics.php:597
 #, php-format
 msgid "Attribute: %s"
 msgstr ""
 
-#: src/Analytics.php:591
+#: src/Analytics.php:613
 msgid "In stock"
 msgstr ""
 
-#: src/Analytics.php:592
+#: src/Analytics.php:614
 msgid "On sale"
 msgstr ""
 
-#: src/Analytics.php:593
+#: src/Analytics.php:615
 msgid "AND"
 msgstr ""
 
-#: src/Analytics.php:594
+#: src/Analytics.php:616
 msgid "OR"
 msgstr ""
 
 #: src/FilterSettings.php:72
-#: src/FilterSettings.php:129
+#: src/FilterSettings.php:140
 msgid "Filter Visibility"
 msgstr ""
 
 #: src/FilterSettings.php:77
-#: src/FilterSettings.php:137
+#: src/FilterSettings.php:148
 msgid "Show Categories"
 msgstr ""
 
 #: src/FilterSettings.php:78
-#: src/FilterSettings.php:143
+#: src/FilterSettings.php:154
 msgid "Show Brands"
 msgstr ""
 
@@ -189,12 +189,12 @@ msgid "Show Price"
 msgstr ""
 
 #: src/FilterSettings.php:80
-#: src/FilterSettings.php:155
+#: src/FilterSettings.php:166
 msgid "Show Customer Rating"
 msgstr ""
 
 #: src/FilterSettings.php:81
-#: src/FilterSettings.php:161
+#: src/FilterSettings.php:172
 msgid "Show Availability"
 msgstr ""
 
@@ -212,392 +212,416 @@ msgstr ""
 msgid "Configure which filters appear in your shop sidebar"
 msgstr ""
 
-#: src/FilterSettings.php:130
-#: src/FilterSettings.php:205
+#: src/FilterSettings.php:129
+msgid "Filter settings saved."
+msgstr ""
+
+#: src/FilterSettings.php:141
+#: src/FilterSettings.php:216
 msgid "Enable or disable individual filter blocks in the shop sidebar."
 msgstr ""
 
-#: src/FilterSettings.php:149
+#: src/FilterSettings.php:160
 msgid "Show Price Range"
 msgstr ""
 
-#: src/FilterSettings.php:167
+#: src/FilterSettings.php:178
 msgid "Show Color Filter"
 msgstr ""
 
-#: src/FilterSettings.php:175
+#: src/FilterSettings.php:186
 msgid "Data Management"
 msgstr ""
 
-#: src/FilterSettings.php:176
+#: src/FilterSettings.php:187
 msgid "Control what happens to Woo Filter Studio data when the plugin is removed."
 msgstr ""
 
-#: src/FilterSettings.php:182
+#: src/FilterSettings.php:193
 msgid "Delete plugin data on uninstall"
 msgstr ""
 
-#: src/FilterSettings.php:184
+#: src/FilterSettings.php:195
 msgid "If enabled, plugin options and analytics data will be removed when Woo Filter Studio is uninstalled."
 msgstr ""
 
-#: src/FilterSettings.php:191
+#: src/FilterSettings.php:202
 msgid "Save Settings"
 msgstr ""
 
-#: src/FilterSettings.php:241
+#: src/FilterSettings.php:252
 msgid "Enabled"
 msgstr ""
 
-#: src/ShopFilters.php:373
-#: src/ShopFilters.php:417
+#: src/ShopFilters.php:421
+#: src/ShopFilters.php:507
 msgid "Filters"
 msgstr ""
 
-#: src/ShopFilters.php:375
-#: src/ShopFilters.php:419
+#: src/ShopFilters.php:423
+#: src/ShopFilters.php:509
 msgid "Shop filters"
 msgstr ""
 
-#: src/ShopFilters.php:376
-#: src/ShopFilters.php:420
+#: src/ShopFilters.php:424
+#: src/ShopFilters.php:510
 msgid "Close filters"
 msgstr ""
 
-#: src/ShopFilters.php:476
+#: src/ShopFilters.php:566
 msgid "No products found"
 msgstr ""
 
-#: src/ShopFilters.php:477
+#: src/ShopFilters.php:567
 msgid "Try removing or changing some filters to find matching products."
 msgstr ""
 
-#: src/ShopFilters.php:479
+#: src/ShopFilters.php:569
 msgid "Clear all filters"
 msgstr ""
 
-#: src/ShopFilters.php:480
+#: src/ShopFilters.php:570
 msgid "Back to shop"
 msgstr ""
 
-#: src/ShopFilters.php:508
-#: src/ShopFilters.php:729
+#: src/ShopFilters.php:598
+#: src/ShopFilters.php:815
 msgid "Clear all"
 msgstr ""
 
-#: src/ShopFilters.php:538
+#: src/ShopFilters.php:628
 msgid "All"
 msgstr ""
 
-#: src/ShopFilters.php:541
+#: src/ShopFilters.php:631
 msgid "Products per page"
 msgstr ""
 
-#: src/ShopFilters.php:617
+#: src/ShopFilters.php:703
 msgid "Categories"
 msgstr ""
 
-#: src/ShopFilters.php:624
+#: src/ShopFilters.php:710
 msgid "Filter by Brands"
 msgstr ""
 
-#: src/ShopFilters.php:630
+#: src/ShopFilters.php:716
 msgid "Multi-select Logic"
 msgstr ""
 
-#: src/ShopFilters.php:631
+#: src/ShopFilters.php:717
 msgid "Match any selected option (OR)"
 msgstr ""
 
-#: src/ShopFilters.php:632
+#: src/ShopFilters.php:718
 msgid "Match all selected options (AND)"
 msgstr ""
 
-#: src/ShopFilters.php:637
+#: src/ShopFilters.php:723
 msgid "Price"
 msgstr ""
 
-#: src/ShopFilters.php:640
+#: src/ShopFilters.php:726
 msgid "Minimum price"
 msgstr ""
 
-#: src/ShopFilters.php:641
+#: src/ShopFilters.php:727
 msgid "Maximum price"
 msgstr ""
 
-#: src/ShopFilters.php:646
+#: src/ShopFilters.php:732
 msgid "Min"
 msgstr ""
 
-#: src/ShopFilters.php:647
+#: src/ShopFilters.php:733
 msgid "Max"
 msgstr ""
 
-#: src/ShopFilters.php:654
+#: src/ShopFilters.php:740
 msgid "Customer Rating"
 msgstr ""
 
-#: src/ShopFilters.php:666
+#: src/ShopFilters.php:752
 msgid "& up"
 msgstr ""
 
-#: src/ShopFilters.php:671
+#: src/ShopFilters.php:757
 msgid "Any"
 msgstr ""
 
-#: src/ShopFilters.php:679
+#: src/ShopFilters.php:765
 msgid "In stock only"
 msgstr ""
 
-#: src/ShopFilters.php:680
+#: src/ShopFilters.php:766
 msgid "On sale only"
 msgstr ""
 
-#: src/ShopFilters.php:704
+#: src/ShopFilters.php:790
 msgid "Apply Filters"
 msgstr ""
 
-#: src/ShopFilters.php:705
+#: src/ShopFilters.php:791
 msgid "Clear"
 msgstr ""
 
-#: src/ShopFilters.php:723
+#: src/ShopFilters.php:809
 msgid "Active Filters"
 msgstr ""
 
 #. translators: %s: product category name.
-#: src/ShopFilters.php:748
+#: src/ShopFilters.php:834
 #, php-format
 msgid "Category: %s"
 msgstr ""
 
-#: src/ShopFilters.php:769
+#: src/ShopFilters.php:855
 msgid "Logic: AND"
 msgstr ""
 
 #. translators: %s: minimum price with currency symbol.
-#: src/ShopFilters.php:778
+#: src/ShopFilters.php:864
 #, php-format
 msgid "Min: %s"
 msgstr ""
 
 #. translators: %s: maximum price with currency symbol.
-#: src/ShopFilters.php:787
+#: src/ShopFilters.php:873
 #, php-format
 msgid "Max: %s"
 msgstr ""
 
 #. translators: %d: star rating threshold.
-#: src/ShopFilters.php:796
+#: src/ShopFilters.php:882
 #, php-format
 msgid "%d stars & up"
 msgstr ""
 
-#: src/ShopFilters.php:803
+#: src/ShopFilters.php:889
 msgid "Stock: In stock"
 msgstr ""
 
-#: src/ShopFilters.php:810
+#: src/ShopFilters.php:896
 msgid "Sale: On sale"
 msgstr ""
 
-#: src/ShopFilters.php:844
+#: src/ShopFilters.php:930
 msgid "All Categories"
 msgstr ""
 
-#: src/ShopFilters.php:880
+#: src/ShopFilters.php:966
 msgid "No options found."
 msgstr ""
 
-#: src/ShopFilters.php:888
+#: src/ShopFilters.php:974
 msgid "Search options..."
 msgstr ""
 
-#: src/ShopFilters.php:888
+#: src/ShopFilters.php:974
 msgid "Search filter options"
 msgstr ""
 
-#: src/ShopFilters.php:1064
+#: src/ShopFilters.php:1147
 msgid "Product Pagination"
 msgstr ""
 
-#: src/StyleSettings.php:72
-#: src/StyleSettings.php:158
-msgid "Design Controls"
-msgstr ""
-
-#: src/StyleSettings.php:79
-#: src/StyleSettings.php:167
-msgid "Default Skin"
-msgstr ""
-
-#: src/StyleSettings.php:85
-#: src/StyleSettings.php:191
-msgid "Accent Color"
-msgstr ""
-
-#: src/StyleSettings.php:86
-#: src/StyleSettings.php:199
-msgid "Sidebar Background"
-msgstr ""
-
-#: src/StyleSettings.php:87
-#: src/StyleSettings.php:207
-msgid "Sidebar Border"
-msgstr ""
-
-#: src/StyleSettings.php:88
-#: src/StyleSettings.php:215
-msgid "Heading Color"
-msgstr ""
-
-#: src/StyleSettings.php:89
-#: src/StyleSettings.php:223
-msgid "Body Text Color"
-msgstr ""
-
-#: src/StyleSettings.php:90
-#: src/StyleSettings.php:231
-msgid "Muted Text Color"
-msgstr ""
-
-#: src/StyleSettings.php:91
-#: src/StyleSettings.php:241
-msgid "Filter Chip Background"
-msgstr ""
-
-#: src/StyleSettings.php:92
-#: src/StyleSettings.php:249
-msgid "Filter Chip Border"
-msgstr ""
-
-#: src/StyleSettings.php:93
-#: src/StyleSettings.php:257
-msgid "Primary Button Background"
-msgstr ""
-
-#: src/StyleSettings.php:94
-#: src/StyleSettings.php:265
-msgid "Primary Button Text"
-msgstr ""
-
-#: src/StyleSettings.php:95
-#: src/StyleSettings.php:273
-msgid "Input Background"
-msgstr ""
-
-#: src/StyleSettings.php:96
-#: src/StyleSettings.php:281
-msgid "Input/Control Border"
-msgstr ""
-
-#: src/StyleSettings.php:97
-#: src/StyleSettings.php:289
-msgid "No Results Background"
-msgstr ""
-
-#: src/StyleSettings.php:98
-#: src/StyleSettings.php:297
-msgid "No Results Border"
-msgstr ""
-
-#: src/StyleSettings.php:99
-#: src/StyleSettings.php:305
-msgid "No Results Shadow"
-msgstr ""
-
-#: src/StyleSettings.php:100
-#: src/StyleSettings.php:321
-msgid "Font Family"
-msgstr ""
-
-#: src/StyleSettings.php:101
-#: src/StyleSettings.php:333
-msgid "Base Font Size (px)"
-msgstr ""
-
-#: src/StyleSettings.php:102
-#: src/StyleSettings.php:345
-msgid "Sidebar Width (px)"
+#: src/StyleSettings.php:46
+msgid "You are not allowed to manage Woo Filter Studio styles."
 msgstr ""
 
 #: src/StyleSettings.php:103
-#: src/StyleSettings.php:357
-msgid "Sidebar/Product Gap (px)"
+#: src/StyleSettings.php:214
+msgid "Design Controls"
 msgstr ""
 
-#: src/StyleSettings.php:104
-#: src/StyleSettings.php:377
-msgid "Sidebar Radius (px)"
+#: src/StyleSettings.php:110
+#: src/StyleSettings.php:223
+msgid "Default Skin"
 msgstr ""
 
-#: src/StyleSettings.php:105
-#: src/StyleSettings.php:389
-msgid "Input Radius (px)"
+#: src/StyleSettings.php:116
+#: src/StyleSettings.php:247
+msgid "Accent Color"
 msgstr ""
 
-#: src/StyleSettings.php:106
-#: src/StyleSettings.php:403
-msgid "Button Radius (px)"
+#: src/StyleSettings.php:117
+#: src/StyleSettings.php:255
+msgid "Sidebar Background"
 msgstr ""
 
-#: src/StyleSettings.php:107
-#: src/StyleSettings.php:415
-msgid "Section Spacing (px)"
+#: src/StyleSettings.php:118
+#: src/StyleSettings.php:263
+msgid "Sidebar Border"
 msgstr ""
 
-#: src/StyleSettings.php:111
-#: src/StyleSettings.php:430
-msgid "Custom CSS"
+#: src/StyleSettings.php:119
+#: src/StyleSettings.php:271
+msgid "Heading Color"
+msgstr ""
+
+#: src/StyleSettings.php:120
+#: src/StyleSettings.php:279
+msgid "Body Text Color"
+msgstr ""
+
+#: src/StyleSettings.php:121
+#: src/StyleSettings.php:287
+msgid "Muted Text Color"
+msgstr ""
+
+#: src/StyleSettings.php:122
+#: src/StyleSettings.php:297
+msgid "Filter Chip Background"
+msgstr ""
+
+#: src/StyleSettings.php:123
+#: src/StyleSettings.php:305
+msgid "Filter Chip Border"
+msgstr ""
+
+#: src/StyleSettings.php:124
+#: src/StyleSettings.php:313
+msgid "Primary Button Background"
+msgstr ""
+
+#: src/StyleSettings.php:125
+#: src/StyleSettings.php:321
+msgid "Primary Button Text"
 msgstr ""
 
 #: src/StyleSettings.php:126
+#: src/StyleSettings.php:329
+msgid "Input Background"
+msgstr ""
+
 #: src/StyleSettings.php:127
-#: src/StyleSettings.php:151
+#: src/StyleSettings.php:337
+msgid "Input/Control Border"
+msgstr ""
+
+#: src/StyleSettings.php:128
+#: src/StyleSettings.php:345
+msgid "No Results Background"
+msgstr ""
+
+#: src/StyleSettings.php:129
+#: src/StyleSettings.php:353
+msgid "No Results Border"
+msgstr ""
+
+#: src/StyleSettings.php:130
+#: src/StyleSettings.php:361
+msgid "No Results Shadow"
+msgstr ""
+
+#: src/StyleSettings.php:131
+#: src/StyleSettings.php:377
+msgid "Font Family"
+msgstr ""
+
+#: src/StyleSettings.php:132
+#: src/StyleSettings.php:389
+msgid "Base Font Size (px)"
+msgstr ""
+
+#: src/StyleSettings.php:133
+#: src/StyleSettings.php:401
+msgid "Sidebar Width (px)"
+msgstr ""
+
+#: src/StyleSettings.php:134
+#: src/StyleSettings.php:413
+msgid "Sidebar/Product Gap (px)"
+msgstr ""
+
+#: src/StyleSettings.php:135
+#: src/StyleSettings.php:433
+msgid "Sidebar Radius (px)"
+msgstr ""
+
+#: src/StyleSettings.php:136
+#: src/StyleSettings.php:445
+msgid "Input Radius (px)"
+msgstr ""
+
+#: src/StyleSettings.php:137
+#: src/StyleSettings.php:459
+msgid "Button Radius (px)"
+msgstr ""
+
+#: src/StyleSettings.php:138
+#: src/StyleSettings.php:471
+msgid "Section Spacing (px)"
+msgstr ""
+
+#: src/StyleSettings.php:142
+#: src/StyleSettings.php:486
+msgid "Custom CSS"
+msgstr ""
+
+#: src/StyleSettings.php:157
+#: src/StyleSettings.php:158
+#: src/StyleSettings.php:182
 msgid "Woo Filter Studio Styling"
 msgstr ""
 
-#: src/StyleSettings.php:152
+#: src/StyleSettings.php:183
 msgid "Customize the appearance of your shop filters"
 msgstr ""
 
-#: src/StyleSettings.php:159
+#: src/StyleSettings.php:192
+msgid "Style settings saved."
+msgstr ""
+
+#: src/StyleSettings.php:206
+msgid "Style settings have been reset to defaults."
+msgstr ""
+
+#: src/StyleSettings.php:215
 msgid "Choose a preset skin and fine-tune colors and typography."
 msgstr ""
 
-#: src/StyleSettings.php:185
+#: src/StyleSettings.php:241
 msgid "Colors"
 msgstr ""
 
-#: src/StyleSettings.php:316
+#: src/StyleSettings.php:372
 msgid "Typography & Layout"
 msgstr ""
 
-#: src/StyleSettings.php:371
+#: src/StyleSettings.php:427
 msgid "Border Radius"
 msgstr ""
 
-#: src/StyleSettings.php:440
+#: src/StyleSettings.php:496
 msgid "CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results"
 msgstr ""
 
-#: src/StyleSettings.php:448
+#: src/StyleSettings.php:513
 msgid "Save Styles"
 msgstr ""
 
-#: src/StyleSettings.php:480
+#: src/StyleSettings.php:515
+msgid "Are you sure you want to reset all style settings to defaults?"
+msgstr ""
+
+#: src/StyleSettings.php:517
+msgid "Reset to Defaults"
+msgstr ""
+
+#: src/StyleSettings.php:549
 msgid "Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results."
 msgstr ""
 
-#: src/StyleSettings.php:758
+#: src/StyleSettings.php:828
 msgid "Classic"
 msgstr ""
 
-#: src/StyleSettings.php:759
+#: src/StyleSettings.php:829
 msgid "Graphite"
 msgstr ""
 
-#: src/StyleSettings.php:760
+#: src/StyleSettings.php:830
 msgid "Sunrise"
 msgstr ""
 

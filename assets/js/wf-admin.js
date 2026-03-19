@@ -2,16 +2,14 @@
   'use strict';
 
   function initResetConfirm() {
-    var resetButton = document.querySelector('.wf-admin-reset-btn');
-    if (!resetButton) {
-      return;
-    }
-
-    resetButton.addEventListener('click', function (event) {
-      var message = resetButton.getAttribute('data-confirm');
-      if (message && !window.confirm(message)) {
-        event.preventDefault();
-      }
+    var buttons = document.querySelectorAll('.wf-admin-reset-btn');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        var message = btn.getAttribute('data-confirm');
+        if (message && !window.confirm(message)) {
+          event.preventDefault();
+        }
+      });
     });
   }
 
