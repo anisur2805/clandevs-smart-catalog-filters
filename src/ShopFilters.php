@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class ShopFilters {
 	/** @var int */
-	private const MAX_PER_PAGE = 9999;
+	private const MAX_PER_PAGE = 120;
 
 	/** @var float */
 	private const MAX_PRICE = 99999999;
@@ -259,7 +259,10 @@ final class ShopFilters {
 
 		$css = '.wf-shop-layout{' . implode( ';', $declarations ) . ';}';
 		if ( ! empty( $options['custom_css'] ) ) {
-			$css .= "\n" . (string) $options['custom_css'];
+			$safe_custom_css = str_replace( array( '<', '>', '"' ), '', (string) $options['custom_css'] );
+			if ( '' !== $safe_custom_css ) {
+				$css .= "\n" . $safe_custom_css;
+			}
 		}
 
 		$swatch_css = $this->get_color_swatch_css();
@@ -1037,8 +1040,6 @@ final class ShopFilters {
 		unset( $args['paged'], $args['product-page'] );
 		$args['wf_per_page'] = 0 === $value ? self::MAX_PER_PAGE : $value;
 
-		$args = $args;
-
 		return add_query_arg( $args, $this->get_archive_url() );
 	}
 
@@ -1527,35 +1528,20 @@ final class ShopFilters {
 		if ( ! isset( $excluded['rating_filter'] ) && isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] ) {
 			$rating = $this->get_request_absint( 'rating_filter' );
 			if ( $rating > 0 && $rating <= 5 ) {
-				add_filter(
-					'posts_where',
-					function ( string $where ) use ( $rating ): string {
-						global $wpdb;
-						$where .= $wpdb->prepare(
-							" AND {$wpdb->posts}.ID IN (
-								SELECT product_id FROM {$wpdb->prefix}wc_product_meta_lookup
-								WHERE average_rating >= %f
-							)",
-							(float) $rating
-						);
-						return $where;
-					}
-				);
+				$rating_ids = $this->get_product_ids_by_rating( (float) $rating );
+				if ( empty( $rating_ids ) ) {
+					$rating_ids = array( 0 );
+				}
+				$post_in = empty( $post_in ) ? $rating_ids : array_intersect( $post_in, $rating_ids );
 			}
 		}
 
 		if ( ! isset( $excluded['wf_in_stock'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
-			add_filter(
-				'posts_where',
-				function ( string $where ): string {
-					global $wpdb;
-					$where .= " AND {$wpdb->posts}.ID IN (
-						SELECT product_id FROM {$wpdb->prefix}wc_product_meta_lookup
-						WHERE stock_status = 'instock'
-					)";
-					return $where;
-				}
-			);
+			$stock_ids = $this->get_in_stock_product_ids();
+			if ( empty( $stock_ids ) ) {
+				$stock_ids = array( 0 );
+			}
+			$post_in = empty( $post_in ) ? $stock_ids : array_intersect( $post_in, $stock_ids );
 		}
 
 		if ( ! isset( $excluded['wf_on_sale'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
@@ -1726,6 +1712,65 @@ final class ShopFilters {
 		$product_ids = array_values( array_unique( $product_ids ) );
 
 		return ! empty( $product_ids ) ? $product_ids : array( 0 );
+	}
+
+	/**
+	 * Get product IDs with average rating at or above threshold.
+	 *
+	 * @param float $min_rating Minimum average rating.
+	 * @return array<int>
+	 */
+	private function get_product_ids_by_rating( float $min_rating ): array {
+		global $wpdb;
+
+		$cache_key = $this->build_cache_key( 'rating_ids_' . (int) $min_rating );
+		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- cached manually above.
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT product_id FROM {$wpdb->prefix}wc_product_meta_lookup WHERE average_rating >= %f",
+				$min_rating
+			)
+		);
+
+		$ids = array_map( 'absint', $ids );
+		wp_cache_set( $cache_key, $ids, self::CACHE_GROUP, 300 );
+
+		return $ids;
+	}
+
+	/**
+	 * Get product IDs that are in stock.
+	 *
+	 * @return array<int>
+	 */
+	private function get_in_stock_product_ids(): array {
+		global $wpdb;
+
+		$cache_key = $this->build_cache_key( 'in_stock_ids' );
+		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- cached manually above.
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT product_id FROM {$wpdb->prefix}wc_product_meta_lookup WHERE stock_status = %s",
+				'instock'
+			)
+		);
+
+		$ids = array_map( 'absint', $ids );
+		wp_cache_set( $cache_key, $ids, self::CACHE_GROUP, 300 );
+
+		return $ids;
 	}
 
 	/**

@@ -26,6 +26,7 @@ final class AdminMenu {
 	public function register_hooks(): void {
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 5 );
 		add_action( 'admin_menu', array( $this, 'cleanup_default_submenu' ), 999 );
+		add_action( 'admin_init', array( $this, 'redirect_root_page' ) );
 	}
 
 	/**
@@ -64,11 +65,15 @@ final class AdminMenu {
 	}
 
 	/**
-	 * Redirect top-level page to filter settings.
+	 * Redirect top-level menu page to filter settings before headers are sent.
 	 *
 	 * @return void
 	 */
-	public function render_root_page(): void {
+	public function redirect_root_page(): void {
+		if ( ! isset( $_GET['page'] ) || self::MENU_SLUG !== sanitize_key( wp_unslash( (string) $_GET['page'] ) ) ) {
+			return;
+		}
+
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
@@ -82,5 +87,14 @@ final class AdminMenu {
 			)
 		);
 		exit;
+	}
+
+	/**
+	 * Render root page placeholder (redirect happens in admin_init).
+	 *
+	 * @return void
+	 */
+	public function render_root_page(): void {
+		// Redirect is handled in redirect_root_page() via admin_init.
 	}
 }
