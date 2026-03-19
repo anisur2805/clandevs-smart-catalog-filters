@@ -86,7 +86,7 @@ final class StyleSettingsSanitizeTest extends TestCase {
 
 	public function test_numeric_values_respect_range(): void {
 		$raw = array(
-			'font_size' => '50',
+			'font_size' => '99',
 		);
 
 		$result = $this->subject->sanitize_settings( $raw );
@@ -102,5 +102,25 @@ final class StyleSettingsSanitizeTest extends TestCase {
 		$result = $this->subject->sanitize_settings( $raw );
 
 		self::assertSame( '16', $result['font_size'] );
+	}
+
+	public function test_numeric_values_accept_zero_minimum(): void {
+		$raw = array(
+			'sidebar_radius' => '0',
+		);
+
+		$result = $this->subject->sanitize_settings( $raw );
+
+		self::assertSame( '0', $result['sidebar_radius'] );
+	}
+
+	public function test_numeric_values_accept_high_values(): void {
+		$raw = array(
+			'button_radius' => '50',
+		);
+
+		$result = $this->subject->sanitize_settings( $raw );
+
+		self::assertSame( '50', $result['button_radius'] );
 	}
 }

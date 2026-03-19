@@ -21,6 +21,9 @@ final class StyleSettings {
 	/** @var string */
 	private const PAGE_SLUG = 'wf-style-settings';
 
+	/** @var string */
+	private const RESET_ACTION = 'wf_reset_styles';
+
 	/**
 	 * Register class hooks.
 	 *
@@ -30,6 +33,34 @@ final class StyleSettings {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'admin_post_' . self::RESET_ACTION, array( $this, 'handle_reset_request' ) );
+	}
+
+	/**
+	 * Handle style settings reset request.
+	 *
+	 * @return void
+	 */
+	public function handle_reset_request(): void {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'You are not allowed to manage Woo Filter Studio styles.', 'woo-filter-studio' ) );
+		}
+
+		check_admin_referer( self::RESET_ACTION );
+
+		delete_option( self::OPTION_KEY );
+
+		set_transient( 'wf_styles_reset_notice', '1', 30 );
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'page' => self::PAGE_SLUG,
+				),
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
 	}
 
 	/**
@@ -98,13 +129,13 @@ final class StyleSettings {
 		$this->register_color_field( 'no_results_border_color', __( 'No Results Border', 'woo-filter-studio' ) );
 		$this->register_color_field( 'no_results_shadow_color', __( 'No Results Shadow', 'woo-filter-studio' ) );
 		$this->register_text_field( 'font_family', __( 'Font Family', 'woo-filter-studio' ) );
-		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'woo-filter-studio' ), 12, 24, 1 );
-		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'woo-filter-studio' ), 220, 420, 1 );
-		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'woo-filter-studio' ), 12, 48, 1 );
-		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'woo-filter-studio' ), 6, 28, 1 );
-		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'woo-filter-studio' ), 4, 18, 1 );
-		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'woo-filter-studio' ), 6, 28, 1 );
-		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'woo-filter-studio' ), 10, 32, 1 );
+		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'woo-filter-studio' ), 10, 48, 1 );
+		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'woo-filter-studio' ), 180, 600, 1 );
+		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'woo-filter-studio' ), 0, 80, 1 );
+		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'woo-filter-studio' ), 0, 60, 1 );
+		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'woo-filter-studio' ), 0, 60, 1 );
+		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'woo-filter-studio' ), 0, 60, 1 );
+		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'woo-filter-studio' ), 0, 60, 1 );
 
 		add_settings_field(
 			'custom_css',
@@ -152,6 +183,20 @@ final class StyleSettings {
 					<p><?php esc_html_e( 'Customize the appearance of your shop filters', 'woo-filter-studio' ); ?></p>
 				</div>
 			</div>
+
+			<?php
+			if ( get_transient( 'wf_styles_reset_notice' ) ) :
+				delete_transient( 'wf_styles_reset_notice' );
+				?>
+				<div class="wf-admin-card wf-admin-success-card">
+					<div class="wf-admin-card-body wf-admin-card-body-compact">
+						<p class="wf-admin-success-text">
+							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+							<?php esc_html_e( 'Style settings have been reset to defaults.', 'woo-filter-studio' ); ?>
+						</p>
+					</div>
+				</div>
+			<?php endif; ?>
 
 			<div class="wf-admin-card">
 				<div class="wf-admin-card-header">
@@ -337,7 +382,7 @@ final class StyleSettings {
 									$options = self::get_options();
 									$value   = isset( $options['font_size'] ) ? absint( (string) $options['font_size'] ) : '';
 									?>
-									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[font_size]" value="<?php echo esc_attr( (string) $value ); ?>" min="12" max="24" step="1" />
+									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[font_size]" value="<?php echo esc_attr( (string) $value ); ?>" min="10" max="48" step="1" />
 								</td>
 							</tr>
 							<tr>
@@ -349,7 +394,7 @@ final class StyleSettings {
 									$options = self::get_options();
 									$value   = isset( $options['sidebar_width'] ) ? absint( (string) $options['sidebar_width'] ) : '';
 									?>
-									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[sidebar_width]" value="<?php echo esc_attr( (string) $value ); ?>" min="220" max="420" step="1" />
+									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[sidebar_width]" value="<?php echo esc_attr( (string) $value ); ?>" min="180" max="600" step="1" />
 								</td>
 							</tr>
 							<tr>
@@ -361,7 +406,7 @@ final class StyleSettings {
 									$options = self::get_options();
 									$value   = isset( $options['layout_gap'] ) ? absint( (string) $options['layout_gap'] ) : '';
 									?>
-									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[layout_gap]" value="<?php echo esc_attr( (string) $value ); ?>" min="12" max="48" step="1" />
+									<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[layout_gap]" value="<?php echo esc_attr( (string) $value ); ?>" min="0" max="80" step="1" />
 								</td>
 							</tr>
 						</table>
@@ -381,7 +426,7 @@ final class StyleSettings {
 										$options = self::get_options();
 										$value   = isset( $options['sidebar_radius'] ) ? absint( (string) $options['sidebar_radius'] ) : '';
 										?>
-										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[sidebar_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="6" max="28" step="1" />
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[sidebar_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="0" max="60" step="1" />
 									</td>
 								</tr>
 								<tr>
@@ -393,7 +438,7 @@ final class StyleSettings {
 										$options = self::get_options();
 										$value   = isset( $options['control_radius'] ) ? absint( (string) $options['control_radius'] ) : '';
 										?>
-										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[control_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="4" max="18" step="1" />
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[control_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="0" max="60" step="1" />
 									</td>
 								</tr>
 							</table>
@@ -407,7 +452,7 @@ final class StyleSettings {
 										$options = self::get_options();
 										$value   = isset( $options['button_radius'] ) ? absint( (string) $options['button_radius'] ) : '';
 										?>
-										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[button_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="6" max="28" step="1" />
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[button_radius]" value="<?php echo esc_attr( (string) $value ); ?>" min="0" max="60" step="1" />
 									</td>
 								</tr>
 								<tr>
@@ -419,7 +464,7 @@ final class StyleSettings {
 										$options = self::get_options();
 										$value   = isset( $options['section_spacing'] ) ? absint( (string) $options['section_spacing'] ) : '';
 										?>
-										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[section_spacing]" value="<?php echo esc_attr( (string) $value ); ?>" min="10" max="32" step="1" />
+										<input type="number" class="wf-admin-input wf-admin-input-small" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[section_spacing]" value="<?php echo esc_attr( (string) $value ); ?>" min="0" max="60" step="1" />
 									</td>
 								</tr>
 							</table>
@@ -449,6 +494,22 @@ final class StyleSettings {
 							</button>
 						</div>
 					</form>
+
+					<?php
+					$reset_url = wp_nonce_url(
+						add_query_arg(
+							array( 'action' => self::RESET_ACTION ),
+							admin_url( 'admin-post.php' )
+						),
+						self::RESET_ACTION
+					);
+					?>
+					<div class="wf-admin-submit-wrap" style="margin-top: 0;">
+						<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'woo-filter-studio' ); ?>">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+							<?php esc_html_e( 'Reset to Defaults', 'woo-filter-studio' ); ?>
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -668,13 +729,13 @@ final class StyleSettings {
 		}
 
 		$numeric_ranges = array(
-			'font_size'       => array( 12, 24 ),
-			'sidebar_width'   => array( 220, 420 ),
-			'layout_gap'      => array( 12, 48 ),
-			'sidebar_radius'  => array( 6, 28 ),
-			'control_radius'  => array( 4, 18 ),
-			'button_radius'   => array( 6, 28 ),
-			'section_spacing' => array( 10, 32 ),
+			'font_size'       => array( 10, 48 ),
+			'sidebar_width'   => array( 180, 600 ),
+			'layout_gap'      => array( 0, 80 ),
+			'sidebar_radius'  => array( 0, 60 ),
+			'control_radius'  => array( 0, 60 ),
+			'button_radius'   => array( 0, 60 ),
+			'section_spacing' => array( 0, 60 ),
 		);
 
 		foreach ( $numeric_ranges as $key => $range ) {
