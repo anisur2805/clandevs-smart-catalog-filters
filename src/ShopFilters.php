@@ -705,18 +705,20 @@ final class ShopFilters {
 			echo '</div>';
 		}
 
-		if ( $show_brands && '' !== $this->brand_taxonomy ) {
+		if ( $show_brands && '' !== $this->brand_taxonomy && License::can( 'brand_filter' ) ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Filter by Brands', 'woo-filter-studio' ) . '</h4>';
 			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands, false, $list_suffix );
 			echo '</div>';
 		}
 
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Multi-select Logic', 'woo-filter-studio' ) . '</h4>';
-		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'woo-filter-studio' ) . '</span></label>';
-		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'woo-filter-studio' ) . '</span></label>';
-		echo '</div>';
+		if ( License::can( 'or_and_logic' ) ) {
+			echo '<div class="wf-filter-block">';
+			echo '<h4>' . esc_html__( 'Multi-select Logic', 'woo-filter-studio' ) . '</h4>';
+			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'woo-filter-studio' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'woo-filter-studio' ) . '</span></label>';
+			echo '</div>';
+		}
 
 		if ( $show_price ) {
 			echo '<div class="wf-filter-block">';
@@ -735,7 +737,7 @@ final class ShopFilters {
 			echo '</div>';
 		}
 
-		if ( $show_rating ) {
+		if ( $show_rating && License::can( 'rating_filter' ) ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Customer Rating', 'woo-filter-studio' ) . '</h4>';
 			for ( $i = 5; $i >= 1; $i-- ) {
@@ -767,11 +769,15 @@ final class ShopFilters {
 			echo '</div>';
 		}
 
-		if ( $show_colors && '' !== $this->color_taxonomy ) {
+		if ( $show_colors && '' !== $this->color_taxonomy && License::can( 'color_filter' ) ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Color', 'woo-filter-studio' ) . '</h4>';
 			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors, true, $list_suffix );
 			echo '</div>';
+		}
+
+		if ( ! License::can( 'custom_attributes' ) ) {
+			$this->custom_attribute_taxonomies = array();
 		}
 
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {

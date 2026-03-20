@@ -49,7 +49,7 @@
   <body>
     <div class="container">
       <h1>Woo Filter Studio</h1>
-      <p>Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).</p>
+      <p>Filter WooCommerce products by category, price, and availability for free. Upgrade to Pro for brand, color, rating, analytics, and full styling.</p>
 
       <h2>Requirements</h2>
       <ul>
@@ -60,10 +60,34 @@
 
       <h2>Installation</h2>
       <ul>
-        <li>Upload the <code>woo-filter-studio</code> folder to <code>/wp-content/plugins/</code>.</li>
+        <li>Upload the <code>woo-filter-studio</code> folder to <code>/wp-content/plugins/</code>, or install from the WordPress plugin repository.</li>
         <li>Activate the plugin from the WordPress Plugins screen.</li>
         <li>Ensure WooCommerce is installed and active.</li>
+        <li>Go to <strong>Woo Filter Studio &gt; Settings</strong> to configure which filters appear.</li>
+        <li>Visit your shop page — filters appear automatically.</li>
       </ul>
+
+      <h2>Activate Pro License</h2>
+      <ol>
+        <li>Purchase a Pro license from <a href="https://woo-filter-studio.clandevs.com/">woo-filter-studio.clandevs.com</a>.</li>
+        <li>In WordPress admin, go to <strong>Woo Filter Studio &gt; Account</strong>.</li>
+        <li>Enter your license key and click <strong>Activate</strong>.</li>
+        <li>Pro features unlock immediately. Your existing settings are preserved.</li>
+      </ol>
+
+      <h2>Start a Free Trial</h2>
+      <ol>
+        <li>Go to <strong>Woo Filter Studio</strong> in your WordPress admin.</li>
+        <li>Click <strong>Start a 14-day Free Trial</strong> — no credit card required.</li>
+        <li>All Pro features are available for 14 days.</li>
+        <li>When the trial ends, the plugin reverts to the free version with your settings intact.</li>
+      </ol>
+
+      <h2>Free vs Pro Features</h2>
+      <div class="note">
+        <p><strong>Free:</strong> Category filter, price range slider, availability filters (in stock / on sale), AJAX filtering, shortcode support, mobile drawer, active filter chips, per-page switcher, Classic skin, 6 color controls.</p>
+        <p><strong>Pro:</strong> Everything in Free plus brand filter, color swatch filter, rating filter, custom attribute filters, OR/AND logic toggle, Graphite &amp; Sunrise skins, all 15 color controls, typography &amp; layout, border radius controls, custom CSS, analytics dashboard.</p>
+      </div>
 
       <h2>Basic Usage</h2>
       <ul>
@@ -82,13 +106,17 @@
       </ul>
 
       <h2>Filter Visibility Settings</h2>
-      <p>Go to <strong>Woo Filter Studio &gt; Woo Filter Studio Settings</strong> to enable or disable individual filter blocks (categories, brands, price, rating, availability, colors).</p>
+      <p>Go to <strong>Woo Filter Studio &gt; Settings</strong> to enable or disable individual filter blocks. Free filters (categories, price, availability) can be toggled freely. Pro filters (brands, rating, colors) show a <strong>PRO</strong> badge and require an active license or trial.</p>
 
       <h2>Styling Settings</h2>
-      <p>Go to <strong>Woo Filter Studio &gt; Woo Filter Studio Styling</strong> to select a preset skin and fine-tune colors, typography, spacing, and custom CSS.</p>
+      <p>Go to <strong>Woo Filter Studio &gt; Styling</strong> to customize the filter appearance.</p>
+      <ul>
+        <li><strong>Free:</strong> Classic skin, 6 basic color controls (accent, sidebar background, sidebar border, heading, body text, muted text).</li>
+        <li><strong>Pro:</strong> Graphite and Sunrise skins, all 15 color controls, typography &amp; layout (font family, font size, sidebar width, gap), border radius controls, and custom CSS.</li>
+      </ul>
 
-      <h2>Analytics</h2>
-      <p>Go to <strong>Woo Filter Studio &gt; Woo Filter Studio Analytics</strong> to see filter usage counts and reset analytics data when needed.</p>
+      <h2>Analytics (Pro)</h2>
+      <p>Go to <strong>Woo Filter Studio &gt; Analytics</strong> to see filter usage counts, top used filters, and last event time. The analytics dashboard and tracking are available with an active Pro license or trial.</p>
 
       <h2>Uninstall Behavior</h2>
       <p>You can choose to delete plugin data on uninstall in <strong>Woo Filter Studio Settings</strong> under the Data Management section.</p>
@@ -108,6 +136,7 @@
       <p>Inline admin icons are based on Feather Icons (MIT License).</p>
 
       <h2>Changelog</h2>
+      <p><strong>1.1.0</strong> - Added Freemius integration with free/Pro tiers, license activation, 14-day trial, and clear upgrade prompts in admin.</p>
       <p><strong>1.0.0</strong> - Initial release.</p>
     </div>
   </body>

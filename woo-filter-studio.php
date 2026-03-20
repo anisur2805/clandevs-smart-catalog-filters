@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Woo Filter Studio
  * Plugin URI: https://woo-filter-studio.clandevs.com/
- * Description: Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly).
+ * Description: Filter WooCommerce products by category, price, and availability for free. Upgrade to Pro for brand, color, rating, analytics, and full styling.
  * Version: 1.0.0
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
@@ -36,49 +36,109 @@ require_once __DIR__ . '/src/Autoloader.php';
 
 \WooFilters\Autoloader::register( __DIR__ . '/src' );
 
-add_filter(
-	'plugin_action_links_' . plugin_basename( __FILE__ ),
-	static function ( array $links ): array {
-		$custom_links = array(
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filter-studio' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'woo-filter-studio' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'woo-filter-studio' ) . '</a>',
-		);
+// Freemius SDK integration — free/premium auto-deactivation pattern.
+if ( function_exists( 'wfs_fs' ) ) {
+	wfs_fs()->set_basename( true, __FILE__ );
+} else {
+	/**
+	 * DO NOT REMOVE THIS IF, IT IS ESSENTIAL FOR THE
+	 * `function_exists` CALL ABOVE TO PROPERLY WORK.
+	 */
+	if ( ! function_exists( 'wfs_fs' ) ) {
+		/**
+		 * Create a helper function for easy Freemius SDK access.
+		 *
+		 * @return \Freemius
+		 */
+		function wfs_fs() {
+			global $wfs_fs;
 
-		return array_merge( $custom_links, $links );
-	}
-);
+			if ( ! isset( $wfs_fs ) ) {
+				// Include Freemius SDK.
+				require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
 
-add_action(
-	'before_woocommerce_init',
-	static function () {
-		if ( ! class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-			return;
+				$wfs_fs = fs_dynamic_init(
+					array(
+						'id'                  => '26209',
+						'slug'                => 'woo-filter-studio',
+						'type'                => 'plugin',
+						'public_key'          => 'pk_c409d5141f9173a5c8ba6cf201103',
+						'is_premium'          => true,
+						'premium_suffix'      => 'Pro',
+						'has_premium_version' => true,
+						'has_addons'          => false,
+						'has_paid_plans'      => true,
+						'is_org_compliant'    => true,
+						// Automatically removed in the free version.
+						'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
+						'trial'               => array(
+							'days'               => 14,
+							'is_require_payment' => false,
+						),
+						'menu'                => array(
+							'slug'    => 'woo-filter-studio',
+							'support' => false,
+						),
+					)
+				);
+			}
+
+			return $wfs_fs;
 		}
 
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+		// Init Freemius.
+		wfs_fs();
+		// Signal that SDK was initiated.
+		do_action( 'wfs_fs_loaded' );
 	}
-);
 
-add_action(
-	'plugins_loaded',
-	static function () {
-		load_plugin_textdomain( 'woo-filter-studio', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
-		if ( ! class_exists( 'WooCommerce' ) ) {
-			add_action(
-				'admin_notices',
-				static function () {
-					if ( ! current_user_can( 'activate_plugins' ) ) {
-						return;
-					}
-					echo '<div class="notice notice-error"><p>' . esc_html__( 'Woo Filter Studio requires WooCommerce to be installed and active.', 'woo-filter-studio' ) . '</p></div>';
-				}
+	add_filter(
+		'plugin_action_links_' . plugin_basename( __FILE__ ),
+		static function ( array $links ): array {
+			$custom_links = array(
+				'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filter-studio' ) . '</a>',
+				'<a href="' . esc_url( admin_url( 'admin.php?page=wf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'woo-filter-studio' ) . '</a>',
 			);
-			return;
-		}
 
-		\WooFilters\Plugin::instance( __FILE__ )->boot();
-	}
-);
+			if ( \WooFilters\License::can( 'analytics' ) ) {
+				$custom_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'woo-filter-studio' ) . '</a>';
+			}
+
+			return array_merge( $custom_links, $links );
+		}
+	);
+
+	add_action(
+		'before_woocommerce_init',
+		static function () {
+			if ( ! class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+				return;
+			}
+
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+		}
+	);
+
+	add_action(
+		'plugins_loaded',
+		static function () {
+			load_plugin_textdomain( 'woo-filter-studio', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+			if ( ! class_exists( 'WooCommerce' ) ) {
+				add_action(
+					'admin_notices',
+					static function () {
+						if ( ! current_user_can( 'activate_plugins' ) ) {
+							return;
+						}
+						echo '<div class="notice notice-error"><p>' . esc_html__( 'Woo Filter Studio requires WooCommerce to be installed and active.', 'woo-filter-studio' ) . '</p></div>';
+					}
+				);
+				return;
+			}
+
+			\WooFilters\Plugin::instance( __FILE__ )->boot();
+		}
+	);
+}

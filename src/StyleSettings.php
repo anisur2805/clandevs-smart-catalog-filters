@@ -291,6 +291,7 @@ final class StyleSettings {
 									</td>
 								</tr>
 							</table>
+							<?php if ( License::can( 'full_styling' ) ) : ?>
 							<table class="form-table">
 								<tr>
 									<th scope="row">
@@ -365,7 +366,14 @@ final class StyleSettings {
 									</td>
 								</tr>
 							</table>
+							<?php else : ?>
+							<div style="display:flex;align-items:center;justify-content:center;padding:20px;">
+								<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-pro-badge" style="font-size:12px;padding:6px 14px;"><?php esc_html_e( '9 more color controls with Pro', 'woo-filter-studio' ); ?></a>
+							</div>
+							<?php endif; ?>
 						</div>
+
+						<?php if ( License::can( 'full_styling' ) ) : ?>
 
 						<hr class="wf-admin-divider" />
 
@@ -481,6 +489,10 @@ final class StyleSettings {
 							</table>
 						</div>
 
+						<?php endif; ?>
+
+						<?php if ( License::can( 'custom_css' ) ) : ?>
+
 						<hr class="wf-admin-divider" />
 
 						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Custom CSS', 'woo-filter-studio' ); ?></h3>
@@ -497,6 +509,20 @@ final class StyleSettings {
 								</td>
 							</tr>
 						</table>
+
+						<?php endif; ?>
+
+						<?php if ( ! License::can( 'full_styling' ) || ! License::can( 'custom_css' ) ) : ?>
+
+						<hr class="wf-admin-divider" />
+
+						<div class="wf-admin-upgrade-notice">
+							<h3><?php esc_html_e( 'Unlock Full Styling Controls', 'woo-filter-studio' ); ?></h3>
+							<p><?php esc_html_e( 'Typography, layout, border radius, and custom CSS are available with Pro.', 'woo-filter-studio' ); ?></p>
+							<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-submit"><?php esc_html_e( 'Upgrade to Pro', 'woo-filter-studio' ); ?></a>
+						</div>
+
+						<?php endif; ?>
 
 						<?php
 						$reset_url = wp_nonce_url(
@@ -824,11 +850,19 @@ final class StyleSettings {
 	 * @return array<string, string>
 	 */
 	private static function get_skin_choices(): array {
-		return array(
-			'classic'  => __( 'Classic', 'woo-filter-studio' ),
-			'graphite' => __( 'Graphite', 'woo-filter-studio' ),
-			'sunrise'  => __( 'Sunrise', 'woo-filter-studio' ),
+		$skins = array(
+			'classic' => __( 'Classic', 'woo-filter-studio' ),
 		);
+
+		if ( License::can( 'extra_skins' ) ) {
+			$skins['graphite'] = __( 'Graphite', 'woo-filter-studio' );
+			$skins['sunrise']  = __( 'Sunrise', 'woo-filter-studio' );
+		} else {
+			$skins['graphite'] = __( 'Graphite (Pro)', 'woo-filter-studio' );
+			$skins['sunrise']  = __( 'Sunrise (Pro)', 'woo-filter-studio' );
+		}
+
+		return $skins;
 	}
 
 	/**
@@ -840,7 +874,16 @@ final class StyleSettings {
 	private static function sanitize_skin( string $skin ): string {
 		$skin = sanitize_key( $skin );
 
-		return array_key_exists( $skin, self::get_skin_choices() ) ? $skin : 'classic';
+		if ( ! array_key_exists( $skin, self::get_skin_choices() ) ) {
+			return 'classic';
+		}
+
+		$pro_skins = array( 'graphite', 'sunrise' );
+		if ( in_array( $skin, $pro_skins, true ) && ! License::can( 'extra_skins' ) ) {
+			return 'classic';
+		}
+
+		return $skin;
 	}
 
 	/**

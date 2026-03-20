@@ -142,41 +142,53 @@ final class FilterSettings {
 					</div>
 					<div class="wf-admin-card-body">
 						<div class="wf-admin-toggle-group wf-admin-toggle-grid">
-							<label class="wf-admin-toggle">
-								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_categories]" value="no" />
-								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_categories]" value="yes" <?php checked( isset( $options['show_categories'] ) && 'yes' === $options['show_categories'] ); ?> />
-								<span><?php esc_html_e( 'Show Categories', 'woo-filter-studio' ); ?></span>
-							</label>
+							<?php
+							$toggles = array(
+								'show_categories'   => array(
+									'label'   => __( 'Show Categories', 'woo-filter-studio' ),
+									'feature' => 'category_filter',
+								),
+								'show_brands'       => array(
+									'label'   => __( 'Show Brands', 'woo-filter-studio' ),
+									'feature' => 'brand_filter',
+								),
+								'show_price'        => array(
+									'label'   => __( 'Show Price Range', 'woo-filter-studio' ),
+									'feature' => 'price_filter',
+								),
+								'show_rating'       => array(
+									'label'   => __( 'Show Customer Rating', 'woo-filter-studio' ),
+									'feature' => 'rating_filter',
+								),
+								'show_availability' => array(
+									'label'   => __( 'Show Availability', 'woo-filter-studio' ),
+									'feature' => 'availability_filter',
+								),
+								'show_colors'       => array(
+									'label'   => __( 'Show Color Filter', 'woo-filter-studio' ),
+									'feature' => 'color_filter',
+								),
+							);
 
-							<label class="wf-admin-toggle">
-								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_brands]" value="no" />
-								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_brands]" value="yes" <?php checked( isset( $options['show_brands'] ) && 'yes' === $options['show_brands'] ); ?> />
-								<span><?php esc_html_e( 'Show Brands', 'woo-filter-studio' ); ?></span>
-							</label>
-
-							<label class="wf-admin-toggle">
-								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_price]" value="no" />
-								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_price]" value="yes" <?php checked( isset( $options['show_price'] ) && 'yes' === $options['show_price'] ); ?> />
-								<span><?php esc_html_e( 'Show Price Range', 'woo-filter-studio' ); ?></span>
-							</label>
-
-							<label class="wf-admin-toggle">
-								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_rating]" value="no" />
-								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_rating]" value="yes" <?php checked( isset( $options['show_rating'] ) && 'yes' === $options['show_rating'] ); ?> />
-								<span><?php esc_html_e( 'Show Customer Rating', 'woo-filter-studio' ); ?></span>
-							</label>
-
-							<label class="wf-admin-toggle">
-								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_availability]" value="no" />
-								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_availability]" value="yes" <?php checked( isset( $options['show_availability'] ) && 'yes' === $options['show_availability'] ); ?> />
-								<span><?php esc_html_e( 'Show Availability', 'woo-filter-studio' ); ?></span>
-							</label>
-
-							<label class="wf-admin-toggle">
-								<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_colors]" value="no" />
-								<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[show_colors]" value="yes" <?php checked( isset( $options['show_colors'] ) && 'yes' === $options['show_colors'] ); ?> />
-								<span><?php esc_html_e( 'Show Color Filter', 'woo-filter-studio' ); ?></span>
-							</label>
+							foreach ( $toggles as $key => $toggle ) :
+								$is_locked = ! License::can( $toggle['feature'] );
+								$is_checked = isset( $options[ $key ] ) && 'yes' === $options[ $key ];
+								?>
+								<?php if ( $is_locked ) : ?>
+									<div class="wf-admin-toggle wf-admin-toggle--locked">
+										<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[<?php echo esc_attr( $key ); ?>]" value="no" />
+										<input type="checkbox" disabled />
+										<span><?php echo esc_html( $toggle['label'] ); ?></span>
+										<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-pro-badge">PRO</a>
+									</div>
+								<?php else : ?>
+									<label class="wf-admin-toggle">
+										<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[<?php echo esc_attr( $key ); ?>]" value="no" />
+										<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[<?php echo esc_attr( $key ); ?>]" value="yes" <?php checked( $is_checked ); ?> />
+										<span><?php echo esc_html( $toggle['label'] ); ?></span>
+									</label>
+								<?php endif; ?>
+							<?php endforeach; ?>
 						</div>
 					</div>
 				</div>

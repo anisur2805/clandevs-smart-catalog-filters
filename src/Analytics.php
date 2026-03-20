@@ -33,11 +33,18 @@ final class Analytics {
 	 * @return void
 	 */
 	public function register_hooks(): void {
+		// Always register the cron flush handler so buffered data is not lost
+		// during license state changes or grace periods.
+		add_action( 'wf_flush_analytics_buffer', array( $this, 'flush_analytics_buffer' ) );
+
+		if ( ! License::can( 'analytics' ) ) {
+			return;
+		}
+
 		add_action( 'pre_get_posts', array( $this, 'track_shop_filter_usage' ), 30 );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_post_' . self::RESET_ACTION, array( $this, 'handle_reset_request' ) );
-		add_action( 'wf_flush_analytics_buffer', array( $this, 'flush_analytics_buffer' ) );
 	}
 
 	/**

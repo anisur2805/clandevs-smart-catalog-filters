@@ -454,3 +454,61 @@
   font-size: 13px;
   color: var(--wf-admin-text-muted);
 }
+
+.wf-admin-pro-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #7c3aed;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  border: 1px solid #c4b5fd;
+  border-radius: 999px;
+  text-decoration: none;
+  margin-left: auto;
+  transition: all 0.15s ease;
+}
+
+.wf-admin-pro-badge:hover {
+  background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+  color: #6d28d9;
+}
+
+.wf-admin-toggle--locked {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.wf-admin-toggle--locked input[type="checkbox"] {
+  pointer-events: none;
+}
+
+.wf-admin-upgrade-notice {
+  text-align: center;
+  padding: 32px 20px;
+  background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%);
+  border: 1px dashed #c4b5fd;
+  border-radius: var(--wf-admin-radius);
+}
+
+.wf-admin-upgrade-notice h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5b21b6;
+}
+
+.wf-admin-upgrade-notice p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #6d28d9;
+}
+
+.wf-admin-upgrade-notice .wf-admin-submit {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+  text-decoration: none;
+}
