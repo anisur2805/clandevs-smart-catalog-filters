@@ -19,7 +19,7 @@ final class StyleSettings {
 	private const OPTION_KEY = 'wf_style_options';
 
 	/** @var string */
-	private const PAGE_SLUG = 'wf-style-settings';
+	private const PAGE_SLUG = 'woo-filter-studio';
 
 	/** @var string */
 	private const RESET_ACTION = 'wf_reset_styles';
@@ -70,7 +70,7 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'woo-filter-studio_page_wf-style-settings' !== $hook ) {
+		if ( 'toplevel_page_woo-filter-studio' !== $hook ) {
 			return;
 		}
 
@@ -155,10 +155,11 @@ final class StyleSettings {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
 			__( 'Woo Filter Studio Styling', 'woo-filter-studio' ),
-			__( 'Woo Filter Studio Styling', 'woo-filter-studio' ),
+			__( 'Styling', 'woo-filter-studio' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
-			array( $this, 'render_page' )
+			array( $this, 'render_page' ),
+			0
 		);
 	}
 

@@ -83,7 +83,7 @@ final class Analytics {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
 			__( 'Woo Filter Studio Analytics', 'woo-filter-studio' ),
-			__( 'Woo Filter Studio Analytics', 'woo-filter-studio' ),
+			__( 'Analytics', 'woo-filter-studio' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )

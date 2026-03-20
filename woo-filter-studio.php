@@ -3,7 +3,7 @@
  * Plugin Name: Woo Filter Studio
  * Plugin URI: https://woo-filter-studio.clandevs.com/
  * Description: Filter WooCommerce products by category, price, and availability for free. Upgrade to Pro for brand, color, rating, analytics, and full styling.
- * Version: 1.0.0
+ * Version: 1.1.1
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
@@ -29,7 +29,7 @@ if ( ! defined( 'WF_PLUGIN_URL' ) ) {
 }
 
 if ( ! defined( 'WF_VERSION' ) ) {
-	define( 'WF_VERSION', '1.0.0' );
+	define( 'WF_VERSION', '1.1.1' );
 }
 
 require_once __DIR__ . '/src/Autoloader.php';
@@ -55,7 +55,7 @@ if ( function_exists( 'wfs_fs' ) ) {
 
 			if ( ! isset( $wfs_fs ) ) {
 				// Include Freemius SDK.
-				require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+				require_once __DIR__ . '/vendor/freemius/start.php';
 
 				$wfs_fs = fs_dynamic_init(
 					array(
@@ -76,8 +76,9 @@ if ( function_exists( 'wfs_fs' ) ) {
 							'is_require_payment' => false,
 						),
 						'menu'                => array(
-							'slug'    => 'woo-filter-studio',
-							'support' => false,
+							'slug'       => 'woo-filter-studio',
+							'first-path' => 'admin.php?page=woo-filter-studio',
+							'support'    => false,
 						),
 					)
 				);
@@ -90,14 +91,36 @@ if ( function_exists( 'wfs_fs' ) ) {
 		wfs_fs();
 		// Signal that SDK was initiated.
 		do_action( 'wfs_fs_loaded' );
+
+		// Freemius uninstall hook — replaces uninstall.php.
+		wfs_fs()->add_action( 'after_uninstall', 'wfs_fs_uninstall_cleanup' );
+	}
+
+	/**
+	 * Clean up plugin data on uninstall via Freemius.
+	 *
+	 * @return void
+	 */
+	function wfs_fs_uninstall_cleanup() {
+		$options = get_option( 'wf_filter_options', array() );
+		$delete  = is_array( $options ) && isset( $options['delete_data_on_uninstall'] ) && 'yes' === $options['delete_data_on_uninstall'];
+
+		if ( ! $delete ) {
+			return;
+		}
+
+		delete_option( 'wf_filter_options' );
+		delete_option( 'wf_style_options' );
+		delete_option( 'wf_analytics_data' );
+		delete_option( 'wf_cache_last_changed' );
 	}
 
 	add_filter(
 		'plugin_action_links_' . plugin_basename( __FILE__ ),
 		static function ( array $links ): array {
 			$custom_links = array(
+				'<a href="' . esc_url( admin_url( 'admin.php?page=woo-filter-studio' ) ) . '">' . esc_html__( 'Styling', 'woo-filter-studio' ) . '</a>',
 				'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filter-studio' ) . '</a>',
-				'<a href="' . esc_url( admin_url( 'admin.php?page=wf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'woo-filter-studio' ) . '</a>',
 			);
 
 			if ( \WooFilters\License::can( 'analytics' ) ) {

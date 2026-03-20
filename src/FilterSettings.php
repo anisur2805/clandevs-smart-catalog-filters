@@ -91,7 +91,7 @@ final class FilterSettings {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
 			__( 'Woo Filter Studio Settings', 'woo-filter-studio' ),
-			__( 'Woo Filter Studio Settings', 'woo-filter-studio' ),
+			__( 'Settings', 'woo-filter-studio' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -171,7 +171,7 @@ final class FilterSettings {
 							);
 
 							foreach ( $toggles as $key => $toggle ) :
-								$is_locked = ! License::can( $toggle['feature'] );
+								$is_locked  = ! License::can( $toggle['feature'] );
 								$is_checked = isset( $options[ $key ] ) && 'yes' === $options[ $key ];
 								?>
 								<?php if ( $is_locked ) : ?>
