@@ -121,6 +121,7 @@ if (!function_exists('sanitize_hex_color')) {
     }
 }
 
+require_once dirname(__DIR__) . '/src/License.php';
 require_once dirname(__DIR__) . '/src/FilterSettings.php';
 require_once dirname(__DIR__) . '/src/StyleSettings.php';
 require_once dirname(__DIR__) . '/src/ShopFilters.php';
