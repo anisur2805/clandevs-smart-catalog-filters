@@ -18,7 +18,7 @@ if (!function_exists('sanitize_key')) {
 
 if (!function_exists('sanitize_text_field')) {
     function sanitize_text_field(string $value): string {
-        return trim(strip_tags($value));
+        return trim(wp_strip_all_tags($value));
     }
 }
 
@@ -104,7 +104,7 @@ if (!function_exists('wc_get_product_ids_on_sale')) {
 
 if (!function_exists('wp_strip_all_tags')) {
     function wp_strip_all_tags(string $value, bool $remove_breaks = false): string {
-        $value = strip_tags($value);
+        $value = preg_replace('/<[^>]*>/', '', $value);
         if ($remove_breaks) {
             $value = preg_replace('/[\r\n\t ]+/', ' ', $value);
         }

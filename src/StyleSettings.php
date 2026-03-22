@@ -19,7 +19,7 @@ final class StyleSettings {
 	private const OPTION_KEY = 'wf_style_options';
 
 	/** @var string */
-	private const PAGE_SLUG = 'woo-filter-studio';
+	private const PAGE_SLUG = 'filter-studio-for-woo';
 
 	/** @var string */
 	private const RESET_ACTION = 'wf_reset_styles';
@@ -43,7 +43,7 @@ final class StyleSettings {
 	 */
 	public function handle_reset_request(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage Woo Filter Studio styles.', 'woo-filter-studio' ) );
+			wp_die( esc_html__( 'You are not allowed to manage Filter Studio for Woo styles.', 'filter-studio-for-woo' ) );
 		}
 
 		check_admin_referer( self::RESET_ACTION );
@@ -100,46 +100,46 @@ final class StyleSettings {
 
 		add_settings_section(
 			'wf_style_section_main',
-			__( 'Design Controls', 'woo-filter-studio' ),
+			__( 'Design Controls', 'filter-studio-for-woo' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			'preset_skin',
-			__( 'Default Skin', 'woo-filter-studio' ),
+			__( 'Default Skin', 'filter-studio-for-woo' ),
 			array( $this, 'render_skin_field' ),
 			self::PAGE_SLUG,
 			'wf_style_section_main'
 		);
 
-		$this->register_color_field( 'accent_color', __( 'Accent Color', 'woo-filter-studio' ) );
-		$this->register_color_field( 'sidebar_bg_color', __( 'Sidebar Background', 'woo-filter-studio' ) );
-		$this->register_color_field( 'sidebar_border_color', __( 'Sidebar Border', 'woo-filter-studio' ) );
-		$this->register_color_field( 'heading_color', __( 'Heading Color', 'woo-filter-studio' ) );
-		$this->register_color_field( 'text_color', __( 'Body Text Color', 'woo-filter-studio' ) );
-		$this->register_color_field( 'muted_text_color', __( 'Muted Text Color', 'woo-filter-studio' ) );
-		$this->register_color_field( 'chip_bg_color', __( 'Filter Chip Background', 'woo-filter-studio' ) );
-		$this->register_color_field( 'chip_border_color', __( 'Filter Chip Border', 'woo-filter-studio' ) );
-		$this->register_color_field( 'button_bg_color', __( 'Primary Button Background', 'woo-filter-studio' ) );
-		$this->register_color_field( 'button_text_color', __( 'Primary Button Text', 'woo-filter-studio' ) );
-		$this->register_color_field( 'input_bg_color', __( 'Input Background', 'woo-filter-studio' ) );
-		$this->register_color_field( 'control_border_color', __( 'Input/Control Border', 'woo-filter-studio' ) );
-		$this->register_color_field( 'no_results_bg_color', __( 'No Results Background', 'woo-filter-studio' ) );
-		$this->register_color_field( 'no_results_border_color', __( 'No Results Border', 'woo-filter-studio' ) );
-		$this->register_color_field( 'no_results_shadow_color', __( 'No Results Shadow', 'woo-filter-studio' ) );
-		$this->register_text_field( 'font_family', __( 'Font Family', 'woo-filter-studio' ) );
-		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'woo-filter-studio' ), 10, 48, 1 );
-		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'woo-filter-studio' ), 180, 600, 1 );
-		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'woo-filter-studio' ), 0, 80, 1 );
-		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'woo-filter-studio' ), 0, 60, 1 );
-		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'woo-filter-studio' ), 0, 60, 1 );
-		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'woo-filter-studio' ), 0, 60, 1 );
-		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'woo-filter-studio' ), 0, 60, 1 );
+		$this->register_color_field( 'accent_color', __( 'Accent Color', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'sidebar_bg_color', __( 'Sidebar Background', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'sidebar_border_color', __( 'Sidebar Border', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'heading_color', __( 'Heading Color', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'text_color', __( 'Body Text Color', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'muted_text_color', __( 'Muted Text Color', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'chip_bg_color', __( 'Filter Chip Background', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'chip_border_color', __( 'Filter Chip Border', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'button_bg_color', __( 'Primary Button Background', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'button_text_color', __( 'Primary Button Text', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'input_bg_color', __( 'Input Background', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'control_border_color', __( 'Input/Control Border', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'no_results_bg_color', __( 'No Results Background', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'no_results_border_color', __( 'No Results Border', 'filter-studio-for-woo' ) );
+		$this->register_color_field( 'no_results_shadow_color', __( 'No Results Shadow', 'filter-studio-for-woo' ) );
+		$this->register_text_field( 'font_family', __( 'Font Family', 'filter-studio-for-woo' ) );
+		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'filter-studio-for-woo' ), 10, 48, 1 );
+		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'filter-studio-for-woo' ), 180, 600, 1 );
+		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'filter-studio-for-woo' ), 0, 80, 1 );
+		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'filter-studio-for-woo' ), 0, 60, 1 );
+		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'filter-studio-for-woo' ), 0, 60, 1 );
+		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'filter-studio-for-woo' ), 0, 60, 1 );
+		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'filter-studio-for-woo' ), 0, 60, 1 );
 
 		add_settings_field(
 			'custom_css',
-			__( 'Custom CSS', 'woo-filter-studio' ),
+			__( 'Custom CSS', 'filter-studio-for-woo' ),
 			array( $this, 'render_custom_css_field' ),
 			self::PAGE_SLUG,
 			'wf_style_section_main'
@@ -154,8 +154,8 @@ final class StyleSettings {
 	public function register_menu(): void {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
-			__( 'Woo Filter Studio Styling', 'woo-filter-studio' ),
-			__( 'Styling', 'woo-filter-studio' ),
+			__( 'Filter Studio for Woo Styling', 'filter-studio-for-woo' ),
+			__( 'Styling', 'filter-studio-for-woo' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' ),
@@ -180,8 +180,8 @@ final class StyleSettings {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
 				</div>
 				<div>
-					<h1><?php esc_html_e( 'Woo Filter Studio Styling', 'woo-filter-studio' ); ?></h1>
-					<p><?php esc_html_e( 'Customize the appearance of your shop filters', 'woo-filter-studio' ); ?></p>
+					<h1><?php esc_html_e( 'Filter Studio for Woo Styling', 'filter-studio-for-woo' ); ?></h1>
+					<p><?php esc_html_e( 'Customize the appearance of your shop filters', 'filter-studio-for-woo' ); ?></p>
 				</div>
 			</div>
 
@@ -190,7 +190,7 @@ final class StyleSettings {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Style settings saved.', 'woo-filter-studio' ); ?>
+							<?php esc_html_e( 'Style settings saved.', 'filter-studio-for-woo' ); ?>
 						</p>
 					</div>
 				</div>
@@ -204,7 +204,7 @@ final class StyleSettings {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Style settings have been reset to defaults.', 'woo-filter-studio' ); ?>
+							<?php esc_html_e( 'Style settings have been reset to defaults.', 'filter-studio-for-woo' ); ?>
 						</p>
 					</div>
 				</div>
@@ -212,8 +212,8 @@ final class StyleSettings {
 
 			<div class="wf-admin-card">
 				<div class="wf-admin-card-header">
-					<h2><?php esc_html_e( 'Design Controls', 'woo-filter-studio' ); ?></h2>
-					<p><?php esc_html_e( 'Choose a preset skin and fine-tune colors and typography.', 'woo-filter-studio' ); ?></p>
+					<h2><?php esc_html_e( 'Design Controls', 'filter-studio-for-woo' ); ?></h2>
+					<p><?php esc_html_e( 'Choose a preset skin and fine-tune colors and typography.', 'filter-studio-for-woo' ); ?></p>
 				</div>
 				<div class="wf-admin-card-body">
 					<form action="options.php" method="post">
@@ -221,7 +221,7 @@ final class StyleSettings {
 						<table class="form-table">
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Default Skin', 'woo-filter-studio' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Default Skin', 'filter-studio-for-woo' ); ?></label>
 								</th>
 								<td>
 									<select name="<?php echo esc_attr( self::OPTION_KEY ); ?>[preset_skin]" class="wf-admin-select">
@@ -239,13 +239,13 @@ final class StyleSettings {
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Colors', 'woo-filter-studio' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Colors', 'filter-studio-for-woo' ); ?></h3>
 
 						<div class="wf-admin-grid-2">
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Accent Color', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Accent Color', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'accent_color' ); ?>
@@ -253,7 +253,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Background', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Background', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'sidebar_bg_color' ); ?>
@@ -261,7 +261,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Border', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Border', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'sidebar_border_color' ); ?>
@@ -269,7 +269,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Heading Color', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Heading Color', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'heading_color' ); ?>
@@ -277,7 +277,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Body Text Color', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Body Text Color', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'text_color' ); ?>
@@ -285,7 +285,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Muted Text Color', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Muted Text Color', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'muted_text_color' ); ?>
@@ -296,7 +296,7 @@ final class StyleSettings {
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Background', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Background', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'chip_bg_color' ); ?>
@@ -304,7 +304,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Border', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Border', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'chip_border_color' ); ?>
@@ -312,7 +312,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Background', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Background', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'button_bg_color' ); ?>
@@ -320,7 +320,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Text', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Text', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'button_text_color' ); ?>
@@ -328,7 +328,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Input Background', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Input Background', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'input_bg_color' ); ?>
@@ -336,7 +336,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Input/Control Border', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Input/Control Border', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'control_border_color' ); ?>
@@ -344,7 +344,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'No Results Background', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Background', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'no_results_bg_color' ); ?>
@@ -352,7 +352,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'No Results Border', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Border', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'no_results_border_color' ); ?>
@@ -360,7 +360,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'No Results Shadow', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Shadow', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'no_results_shadow_color' ); ?>
@@ -369,7 +369,7 @@ final class StyleSettings {
 							</table>
 							<?php else : ?>
 							<div style="display:flex;align-items:center;justify-content:center;padding:20px;">
-								<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-pro-badge" style="font-size:12px;padding:6px 14px;"><?php esc_html_e( '9 more color controls with Pro', 'woo-filter-studio' ); ?></a>
+								<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-pro-badge" style="font-size:12px;padding:6px 14px;"><?php esc_html_e( '9 more color controls with Pro', 'filter-studio-for-woo' ); ?></a>
 							</div>
 							<?php endif; ?>
 						</div>
@@ -378,12 +378,12 @@ final class StyleSettings {
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Typography & Layout', 'woo-filter-studio' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Typography & Layout', 'filter-studio-for-woo' ); ?></h3>
 
 						<table class="form-table">
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Font Family', 'woo-filter-studio' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Font Family', 'filter-studio-for-woo' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -395,7 +395,7 @@ final class StyleSettings {
 							</tr>
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Base Font Size (px)', 'woo-filter-studio' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Base Font Size (px)', 'filter-studio-for-woo' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -407,7 +407,7 @@ final class StyleSettings {
 							</tr>
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Width (px)', 'woo-filter-studio' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Width (px)', 'filter-studio-for-woo' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -419,7 +419,7 @@ final class StyleSettings {
 							</tr>
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar/Product Gap (px)', 'woo-filter-studio' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar/Product Gap (px)', 'filter-studio-for-woo' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -433,13 +433,13 @@ final class StyleSettings {
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Border Radius', 'woo-filter-studio' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Border Radius', 'filter-studio-for-woo' ); ?></h3>
 
 						<div class="wf-admin-grid-2">
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Radius (px)', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Radius (px)', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -451,7 +451,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Input Radius (px)', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Input Radius (px)', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -465,7 +465,7 @@ final class StyleSettings {
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Button Radius (px)', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Button Radius (px)', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -477,7 +477,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Section Spacing (px)', 'woo-filter-studio' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Section Spacing (px)', 'filter-studio-for-woo' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -496,7 +496,7 @@ final class StyleSettings {
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Custom CSS', 'woo-filter-studio' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Custom CSS', 'filter-studio-for-woo' ); ?></h3>
 
 						<table class="form-table">
 							<tr>
@@ -506,7 +506,7 @@ final class StyleSettings {
 									$value   = isset( $options['custom_css'] ) ? (string) $options['custom_css'] : '';
 									?>
 									<textarea class="wf-admin-textarea" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[custom_css]" rows="8" placeholder=".wf-shop-layout { /* your custom styles */ }"><?php echo esc_textarea( $value ); ?></textarea>
-									<p class="description wf-admin-help"><?php esc_html_e( 'CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results', 'woo-filter-studio' ); ?></p>
+									<p class="description wf-admin-help"><?php esc_html_e( 'CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results', 'filter-studio-for-woo' ); ?></p>
 								</td>
 							</tr>
 						</table>
@@ -518,9 +518,9 @@ final class StyleSettings {
 						<hr class="wf-admin-divider" />
 
 						<div class="wf-admin-upgrade-notice">
-							<h3><?php esc_html_e( 'Unlock Full Styling Controls', 'woo-filter-studio' ); ?></h3>
-							<p><?php esc_html_e( 'Typography, layout, border radius, and custom CSS are available with Pro.', 'woo-filter-studio' ); ?></p>
-							<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-submit"><?php esc_html_e( 'Upgrade to Pro', 'woo-filter-studio' ); ?></a>
+							<h3><?php esc_html_e( 'Unlock Full Styling Controls', 'filter-studio-for-woo' ); ?></h3>
+							<p><?php esc_html_e( 'Typography, layout, border radius, and custom CSS are available with Pro.', 'filter-studio-for-woo' ); ?></p>
+							<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-submit"><?php esc_html_e( 'Upgrade to Pro', 'filter-studio-for-woo' ); ?></a>
 						</div>
 
 						<?php endif; ?>
@@ -537,11 +537,11 @@ final class StyleSettings {
 						<div class="wf-admin-submit-wrap" style="display: flex; align-items: center; gap: 16px;">
 							<button type="submit" class="wf-admin-submit">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-								<?php esc_html_e( 'Save Styles', 'woo-filter-studio' ); ?>
+								<?php esc_html_e( 'Save Styles', 'filter-studio-for-woo' ); ?>
 							</button>
-							<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'woo-filter-studio' ); ?>">
+							<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'filter-studio-for-woo' ); ?>">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-								<?php esc_html_e( 'Reset to Defaults', 'woo-filter-studio' ); ?>
+								<?php esc_html_e( 'Reset to Defaults', 'filter-studio-for-woo' ); ?>
 							</a>
 						</div>
 					</form>
@@ -573,7 +573,7 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function render_section_intro(): void {
-		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results.', 'woo-filter-studio' ) . '</p>';
+		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results.', 'filter-studio-for-woo' ) . '</p>';
 	}
 
 	/**
@@ -852,15 +852,15 @@ final class StyleSettings {
 	 */
 	private static function get_skin_choices(): array {
 		$skins = array(
-			'classic' => __( 'Classic', 'woo-filter-studio' ),
+			'classic' => __( 'Classic', 'filter-studio-for-woo' ),
 		);
 
 		if ( License::can( 'extra_skins' ) ) {
-			$skins['graphite'] = __( 'Graphite', 'woo-filter-studio' );
-			$skins['sunrise']  = __( 'Sunrise', 'woo-filter-studio' );
+			$skins['graphite'] = __( 'Graphite', 'filter-studio-for-woo' );
+			$skins['sunrise']  = __( 'Sunrise', 'filter-studio-for-woo' );
 		} else {
-			$skins['graphite'] = __( 'Graphite (Pro)', 'woo-filter-studio' );
-			$skins['sunrise']  = __( 'Sunrise (Pro)', 'woo-filter-studio' );
+			$skins['graphite'] = __( 'Graphite (Pro)', 'filter-studio-for-woo' );
+			$skins['sunrise']  = __( 'Sunrise (Pro)', 'filter-studio-for-woo' );
 		}
 
 		return $skins;

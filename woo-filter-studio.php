@@ -1,19 +1,19 @@
 <?php
 /**
- * Plugin Name: Woo Filter Studio
+ * Plugin Name: Filter Studio for Woo
  * Plugin URI: https://woo-filter-studio.clandevs.com/
  * Description: Filter WooCommerce products by category, price, and availability for free. Upgrade to Pro for brand, color, rating, analytics, and full styling.
  * Version: 1.1.1
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
- * Tested up to: 6.8
+ * Tested up to: 6.9
  * Requires PHP: 7.4
  * WC requires at least: 7.0
  * WC tested up to: 10.0
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: woo-filter-studio
+ * Text Domain: filter-studio-for-woo
  * Requires Plugins: woocommerce
  * Domain Path: /languages
  *
@@ -60,7 +60,7 @@ if ( function_exists( 'wfs_fs' ) ) {
 				$wfs_fs = fs_dynamic_init(
 					array(
 						'id'                  => '26209',
-						'slug'                => 'woo-filter-studio',
+						'slug'                => 'filter-studio-for-woo',
 						'type'                => 'plugin',
 						'public_key'          => 'pk_c409d5141f9173a5c8ba6cf201103',
 						'is_premium'          => true,
@@ -76,7 +76,7 @@ if ( function_exists( 'wfs_fs' ) ) {
 							'is_require_payment' => false,
 						),
 						'menu'                => array(
-							'slug'       => 'woo-filter-studio',
+							'slug'       => 'filter-studio-for-woo',
 							'first-path' => 'admin.php?page=woo-filter-studio',
 							'support'    => false,
 						),
@@ -119,12 +119,12 @@ if ( function_exists( 'wfs_fs' ) ) {
 		'plugin_action_links_' . plugin_basename( __FILE__ ),
 		static function ( array $links ): array {
 			$custom_links = array(
-				'<a href="' . esc_url( admin_url( 'admin.php?page=woo-filter-studio' ) ) . '">' . esc_html__( 'Styling', 'woo-filter-studio' ) . '</a>',
-				'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'woo-filter-studio' ) . '</a>',
+				'<a href="' . esc_url( admin_url( 'admin.php?page=woo-filter-studio' ) ) . '">' . esc_html__( 'Styling', 'filter-studio-for-woo' ) . '</a>',
+				'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'filter-studio-for-woo' ) . '</a>',
 			);
 
 			if ( \WooFilters\License::can( 'analytics' ) ) {
-				$custom_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'woo-filter-studio' ) . '</a>';
+				$custom_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'filter-studio-for-woo' ) . '</a>';
 			}
 
 			return array_merge( $custom_links, $links );
@@ -146,8 +146,6 @@ if ( function_exists( 'wfs_fs' ) ) {
 	add_action(
 		'plugins_loaded',
 		static function () {
-			load_plugin_textdomain( 'woo-filter-studio', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
 			if ( ! class_exists( 'WooCommerce' ) ) {
 				add_action(
 					'admin_notices',
@@ -155,7 +153,7 @@ if ( function_exists( 'wfs_fs' ) ) {
 						if ( ! current_user_can( 'activate_plugins' ) ) {
 							return;
 						}
-						echo '<div class="notice notice-error"><p>' . esc_html__( 'Woo Filter Studio requires WooCommerce to be installed and active.', 'woo-filter-studio' ) . '</p></div>';
+						echo '<div class="notice notice-error"><p>' . esc_html__( 'Filter Studio for Woo requires WooCommerce to be installed and active.', 'filter-studio-for-woo' ) . '</p></div>';
 					}
 				);
 				return;

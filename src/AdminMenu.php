@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers primary Woo Filter Studio admin menu.
+ * Registers primary Filter Studio for Woo admin menu.
  */
 final class AdminMenu {
 	/** @var string */
-	private const MENU_SLUG = 'woo-filter-studio';
+	private const MENU_SLUG = 'filter-studio-for-woo';
 
 	/**
 	 * Register hooks.
@@ -46,8 +46,8 @@ final class AdminMenu {
 	 */
 	public function register_menu(): void {
 		add_menu_page(
-			__( 'Woo Filter Studio', 'woo-filter-studio' ),
-			__( 'Woo Filter Studio', 'woo-filter-studio' ),
+			__( 'Filter Studio for Woo', 'filter-studio-for-woo' ),
+			__( 'Filter Studio for Woo', 'filter-studio-for-woo' ),
 			'manage_woocommerce',
 			self::MENU_SLUG,
 			'__return_null',

@@ -7,6 +7,8 @@
 __MACOSX
 .idea
 .vscode
+.editorconfig
+.phpunit.result.cache
 
 # Build output
 /dist
@@ -35,7 +37,5 @@ vendor/theseer
 vendor/wp-coding-standards
 phpcs.xml.dist
 phpunit.xml.dist
-.phpunit.result.cache
 composer.json
 composer.lock
-.editorconfig

@@ -1,8 +1,8 @@
-=== Woo Filter Studio ===
+=== Filter Studio for Woo ===
 Contributors: anisur2805
 Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 Stable tag: 1.1.1
@@ -13,7 +13,7 @@ Filter WooCommerce products by category, price, and availability for free — up
 
 == Description ==
 
-Woo Filter Studio helps shoppers quickly find products using powerful AJAX-powered filters. The free version gives you everything you need to get started, and you can upgrade to Pro to unlock the full feature set.
+Filter Studio for Woo helps shoppers quickly find products using powerful AJAX-powered filters. The free version gives you everything you need to get started, and you can upgrade to Pro to unlock the full feature set.
 
 = Free Features =
 
@@ -79,21 +79,21 @@ Upgrade to Pro to unlock:
 1. Upload the `woo-filter-studio` folder to the `/wp-content/plugins/` directory, or install it directly from the WordPress plugin repository.
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Ensure WooCommerce is installed and activated.
-4. Go to **Woo Filter Studio > Settings** to configure which filters appear in your shop.
-5. Go to **Woo Filter Studio > Styling** to customize colors and the preset skin.
+4. Go to **Filter Studio for Woo > Settings** to configure which filters appear in your shop.
+5. Go to **Filter Studio for Woo > Styling** to customize colors and the preset skin.
 6. Visit your shop page — filters will appear automatically in the sidebar.
 
 = Activate a Pro License =
 
 1. Purchase a Pro license from [woo-filter-studio.clandevs.com](https://woo-filter-studio.clandevs.com/).
-2. After activation, go to **Woo Filter Studio > Account** in your WordPress admin.
+2. After activation, go to **Filter Studio for Woo > Account** in your WordPress admin.
 3. Enter your license key and click **Activate**.
 4. Pro features (brand, color, rating, custom attributes, analytics, full styling) will unlock immediately.
 5. Your existing free settings are fully preserved — nothing is lost.
 
 = Start a Free Trial =
 
-1. Go to **Woo Filter Studio** in your WordPress admin.
+1. Go to **Filter Studio for Woo** in your WordPress admin.
 2. You will see an option to **Start a 14-day Free Trial** — no credit card required.
 3. Click to activate the trial. All Pro features will be unlocked for 14 days.
 4. When the trial ends, the plugin reverts to the free version with your settings intact.
@@ -102,7 +102,7 @@ Upgrade to Pro to unlock:
 
 = Does this work without WooCommerce? =
 
-No. Woo Filter Studio requires WooCommerce and only runs when WooCommerce is active.
+No. Filter Studio for Woo requires WooCommerce and only runs when WooCommerce is active.
 
 = What do I get in the free version? =
 
@@ -122,7 +122,7 @@ Yes. Supported interactions update the filter and product sections without full 
 
 = Does uninstall remove data? =
 
-By default, data is retained. Enable "Delete plugin data on uninstall" in Woo Filter Studio Settings to remove options and analytics on uninstall.
+By default, data is retained. Enable "Delete plugin data on uninstall" in Filter Studio for Woo Settings to remove options and analytics on uninstall.
 
 = Will I lose my settings when upgrading from free to Pro? =
 
@@ -130,7 +130,7 @@ No. Upgrading activates your license key and unlocks Pro features instantly. All
 
 = How do I activate my Pro license? =
 
-After purchasing, go to **Woo Filter Studio > Account** in your WordPress admin, enter your license key, and click **Activate**. Pro features will unlock immediately. If you do not see the Account page, deactivate and reactivate the plugin first.
+After purchasing, go to **Filter Studio for Woo > Account** in your WordPress admin, enter your license key, and click **Activate**. Pro features will unlock immediately. If you do not see the Account page, deactivate and reactivate the plugin first.
 
 = Can I try Pro before buying? =
 
@@ -194,7 +194,7 @@ Inline admin icons are based on Feather Icons (MIT License).
 Admin menu streamlined — Styling is now the default page. Uninstall cleanup uses Freemius hook.
 
 = 1.1.0 =
-Woo Filter Studio now offers a free tier and a Pro tier. Free users get category, price, and availability filters. Upgrade to Pro for brand, color, rating, attribute filters, analytics, and full styling controls.
+Filter Studio for Woo now offers a free tier and a Pro tier. Free users get category, price, and availability filters. Upgrade to Pro for brand, color, rating, attribute filters, analytics, and full styling controls.
 
 = 1.0.0 =
-Initial public release of Woo Filter Studio.
+Initial public release of Filter Studio for Woo.

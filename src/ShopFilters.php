@@ -418,10 +418,10 @@ final class ShopFilters {
 
 		echo '<div class="' . esc_attr( $layout_class ) . '">';
 		if ( $show_filters ) {
-			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filter-studio' ) . '</button>';
+			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'filter-studio-for-woo' ) . '</button>';
 			echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-			echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'woo-filter-studio' ) . '">';
-			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filter-studio' ) . '">&times;</button>';
+			echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'filter-studio-for-woo' ) . '">';
+			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'filter-studio-for-woo' ) . '">&times;</button>';
 			$this->render_filter_form();
 			echo '</div>';
 		}
@@ -504,10 +504,10 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-shop-layout alignwide ' . esc_attr( $this->get_layout_skin_class() ) . '">';
-		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'woo-filter-studio' ) . '</button>';
+		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'filter-studio-for-woo' ) . '</button>';
 		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-		echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'woo-filter-studio' ) . '">';
-		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'woo-filter-studio' ) . '">&times;</button>';
+		echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'filter-studio-for-woo' ) . '">';
+		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'filter-studio-for-woo' ) . '">&times;</button>';
 		$this->render_filter_form();
 		echo '</div>';
 		echo '<div class="wf-products">';
@@ -563,11 +563,11 @@ final class ShopFilters {
 	 */
 	private function get_no_results_markup(): string {
 		$html  = '<div class="wf-no-results wf-no-results-card" role="status" aria-live="polite">';
-		$html .= '<h3>' . esc_html__( 'No products found', 'woo-filter-studio' ) . '</h3>';
-		$html .= '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'woo-filter-studio' ) . '</p>';
+		$html .= '<h3>' . esc_html__( 'No products found', 'filter-studio-for-woo' ) . '</h3>';
+		$html .= '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'filter-studio-for-woo' ) . '</p>';
 		$html .= '<div class="wf-empty-actions">';
-		$html .= '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'woo-filter-studio' ) . '</a>';
-		$html .= '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'woo-filter-studio' ) . '</a>';
+		$html .= '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'filter-studio-for-woo' ) . '</a>';
+		$html .= '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'filter-studio-for-woo' ) . '</a>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -595,7 +595,7 @@ final class ShopFilters {
 			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
 		}
 		echo '</div>';
-		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'woo-filter-studio' ) . '</a>';
+		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'filter-studio-for-woo' ) . '</a>';
 		echo '</div>';
 	}
 
@@ -625,10 +625,10 @@ final class ShopFilters {
 			20 => '20',
 			40 => '40',
 			60 => '60',
-			0  => __( 'All', 'woo-filter-studio' ),
+			0  => __( 'All', 'filter-studio-for-woo' ),
 		);
 
-		echo '<div class="wf-per-page" aria-label="' . esc_attr__( 'Products per page', 'woo-filter-studio' ) . '">';
+		echo '<div class="wf-per-page" aria-label="' . esc_attr__( 'Products per page', 'filter-studio-for-woo' ) . '">';
 		foreach ( $choices as $value => $label ) {
 			$url        = $this->build_filter_url_for_per_page( (int) $value );
 			$active     = ( 0 === (int) $value && $current >= $total && $total > 0 ) || ( (int) $value > 0 && $current === (int) $value );
@@ -700,46 +700,46 @@ final class ShopFilters {
 
 		if ( $show_categories ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Categories', 'woo-filter-studio' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Categories', 'filter-studio-for-woo' ) . '</h4>';
 			$this->render_categories( $list_suffix );
 			echo '</div>';
 		}
 
 		if ( $show_brands && '' !== $this->brand_taxonomy && License::can( 'brand_filter' ) ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Filter by Brands', 'woo-filter-studio' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Filter by Brands', 'filter-studio-for-woo' ) . '</h4>';
 			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands, false, $list_suffix );
 			echo '</div>';
 		}
 
 		if ( License::can( 'or_and_logic' ) ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Multi-select Logic', 'woo-filter-studio' ) . '</h4>';
-			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'woo-filter-studio' ) . '</span></label>';
-			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'woo-filter-studio' ) . '</span></label>';
+			echo '<h4>' . esc_html__( 'Multi-select Logic', 'filter-studio-for-woo' ) . '</h4>';
+			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'filter-studio-for-woo' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'filter-studio-for-woo' ) . '</span></label>';
 			echo '</div>';
 		}
 
 		if ( $show_price ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Price', 'woo-filter-studio' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Price', 'filter-studio-for-woo' ) . '</h4>';
 			echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
 			echo '<div class="wf-price-range-inputs">';
-			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'woo-filter-studio' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
-			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'woo-filter-studio' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
+			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'filter-studio-for-woo' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
+			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'filter-studio-for-woo' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
 			echo '</div>';
 			echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
 			echo '</div>';
 			echo '<div class="wf-price-grid">';
-			echo '<label><span>' . esc_html__( 'Min', 'woo-filter-studio' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
-			echo '<label><span>' . esc_html__( 'Max', 'woo-filter-studio' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
+			echo '<label><span>' . esc_html__( 'Min', 'filter-studio-for-woo' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
+			echo '<label><span>' . esc_html__( 'Max', 'filter-studio-for-woo' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
 			echo '</div>';
 			echo '</div>';
 		}
 
 		if ( $show_rating && License::can( 'rating_filter' ) ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Customer Rating', 'woo-filter-studio' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Customer Rating', 'filter-studio-for-woo' ) . '</h4>';
 			for ( $i = 5; $i >= 1; $i-- ) {
 				echo '<label class="wf-rating">';
 				echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
@@ -751,27 +751,27 @@ final class ShopFilters {
 					echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" class="wf-star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
 				}
 				echo '</span>';
-				echo '<span class="wf-rating-text">' . esc_html__( '& up', 'woo-filter-studio' ) . '</span>';
+				echo '<span class="wf-rating-text">' . esc_html__( '& up', 'filter-studio-for-woo' ) . '</span>';
 				echo '</label>';
 			}
 			echo '<label class="wf-rating">';
 			echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
-			echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'woo-filter-studio' ) . '</span>';
+			echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'filter-studio-for-woo' ) . '</span>';
 			echo '</label>';
 			echo '</div>';
 		}
 
 		if ( $show_stock ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Availability', 'woo-filter-studio' ) . '</h4>';
-			echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'woo-filter-studio' ) . '</span></label>';
-			echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'woo-filter-studio' ) . '</span></label>';
+			echo '<h4>' . esc_html__( 'Availability', 'filter-studio-for-woo' ) . '</h4>';
+			echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'filter-studio-for-woo' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'filter-studio-for-woo' ) . '</span></label>';
 			echo '</div>';
 		}
 
 		if ( $show_colors && '' !== $this->color_taxonomy && License::can( 'color_filter' ) ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Color', 'woo-filter-studio' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Color', 'filter-studio-for-woo' ) . '</h4>';
 			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors, true, $list_suffix );
 			echo '</div>';
 		}
@@ -793,8 +793,8 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-actions">';
-		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'woo-filter-studio' ) . '</button>';
-		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'woo-filter-studio' ) . '</a>';
+		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'filter-studio-for-woo' ) . '</button>';
+		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'filter-studio-for-woo' ) . '</a>';
 		echo '</div>';
 		echo '</form>';
 	}
@@ -812,13 +812,13 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-active-filters">';
-		echo '<h5>' . esc_html__( 'Active Filters', 'woo-filter-studio' ) . '</h5>';
+		echo '<h5>' . esc_html__( 'Active Filters', 'filter-studio-for-woo' ) . '</h5>';
 		echo '<div class="wf-chip-list">';
 		foreach ( $chips as $chip ) {
 			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
 		}
 		echo '</div>';
-		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'woo-filter-studio' ) . '</a>';
+		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'filter-studio-for-woo' ) . '</a>';
 		echo '</div>';
 	}
 
@@ -837,17 +837,17 @@ final class ShopFilters {
 			if ( $term instanceof \WP_Term ) {
 				$chips[] = array(
 					/* translators: %s: product category name. */
-					'label' => sprintf( __( 'Category: %s', 'woo-filter-studio' ), $term->name ),
+					'label' => sprintf( __( 'Category: %s', 'filter-studio-for-woo' ), $term->name ),
 					'url'   => $this->build_remove_filter_url( 'wf_cat' ),
 				);
 			}
 		}
 
 		if ( isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
-			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'woo-filter-studio' ) ) );
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'filter-studio-for-woo' ) ) );
 		}
 		if ( isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
-			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'woo-filter-studio' ) ) );
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'filter-studio-for-woo' ) ) );
 		}
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -858,7 +858,7 @@ final class ShopFilters {
 		$multiselect_mode = $this->get_request_multiselect_mode();
 		if ( 'and' === $multiselect_mode ) {
 			$chips[] = array(
-				'label' => __( 'Logic: AND', 'woo-filter-studio' ),
+				'label' => __( 'Logic: AND', 'filter-studio-for-woo' ),
 				'url'   => $this->build_remove_filter_url( 'wf_logic' ),
 			);
 		}
@@ -867,7 +867,7 @@ final class ShopFilters {
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $min_price ) {
 			$chips[] = array(
 				/* translators: %s: minimum price with currency symbol. */
-				'label' => sprintf( __( 'Min: %s', 'woo-filter-studio' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
+				'label' => sprintf( __( 'Min: %s', 'filter-studio-for-woo' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'min_price' ),
 			);
 		}
@@ -876,7 +876,7 @@ final class ShopFilters {
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $max_price ) {
 			$chips[] = array(
 				/* translators: %s: maximum price with currency symbol. */
-				'label' => sprintf( __( 'Max: %s', 'woo-filter-studio' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
+				'label' => sprintf( __( 'Max: %s', 'filter-studio-for-woo' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'max_price' ),
 			);
 		}
@@ -885,21 +885,21 @@ final class ShopFilters {
 		if ( isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] && $rating > 0 && $rating <= 5 ) {
 			$chips[] = array(
 				/* translators: %d: star rating threshold. */
-				'label' => sprintf( __( '%d stars & up', 'woo-filter-studio' ), $rating ),
+				'label' => sprintf( __( '%d stars & up', 'filter-studio-for-woo' ), $rating ),
 				'url'   => $this->build_remove_filter_url( 'rating_filter' ),
 			);
 		}
 
 		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
 			$chips[] = array(
-				'label' => __( 'Stock: In stock', 'woo-filter-studio' ),
+				'label' => __( 'Stock: In stock', 'filter-studio-for-woo' ),
 				'url'   => $this->build_remove_filter_url( 'wf_in_stock' ),
 			);
 		}
 
 		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
 			$chips[] = array(
-				'label' => __( 'Sale: On sale', 'woo-filter-studio' ),
+				'label' => __( 'Sale: On sale', 'filter-studio-for-woo' ),
 				'url'   => $this->build_remove_filter_url( 'wf_on_sale' ),
 			);
 		}
@@ -933,7 +933,7 @@ final class ShopFilters {
 		$list_id = 'wf-cat-list-' . sanitize_key( $list_suffix );
 
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-cat-list">';
-		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'woo-filter-studio' ) . '</span></label></li>';
+		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'filter-studio-for-woo' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
 			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
 			$is_active   = $selected === $term->slug;
@@ -969,7 +969,7 @@ final class ShopFilters {
 		);
 
 		if ( empty( $terms ) ) {
-			echo '<p class="wf-empty">' . esc_html__( 'No options found.', 'woo-filter-studio' ) . '</p>';
+			echo '<p class="wf-empty">' . esc_html__( 'No options found.', 'filter-studio-for-woo' ) . '</p>';
 			return;
 		}
 
@@ -977,7 +977,7 @@ final class ShopFilters {
 
 		if ( count( $terms ) > 7 ) {
 			echo '<div class="wf-option-search-wrap">';
-			echo '<input type="search" class="wf-option-search" data-list-id="' . esc_attr( $list_id ) . '" placeholder="' . esc_attr__( 'Search options...', 'woo-filter-studio' ) . '" aria-label="' . esc_attr__( 'Search filter options', 'woo-filter-studio' ) . '" />';
+			echo '<input type="search" class="wf-option-search" data-list-id="' . esc_attr( $list_id ) . '" placeholder="' . esc_attr__( 'Search options...', 'filter-studio-for-woo' ) . '" aria-label="' . esc_attr__( 'Search filter options', 'filter-studio-for-woo' ) . '" />';
 			echo '</div>';
 		}
 
@@ -1150,7 +1150,7 @@ final class ShopFilters {
 		$current_url = $this->get_archive_url();
 		$page_base   = remove_query_arg( array( 'paged', 'product-page' ), $current_url );
 
-		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'woo-filter-studio' ) . '">';
+		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'filter-studio-for-woo' ) . '">';
 		echo wp_kses_post(
 			paginate_links(
 				array(
