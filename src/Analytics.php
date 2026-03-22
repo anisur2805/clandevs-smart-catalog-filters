@@ -82,8 +82,8 @@ final class Analytics {
 	public function register_menu(): void {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
-			__( 'Filter Studio for Woo Analytics', 'filter-studio-for-woo' ),
-			__( 'Analytics', 'filter-studio-for-woo' ),
+			__( 'Filter Studio for WooCommerce Analytics', 'filter-studio-for-woocommerce' ),
+			__( 'Analytics', 'filter-studio-for-woocommerce' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -120,7 +120,7 @@ final class Analytics {
 	 */
 	public function handle_reset_request(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage Filter Studio for Woo analytics.', 'filter-studio-for-woo' ) );
+			wp_die( esc_html__( 'You are not allowed to manage Filter Studio for WooCommerce analytics.', 'filter-studio-for-woocommerce' ) );
 		}
 
 		check_admin_referer( self::RESET_ACTION );
@@ -163,8 +163,8 @@ final class Analytics {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 				</div>
 				<div>
-					<h1><?php esc_html_e( 'Filter Studio for Woo Analytics', 'filter-studio-for-woo' ); ?></h1>
-					<p><?php esc_html_e( 'Track how customers use filters on your shop', 'filter-studio-for-woo' ); ?></p>
+					<h1><?php esc_html_e( 'Filter Studio for WooCommerce Analytics', 'filter-studio-for-woocommerce' ); ?></h1>
+					<p><?php esc_html_e( 'Track how customers use filters on your shop', 'filter-studio-for-woocommerce' ); ?></p>
 				</div>
 			</div>
 
@@ -176,7 +176,7 @@ final class Analytics {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Analytics data has been reset.', 'filter-studio-for-woo' ); ?>
+							<?php esc_html_e( 'Analytics data has been reset.', 'filter-studio-for-woocommerce' ); ?>
 						</p>
 					</div>
 				</div>
@@ -184,23 +184,23 @@ final class Analytics {
 
 			<div class="wf-admin-stats-grid">
 				<div class="wf-admin-stat-card">
-					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Total Filter Events', 'filter-studio-for-woo' ); ?></div>
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Total Filter Events', 'filter-studio-for-woocommerce' ); ?></div>
 					<div class="wf-admin-stat-card-value"><?php echo esc_html( number_format_i18n( $total_events ) ); ?></div>
 				</div>
 				<div class="wf-admin-stat-card">
-					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Distinct Filter Values', 'filter-studio-for-woo' ); ?></div>
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Distinct Filter Values', 'filter-studio-for-woocommerce' ); ?></div>
 					<div class="wf-admin-stat-card-value"><?php echo esc_html( number_format_i18n( $distinct_filters ) ); ?></div>
 				</div>
 				<div class="wf-admin-stat-card">
-					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Last Event', 'filter-studio-for-woo' ); ?></div>
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Last Event', 'filter-studio-for-woocommerce' ); ?></div>
 					<div class="wf-admin-stat-card-value wf-admin-stat-card-value--small"><?php echo esc_html( $last_event_display ); ?></div>
 				</div>
 			</div>
 
 			<div class="wf-admin-card">
 				<div class="wf-admin-card-header">
-					<h2><?php esc_html_e( 'Top Used Filters', 'filter-studio-for-woo' ); ?></h2>
-					<p><?php esc_html_e( 'Usage data updates when customers apply filters on the shop archive.', 'filter-studio-for-woo' ); ?></p>
+					<h2><?php esc_html_e( 'Top Used Filters', 'filter-studio-for-woocommerce' ); ?></h2>
+					<p><?php esc_html_e( 'Usage data updates when customers apply filters on the shop archive.', 'filter-studio-for-woocommerce' ); ?></p>
 				</div>
 				<div class="wf-admin-card-body wf-admin-card-body-tight">
 					<?php if ( empty( $rows ) ) : ?>
@@ -208,15 +208,15 @@ final class Analytics {
 							<div class="wf-admin-empty-icon">
 								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
 							</div>
-							<p><?php esc_html_e( 'No analytics data yet. Filter usage will appear here once customers start using the filters.', 'filter-studio-for-woo' ); ?></p>
+							<p><?php esc_html_e( 'No analytics data yet. Filter usage will appear here once customers start using the filters.', 'filter-studio-for-woocommerce' ); ?></p>
 						</div>
 					<?php else : ?>
 						<table class="wf-admin-table">
 							<thead>
 								<tr>
-									<th><?php esc_html_e( 'Filter Type', 'filter-studio-for-woo' ); ?></th>
-									<th><?php esc_html_e( 'Value', 'filter-studio-for-woo' ); ?></th>
-									<th><?php esc_html_e( 'Events', 'filter-studio-for-woo' ); ?></th>
+									<th><?php esc_html_e( 'Filter Type', 'filter-studio-for-woocommerce' ); ?></th>
+									<th><?php esc_html_e( 'Value', 'filter-studio-for-woocommerce' ); ?></th>
+									<th><?php esc_html_e( 'Events', 'filter-studio-for-woocommerce' ); ?></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -245,9 +245,9 @@ final class Analytics {
 					self::RESET_ACTION
 				);
 				?>
-				<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all analytics data?', 'filter-studio-for-woo' ); ?>">
+				<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all analytics data?', 'filter-studio-for-woocommerce' ); ?>">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-					<?php esc_html_e( 'Reset Analytics Data', 'filter-studio-for-woo' ); ?>
+					<?php esc_html_e( 'Reset Analytics Data', 'filter-studio-for-woocommerce' ); ?>
 				</a>
 			</div>
 		</div>
@@ -557,12 +557,12 @@ final class Analytics {
 	 */
 	private function format_timestamp_for_admin( string $timestamp_gmt ): string {
 		if ( '' === $timestamp_gmt ) {
-			return __( 'No data yet', 'filter-studio-for-woo' );
+			return __( 'No data yet', 'filter-studio-for-woocommerce' );
 		}
 
 		$unix = strtotime( $timestamp_gmt . ' UTC' );
 		if ( false === $unix ) {
-			return __( 'Unknown', 'filter-studio-for-woo' );
+			return __( 'Unknown', 'filter-studio-for-woocommerce' );
 		}
 
 		return wp_date(
@@ -579,14 +579,14 @@ final class Analytics {
 	 */
 	private function get_translated_filter_type_label( string $type_key ): string {
 		$labels = array(
-			'category'     => __( 'Category', 'filter-studio-for-woo' ),
-			'brand'        => __( 'Brand', 'filter-studio-for-woo' ),
-			'color'        => __( 'Color', 'filter-studio-for-woo' ),
-			'logic'        => __( 'Logic', 'filter-studio-for-woo' ),
-			'rating'       => __( 'Rating', 'filter-studio-for-woo' ),
-			'min_price'    => __( 'Minimum Price', 'filter-studio-for-woo' ),
-			'max_price'    => __( 'Maximum Price', 'filter-studio-for-woo' ),
-			'availability' => __( 'Availability', 'filter-studio-for-woo' ),
+			'category'     => __( 'Category', 'filter-studio-for-woocommerce' ),
+			'brand'        => __( 'Brand', 'filter-studio-for-woocommerce' ),
+			'color'        => __( 'Color', 'filter-studio-for-woocommerce' ),
+			'logic'        => __( 'Logic', 'filter-studio-for-woocommerce' ),
+			'rating'       => __( 'Rating', 'filter-studio-for-woocommerce' ),
+			'min_price'    => __( 'Minimum Price', 'filter-studio-for-woocommerce' ),
+			'max_price'    => __( 'Maximum Price', 'filter-studio-for-woocommerce' ),
+			'availability' => __( 'Availability', 'filter-studio-for-woocommerce' ),
 		);
 
 		if ( isset( $labels[ $type_key ] ) ) {
@@ -601,7 +601,7 @@ final class Analytics {
 
 			return sprintf(
 				/* translators: %s: attribute taxonomy name */
-				__( 'Attribute: %s', 'filter-studio-for-woo' ),
+				__( 'Attribute: %s', 'filter-studio-for-woocommerce' ),
 				$this->humanize_key( $taxonomy )
 			);
 		}
@@ -617,10 +617,10 @@ final class Analytics {
 	 */
 	private function get_translated_filter_value_label( string $value_key ): string {
 		$labels = array(
-			'in_stock' => __( 'In stock', 'filter-studio-for-woo' ),
-			'on_sale'  => __( 'On sale', 'filter-studio-for-woo' ),
-			'and'      => __( 'AND', 'filter-studio-for-woo' ),
-			'or'       => __( 'OR', 'filter-studio-for-woo' ),
+			'in_stock' => __( 'In stock', 'filter-studio-for-woocommerce' ),
+			'on_sale'  => __( 'On sale', 'filter-studio-for-woocommerce' ),
+			'and'      => __( 'AND', 'filter-studio-for-woocommerce' ),
+			'or'       => __( 'OR', 'filter-studio-for-woocommerce' ),
 		);
 
 		if ( isset( $labels[ $value_key ] ) ) {

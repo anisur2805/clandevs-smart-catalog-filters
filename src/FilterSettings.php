@@ -69,17 +69,17 @@ final class FilterSettings {
 
 		add_settings_section(
 			'wf_filter_section_main',
-			__( 'Filter Visibility', 'filter-studio-for-woo' ),
+			__( 'Filter Visibility', 'filter-studio-for-woocommerce' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
 		);
 
-		$this->register_checkbox_field( 'show_categories', __( 'Show Categories', 'filter-studio-for-woo' ) );
-		$this->register_checkbox_field( 'show_brands', __( 'Show Brands', 'filter-studio-for-woo' ) );
-		$this->register_checkbox_field( 'show_price', __( 'Show Price', 'filter-studio-for-woo' ) );
-		$this->register_checkbox_field( 'show_rating', __( 'Show Customer Rating', 'filter-studio-for-woo' ) );
-		$this->register_checkbox_field( 'show_availability', __( 'Show Availability', 'filter-studio-for-woo' ) );
-		$this->register_checkbox_field( 'show_colors', __( 'Show Color', 'filter-studio-for-woo' ) );
+		$this->register_checkbox_field( 'show_categories', __( 'Show Categories', 'filter-studio-for-woocommerce' ) );
+		$this->register_checkbox_field( 'show_brands', __( 'Show Brands', 'filter-studio-for-woocommerce' ) );
+		$this->register_checkbox_field( 'show_price', __( 'Show Price', 'filter-studio-for-woocommerce' ) );
+		$this->register_checkbox_field( 'show_rating', __( 'Show Customer Rating', 'filter-studio-for-woocommerce' ) );
+		$this->register_checkbox_field( 'show_availability', __( 'Show Availability', 'filter-studio-for-woocommerce' ) );
+		$this->register_checkbox_field( 'show_colors', __( 'Show Color', 'filter-studio-for-woocommerce' ) );
 	}
 
 	/**
@@ -90,8 +90,8 @@ final class FilterSettings {
 	public function register_menu(): void {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
-			__( 'Filter Studio for Woo Settings', 'filter-studio-for-woo' ),
-			__( 'Settings', 'filter-studio-for-woo' ),
+			__( 'Filter Studio for WooCommerce Settings', 'filter-studio-for-woocommerce' ),
+			__( 'Settings', 'filter-studio-for-woocommerce' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -116,8 +116,8 @@ final class FilterSettings {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
 				</div>
 				<div>
-					<h1><?php esc_html_e( 'Filter Studio for Woo Settings', 'filter-studio-for-woo' ); ?></h1>
-					<p><?php esc_html_e( 'Configure which filters appear in your shop sidebar', 'filter-studio-for-woo' ); ?></p>
+					<h1><?php esc_html_e( 'Filter Studio for WooCommerce Settings', 'filter-studio-for-woocommerce' ); ?></h1>
+					<p><?php esc_html_e( 'Configure which filters appear in your shop sidebar', 'filter-studio-for-woocommerce' ); ?></p>
 				</div>
 			</div>
 
@@ -126,7 +126,7 @@ final class FilterSettings {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Filter settings saved.', 'filter-studio-for-woo' ); ?>
+							<?php esc_html_e( 'Filter settings saved.', 'filter-studio-for-woocommerce' ); ?>
 						</p>
 					</div>
 				</div>
@@ -137,35 +137,35 @@ final class FilterSettings {
 
 				<div class="wf-admin-card">
 					<div class="wf-admin-card-header">
-						<h2><?php esc_html_e( 'Filter Visibility', 'filter-studio-for-woo' ); ?></h2>
-						<p><?php esc_html_e( 'Enable or disable individual filter blocks in the shop sidebar.', 'filter-studio-for-woo' ); ?></p>
+						<h2><?php esc_html_e( 'Filter Visibility', 'filter-studio-for-woocommerce' ); ?></h2>
+						<p><?php esc_html_e( 'Enable or disable individual filter blocks in the shop sidebar.', 'filter-studio-for-woocommerce' ); ?></p>
 					</div>
 					<div class="wf-admin-card-body">
 						<div class="wf-admin-toggle-group wf-admin-toggle-grid">
 							<?php
 							$toggles = array(
 								'show_categories'   => array(
-									'label'   => __( 'Show Categories', 'filter-studio-for-woo' ),
+									'label'   => __( 'Show Categories', 'filter-studio-for-woocommerce' ),
 									'feature' => 'category_filter',
 								),
 								'show_brands'       => array(
-									'label'   => __( 'Show Brands', 'filter-studio-for-woo' ),
+									'label'   => __( 'Show Brands', 'filter-studio-for-woocommerce' ),
 									'feature' => 'brand_filter',
 								),
 								'show_price'        => array(
-									'label'   => __( 'Show Price Range', 'filter-studio-for-woo' ),
+									'label'   => __( 'Show Price Range', 'filter-studio-for-woocommerce' ),
 									'feature' => 'price_filter',
 								),
 								'show_rating'       => array(
-									'label'   => __( 'Show Customer Rating', 'filter-studio-for-woo' ),
+									'label'   => __( 'Show Customer Rating', 'filter-studio-for-woocommerce' ),
 									'feature' => 'rating_filter',
 								),
 								'show_availability' => array(
-									'label'   => __( 'Show Availability', 'filter-studio-for-woo' ),
+									'label'   => __( 'Show Availability', 'filter-studio-for-woocommerce' ),
 									'feature' => 'availability_filter',
 								),
 								'show_colors'       => array(
-									'label'   => __( 'Show Color Filter', 'filter-studio-for-woo' ),
+									'label'   => __( 'Show Color Filter', 'filter-studio-for-woocommerce' ),
 									'feature' => 'color_filter',
 								),
 							);
@@ -195,23 +195,23 @@ final class FilterSettings {
 
 				<div class="wf-admin-card">
 					<div class="wf-admin-card-header">
-						<h2><?php esc_html_e( 'Data Management', 'filter-studio-for-woo' ); ?></h2>
-						<p><?php esc_html_e( 'Control what happens to Filter Studio for Woo data when the plugin is removed.', 'filter-studio-for-woo' ); ?></p>
+						<h2><?php esc_html_e( 'Data Management', 'filter-studio-for-woocommerce' ); ?></h2>
+						<p><?php esc_html_e( 'Control what happens to Filter Studio for WooCommerce data when the plugin is removed.', 'filter-studio-for-woocommerce' ); ?></p>
 					</div>
 					<div class="wf-admin-card-body">
 						<label class="wf-admin-toggle">
 							<input type="hidden" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[delete_data_on_uninstall]" value="no" />
 							<input type="checkbox" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[delete_data_on_uninstall]" value="yes" <?php checked( isset( $options['delete_data_on_uninstall'] ) && 'yes' === $options['delete_data_on_uninstall'] ); ?> />
-							<span><?php esc_html_e( 'Delete plugin data on uninstall', 'filter-studio-for-woo' ); ?></span>
+							<span><?php esc_html_e( 'Delete plugin data on uninstall', 'filter-studio-for-woocommerce' ); ?></span>
 						</label>
-						<p class="wf-admin-help"><?php esc_html_e( 'If enabled, plugin options and analytics data will be removed when Filter Studio for Woo is uninstalled.', 'filter-studio-for-woo' ); ?></p>
+						<p class="wf-admin-help"><?php esc_html_e( 'If enabled, plugin options and analytics data will be removed when Filter Studio for WooCommerce is uninstalled.', 'filter-studio-for-woocommerce' ); ?></p>
 					</div>
 				</div>
 
 				<div class="wf-admin-submit-wrap">
 					<button type="submit" class="wf-admin-submit">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-						<?php esc_html_e( 'Save Settings', 'filter-studio-for-woo' ); ?>
+						<?php esc_html_e( 'Save Settings', 'filter-studio-for-woocommerce' ); ?>
 					</button>
 				</div>
 			</form>
@@ -225,7 +225,7 @@ final class FilterSettings {
 	 * @return void
 	 */
 	public function render_section_intro(): void {
-		echo '<p>' . esc_html__( 'Enable or disable individual filter blocks in the shop sidebar.', 'filter-studio-for-woo' ) . '</p>';
+		echo '<p>' . esc_html__( 'Enable or disable individual filter blocks in the shop sidebar.', 'filter-studio-for-woocommerce' ) . '</p>';
 	}
 
 	/**
@@ -261,7 +261,7 @@ final class FilterSettings {
 
 		echo '<label>';
 		echo '<input type="checkbox" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="yes" ' . checked( $checked, true, false ) . ' />';
-		echo ' ' . esc_html__( 'Enabled', 'filter-studio-for-woo' );
+		echo ' ' . esc_html__( 'Enabled', 'filter-studio-for-woocommerce' );
 		echo '</label>';
 	}
 
