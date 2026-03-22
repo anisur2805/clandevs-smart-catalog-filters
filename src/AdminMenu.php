@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers primary Filter Studio for WooCommerce admin menu.
+ * Registers primary Advanced Product Filter admin menu.
  */
 final class AdminMenu {
 	/** @var string */
-	private const MENU_SLUG = 'filter-studio-for-woocommerce';
+	private const MENU_SLUG = 'advanced-product-filter';
 
 	/**
 	 * Register hooks.
@@ -46,8 +46,8 @@ final class AdminMenu {
 	 */
 	public function register_menu(): void {
 		add_menu_page(
-			__( 'Filter Studio for WooCommerce', 'filter-studio-for-woocommerce' ),
-			__( 'Filter Studio for WooCommerce', 'filter-studio-for-woocommerce' ),
+			__( 'Advanced Product Filter', 'advanced-product-filter' ),
+			__( 'Advanced Product Filter', 'advanced-product-filter' ),
 			'manage_woocommerce',
 			self::MENU_SLUG,
 			'__return_null',

@@ -2,8 +2,8 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Filter Studio for WooCommerce 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/filter-studio-for-woocommerce\n"
+"Project-Id-Version: Advanced Product Filter 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/advanced-product-filter\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,43 +12,43 @@ msgstr ""
 "POT-Creation-Date: 2026-03-19T17:50:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: filter-studio-for-woocommerce\n"
+"X-Domain: advanced-product-filter\n"
 
 #. Plugin Name of the plugin
-#: filter-studio-for-woocommerce.php
+#: advanced-product-filter.php
 #: src/AdminMenu.php:48
 #: src/AdminMenu.php:49
-msgid "Filter Studio for WooCommerce"
+msgid "Advanced Product Filter"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: filter-studio-for-woocommerce.php
-msgid "https://filter-studio-for-woocommerce.clandevs.com/"
+#: advanced-product-filter.php
+msgid "https://advanced-product-filter.clandevs.com/"
 msgstr ""
 
 #. Description of the plugin
-#: filter-studio-for-woocommerce.php
+#: advanced-product-filter.php
 msgid "Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly)."
 msgstr ""
 
 #. Author of the plugin
-#: filter-studio-for-woocommerce.php
+#: advanced-product-filter.php
 msgid "Anisur Rahman"
 msgstr ""
 
 #. Author URI of the plugin
-#: filter-studio-for-woocommerce.php
+#: advanced-product-filter.php
 msgid "https://portfolio.clandevs.com"
 msgstr ""
 
 #: src/Analytics.php:78
 #: src/Analytics.php:79
 #: src/Analytics.php:159
-msgid "Filter Studio for WooCommerce Analytics"
+msgid "Advanced Product Filter Analytics"
 msgstr ""
 
 #: src/Analytics.php:116
-msgid "You are not allowed to manage Filter Studio for WooCommerce analytics."
+msgid "You are not allowed to manage Advanced Product Filter analytics."
 msgstr ""
 
 #: src/Analytics.php:160
@@ -205,7 +205,7 @@ msgstr ""
 #: src/FilterSettings.php:93
 #: src/FilterSettings.php:94
 #: src/FilterSettings.php:119
-msgid "Filter Studio for WooCommerce Settings"
+msgid "Advanced Product Filter Settings"
 msgstr ""
 
 #: src/FilterSettings.php:120
@@ -234,7 +234,7 @@ msgid "Data Management"
 msgstr ""
 
 #: src/FilterSettings.php:187
-msgid "Control what happens to Filter Studio for WooCommerce data when the plugin is removed."
+msgid "Control what happens to Advanced Product Filter data when the plugin is removed."
 msgstr ""
 
 #: src/FilterSettings.php:193
@@ -242,7 +242,7 @@ msgid "Delete plugin data on uninstall"
 msgstr ""
 
 #: src/FilterSettings.php:195
-msgid "If enabled, plugin options and analytics data will be removed when Filter Studio for WooCommerce is uninstalled."
+msgid "If enabled, plugin options and analytics data will be removed when Advanced Product Filter is uninstalled."
 msgstr ""
 
 #: src/FilterSettings.php:202
@@ -426,7 +426,7 @@ msgid "Product Pagination"
 msgstr ""
 
 #: src/StyleSettings.php:46
-msgid "You are not allowed to manage Filter Studio for WooCommerce styles."
+msgid "You are not allowed to manage Advanced Product Filter styles."
 msgstr ""
 
 #: src/StyleSettings.php:103
@@ -562,7 +562,7 @@ msgstr ""
 #: src/StyleSettings.php:157
 #: src/StyleSettings.php:158
 #: src/StyleSettings.php:182
-msgid "Filter Studio for WooCommerce Styling"
+msgid "Advanced Product Filter Styling"
 msgstr ""
 
 #: src/StyleSettings.php:183
@@ -625,18 +625,18 @@ msgstr ""
 msgid "Sunrise"
 msgstr ""
 
-#: filter-studio-for-woocommerce.php:43
+#: advanced-product-filter.php:43
 msgid "Settings"
 msgstr ""
 
-#: filter-studio-for-woocommerce.php:44
+#: advanced-product-filter.php:44
 msgid "Styling"
 msgstr ""
 
-#: filter-studio-for-woocommerce.php:45
+#: advanced-product-filter.php:45
 msgid "Analytics"
 msgstr ""
 
-#: filter-studio-for-woocommerce.php:76
-msgid "Filter Studio for WooCommerce requires WooCommerce to be installed and active."
+#: advanced-product-filter.php:76
+msgid "Advanced Product Filter requires WooCommerce to be installed and active."
 msgstr ""
