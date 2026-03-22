@@ -150,6 +150,12 @@ The plugin continues to work with all free features. Pro features will be locked
 
 == Changelog ==
 
+= 1.1.1 =
+* Simplified admin menu — Styling page is now the default landing page.
+* Shortened submenu labels to Settings, Styling, and Analytics.
+* Moved uninstall data cleanup from uninstall.php to Freemius after_uninstall hook.
+* Added first-path redirect for initial plugin activation.
+
 = 1.1.0 =
 * Added Freemius integration for Pro license management.
 * Added free/Pro feature tiers with clear upgrade prompts in admin.
@@ -183,6 +189,9 @@ The plugin continues to work with all free features. Pro features will be locked
 Inline admin icons are based on Feather Icons (MIT License).
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Admin menu streamlined — Styling is now the default page. Uninstall cleanup uses Freemius hook.
 
 = 1.1.0 =
 Woo Filter Studio now offers a free tier and a Pro tier. Free users get category, price, and availability filters. Upgrade to Pro for brand, color, rating, attribute filters, analytics, and full styling controls.
