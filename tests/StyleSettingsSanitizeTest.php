@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use WooFilters\StyleSettings;
+use AdvancedProductFilter\StyleSettings;
 
 final class StyleSettingsSanitizeTest extends TestCase {
 	/** @var StyleSettings */

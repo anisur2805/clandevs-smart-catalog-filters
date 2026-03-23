@@ -2,10 +2,10 @@
 /**
  * Main plugin service container.
  *
- * @package WooFilters
+ * @package AdvancedProductFilter
  */
 
-namespace WooFilters;
+namespace AdvancedProductFilter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -86,7 +86,7 @@ final class Plugin {
 	private function __construct( string $plugin_file ) {
 		$this->plugin_file = $plugin_file;
 		$this->plugin_url  = plugin_dir_url( $plugin_file );
-		$this->version     = defined( 'WF_VERSION' ) ? WF_VERSION : '1.0.0';
+		$this->version     = defined( 'APF_VERSION' ) ? APF_VERSION : '1.0.0';
 	}
 
 	/**

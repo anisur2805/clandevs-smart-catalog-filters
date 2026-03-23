@@ -23,7 +23,7 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: advanced-product-filter.php
-msgid "https://advanced-product-filter.clandevs.com/"
+msgid "https://clandevs.com/advancedproductfilter/"
 msgstr ""
 
 #. Description of the plugin

@@ -2,8 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PLUGIN_SLUG="woo-filter-studio"
-VERSION="$(sed -n 's/^ \* Version: //p' "$ROOT_DIR/woo-filter-studio.php" | head -n 1)"
+PLUGIN_SLUG="advanced-product-filter"
+VERSION="$(sed -n 's/^ \* Version: //p' "$ROOT_DIR/advanced-product-filter.php" | head -n 1)"
 DISTIGNORE_FILE="${ROOT_DIR}/.distignore"
 
 if [[ -z "${VERSION}" ]]; then

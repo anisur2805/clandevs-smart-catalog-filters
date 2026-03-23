@@ -2,10 +2,10 @@
 /**
  * Filter settings controller.
  *
- * @package WooFilters
+ * @package AdvancedProductFilter
  */
 
-namespace WooFilters;
+namespace AdvancedProductFilter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -39,15 +39,15 @@ final class FilterSettings {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'woo-filter-studio_page_wf-filter-settings' !== $hook ) {
+		if ( 'advanced-product-filter_page_wf-filter-settings' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_style(
 			'wf-admin-styles',
-			WF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			APF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
-			WF_VERSION
+			APF_VERSION
 		);
 	}
 

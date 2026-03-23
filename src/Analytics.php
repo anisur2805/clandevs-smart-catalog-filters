@@ -2,10 +2,10 @@
 /**
  * Analytics tracking and reporting.
  *
- * @package WooFilters
+ * @package AdvancedProductFilter
  */
 
-namespace WooFilters;
+namespace AdvancedProductFilter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -54,22 +54,22 @@ final class Analytics {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'woo-filter-studio_page_wf-filter-analytics' !== $hook ) {
+		if ( 'advanced-product-filter_page_wf-filter-analytics' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_style(
 			'wf-admin-styles',
-			WF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			APF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
-			WF_VERSION
+			APF_VERSION
 		);
 
 		wp_enqueue_script(
 			'wf-admin-scripts',
-			WF_PLUGIN_URL . 'assets/js/wf-admin.js',
+			APF_PLUGIN_URL . 'assets/js/wf-admin.js',
 			array(),
-			WF_VERSION,
+			APF_VERSION,
 			true
 		);
 	}

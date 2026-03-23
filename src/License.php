@@ -2,10 +2,10 @@
 /**
  * Central feature gating for free/pro tiers.
  *
- * @package WooFilters
+ * @package AdvancedProductFilter
  */
 
-namespace WooFilters;
+namespace AdvancedProductFilter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

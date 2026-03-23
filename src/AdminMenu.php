@@ -2,10 +2,10 @@
 /**
  * Admin menu controller.
  *
- * @package WooFilters
+ * @package AdvancedProductFilter
  */
 
-namespace WooFilters;
+namespace AdvancedProductFilter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

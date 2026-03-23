@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use WooFilters\ShopFilters;
+use AdvancedProductFilter\ShopFilters;
 
 final class ShopFiltersQueryTest extends TestCase {
     /** @var ShopFilters */

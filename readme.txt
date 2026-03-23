@@ -24,7 +24,7 @@ Advanced Product Filter helps shoppers quickly find products using powerful AJAX
 * **Shareable filter URLs** — filtered results can be bookmarked and shared.
 * **Active filter chips** — visual indicators with individual remove and clear-all actions.
 * **Mobile-friendly drawer** — responsive sidebar that collapses into a toggleable drawer.
-* **Shortcode support** — use `[woo_filters]` to embed filters on any page (Elementor-friendly).
+* **Shortcode support** — use `[advanced_product_filter]` to embed filters on any page (Elementor-friendly).
 * **Per-page switcher** — let shoppers control how many products are displayed.
 * **No-results state** — styled empty state card when no products match.
 * **Classic skin** — clean default skin with 6 color controls (accent, sidebar background, sidebar border, heading, body text, muted text).
@@ -46,7 +46,7 @@ Upgrade to Pro to unlock:
 * **Custom CSS** — inject your own styles with pre-defined CSS hooks.
 * **Analytics dashboard** — track filter usage, see top filters, total events, and last event time.
 
-[Upgrade to Pro](https://woo-filter-studio.clandevs.com/)
+[Upgrade to Pro](https://clandevs.com/advancedproductfilter/)
 
 = Free vs Pro Comparison =
 
@@ -76,7 +76,7 @@ Upgrade to Pro to unlock:
 
 = Install the Plugin =
 
-1. Upload the `woo-filter-studio` folder to the `/wp-content/plugins/` directory, or install it directly from the WordPress plugin repository.
+1. Upload the `advanced-product-filter` folder to the `/wp-content/plugins/` directory, or install it directly from the WordPress plugin repository.
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Ensure WooCommerce is installed and activated.
 4. Go to **Advanced Product Filter > Settings** to configure which filters appear in your shop.
@@ -85,7 +85,7 @@ Upgrade to Pro to unlock:
 
 = Activate a Pro License =
 
-1. Purchase a Pro license from [woo-filter-studio.clandevs.com](https://woo-filter-studio.clandevs.com/).
+1. Purchase a Pro license from [advanced-product-filter.clandevs.com](https://clandevs.com/advancedproductfilter/).
 2. After activation, go to **Advanced Product Filter > Account** in your WordPress admin.
 3. Enter your license key and click **Activate**.
 4. Pro features (brand, color, rating, custom attributes, analytics, full styling) will unlock immediately.
@@ -114,7 +114,7 @@ Pro unlocks brand, color, rating, and custom attribute filters, the OR/AND logic
 
 = Can I use the filters on a custom page? =
 
-Yes. Use the shortcode `[woo_filters]` in a standard WordPress page or post content area, with optional attributes such as `per_page`, `columns`, `category`, `show_filters`, and `show_pagination`. The plugin will load its WooCommerce frontend assets for shortcode pages automatically.
+Yes. Use the shortcode `[advanced_product_filter]` in a standard WordPress page or post content area, with optional attributes such as `per_page`, `columns`, `category`, `show_filters`, and `show_pagination`. The legacy shortcode `[woo_filters]` is still supported for existing pages. The plugin will load its WooCommerce frontend assets for shortcode pages automatically.
 
 = Is the filtering AJAX-based? =
 
@@ -138,11 +138,11 @@ Yes. After activating the plugin, you will see an option to start a 14-day free 
 
 = Where do I find my license key? =
 
-After purchasing, you will receive your license key by email. You can also find it by logging into your account at [woo-filter-studio.clandevs.com](https://woo-filter-studio.clandevs.com/).
+After purchasing, you will receive your license key by email. You can also find it by logging into your account at [advanced-product-filter.clandevs.com](https://clandevs.com/advancedproductfilter/).
 
 = Can I use my license on multiple sites? =
 
-This depends on your plan. Check your license details at [woo-filter-studio.clandevs.com](https://woo-filter-studio.clandevs.com/) for the number of allowed site activations.
+This depends on your plan. Check your license details at [advanced-product-filter.clandevs.com](https://clandevs.com/advancedproductfilter/) for the number of allowed site activations.
 
 = What happens when my Pro license expires? =
 

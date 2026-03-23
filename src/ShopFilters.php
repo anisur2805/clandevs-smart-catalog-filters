@@ -2,10 +2,10 @@
 /**
  * Shop filter controller.
  *
- * @package WooFilters
+ * @package AdvancedProductFilter
  */
 
-namespace WooFilters;
+namespace AdvancedProductFilter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles WooCommerce archive filters and UI rendering.
  */
 final class ShopFilters {
+	/** @var string */
+	private const SHORTCODE_TAG = 'advanced_product_filter';
+
+	/** @var string */
+	private const LEGACY_SHORTCODE_TAG = 'woo_filters';
+
 	/** @var int */
 	private const MAX_PER_PAGE = 120;
 
@@ -75,7 +81,8 @@ final class ShopFilters {
 	 */
 	public function register_hooks(): void {
 		add_action( 'init', array( $this, 'bootstrap_taxonomies' ), 20 );
-		add_shortcode( 'woo_filters', array( $this, 'render_shortcode' ) );
+		add_shortcode( self::SHORTCODE_TAG, array( $this, 'render_shortcode' ) );
+		add_shortcode( self::LEGACY_SHORTCODE_TAG, array( $this, 'render_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_filter( 'body_class', array( $this, 'filter_body_classes' ) );
 		add_action( 'pre_get_posts', array( $this, 'apply_filters_to_main_query' ) );
@@ -382,7 +389,7 @@ final class ShopFilters {
 				'show_pagination' => 'yes',
 			),
 			$atts,
-			'woo_filters'
+			self::SHORTCODE_TAG
 		);
 
 		$per_page = absint( $atts['per_page'] );
@@ -2083,7 +2090,7 @@ final class ShopFilters {
 			return $this->has_shortcode_page_context;
 		}
 
-		$this->has_shortcode_page_context = has_shortcode( $post->post_content, 'woo_filters' );
+		$this->has_shortcode_page_context = has_shortcode( $post->post_content, self::SHORTCODE_TAG ) || has_shortcode( $post->post_content, self::LEGACY_SHORTCODE_TAG );
 
 		return $this->has_shortcode_page_context;
 	}

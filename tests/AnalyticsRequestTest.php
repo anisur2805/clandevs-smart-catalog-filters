@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use WooFilters\Analytics;
+use AdvancedProductFilter\Analytics;
 
 final class AnalyticsRequestTest extends TestCase {
 	/** @var Analytics */
