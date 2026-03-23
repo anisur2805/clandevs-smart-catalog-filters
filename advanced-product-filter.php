@@ -3,7 +3,7 @@
  * Plugin Name: Advanced Product Filter
  * Plugin URI: https://clandevs.com/advancedproductfilter/
  * Description: Filter WooCommerce products by category, price, and availability for free. Upgrade to Pro for brand, color, rating, analytics, and full styling.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
@@ -29,7 +29,7 @@ if ( ! defined( 'APF_PLUGIN_URL' ) ) {
 }
 
 if ( ! defined( 'APF_VERSION' ) ) {
-	define( 'APF_VERSION', '1.0.0' );
+	define( 'APF_VERSION', '1.0.1' );
 }
 
 require_once __DIR__ . '/src/Autoloader.php';
