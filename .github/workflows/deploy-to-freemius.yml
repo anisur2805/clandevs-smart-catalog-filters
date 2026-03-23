@@ -12,13 +12,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Build release zip
+        run: |
+          mkdir -p dist
+          rsync -a --exclude-from=.distignore ./ dist/advanced-product-filter/
+          sed -i "/wp_org_gatekeeper/d" dist/advanced-product-filter/advanced-product-filter.php
+          cd dist && zip -r advanced-product-filter.zip advanced-product-filter/
+
       - name: Deploy to Freemius
-        uses: freemius/deploy@v2
+        uses: buttonizer/freemius-deploy@v0.1.2
         with:
-          developer_id: ${{ secrets.FS_DEVELOPER_ID }}
-          plugin_id: ${{ secrets.FS_PLUGIN_ID }}
-          public_key: ${{ secrets.FS_PUBLIC_KEY }}
-          secret_key: ${{ secrets.FS_SECRET_KEY }}
-          zip_name: advanced-product-filter
-          zip_path: '.'
-          add_freemius_contributors: true
+          file_name: dist/advanced-product-filter.zip
+          release_mode: pending
+          version: ${{ github.ref_name }}
+          sandbox: false
+        env:
+          DEV_ID: ${{ secrets.FS_DEVELOPER_ID }}
+          PLUGIN_ID: ${{ secrets.FS_PLUGIN_ID }}
+          PUBLIC_KEY: ${{ secrets.FS_PUBLIC_KEY }}
+          SECRET_KEY: ${{ secrets.FS_SECRET_KEY }}
+          PLUGIN_SLUG: advanced-product-filter
