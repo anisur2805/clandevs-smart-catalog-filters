@@ -14,17 +14,23 @@ jobs:
 
       - name: Build release zip
         run: |
-          mkdir -p dist
-          rsync -a --exclude-from=.distignore ./ dist/advanced-product-filter/
-          sed -i "/wp_org_gatekeeper/d" dist/advanced-product-filter/advanced-product-filter.php
-          cd dist && zip -r advanced-product-filter.zip advanced-product-filter/
+          mkdir -p build
+          rsync -a --exclude-from=.distignore ./ build/advanced-product-filter/
+          sed -i "/wp_org_gatekeeper/d" build/advanced-product-filter/advanced-product-filter.php
+          cd build && zip -r ../advanced-product-filter.zip advanced-product-filter/
+
+      - name: Extract version from tag
+        id: version
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: echo "number=${REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Freemius
         uses: buttonizer/freemius-deploy@v0.1.2
         with:
-          file_name: dist/advanced-product-filter.zip
+          file_name: advanced-product-filter.zip
           release_mode: pending
-          version: ${{ github.ref_name }}
+          version: ${{ steps.version.outputs.number }}
           sandbox: false
         env:
           DEV_ID: ${{ secrets.FS_DEVELOPER_ID }}
