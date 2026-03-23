@@ -2,7 +2,7 @@
 Contributors: anisur2805
 Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 6.7
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 Stable tag: 1.0.0
@@ -178,5 +178,15 @@ Inline admin icons are based on Feather Icons (MIT License).
 = 1.0.0 =
 Initial release. Free tier includes category, price, and availability filters. Upgrade to Pro for brand, color, rating, attribute filters, analytics, and full styling controls.
 
-= 1.0.0 =
-Initial public release of Advanced Product Filter.
+== External Services ==
+
+This plugin uses the [Freemius](https://freemius.com/) SDK for license management, optional usage analytics, and Pro feature delivery. Freemius may transmit the following data to its servers (`wp.freemius.com`):
+
+* Site URL, WordPress version, PHP version, and plugin version.
+* Admin email address (only after explicit opt-in consent on first activation).
+* License key information when activating a Pro license.
+
+**No data is sent without your explicit consent.** On first activation, an opt-in dialog is shown. You can skip it entirely and use the free version without any external communication.
+
+* [Freemius Terms of Service](https://freemius.com/terms/)
+* [Freemius Privacy Policy](https://freemius.com/privacy/)

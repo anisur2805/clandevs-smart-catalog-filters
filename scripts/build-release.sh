@@ -29,6 +29,10 @@ mkdir -p "${DIST_DIR}"
 
 rsync "${RSYNC_ARGS[@]}" "${ROOT_DIR}/" "${BUILD_DIR}/"
 
+# Strip Freemius wp_org_gatekeeper line from the release copy (not needed for wp.org builds).
+sed -i '' "/wp_org_gatekeeper/d" "${BUILD_DIR}/advanced-product-filter.php"
+rm -f "${BUILD_DIR}/advanced-product-filter.php-e"
+
 ( cd "${DIST_DIR}" && zip -r "${PLUGIN_SLUG}-${VERSION}.zip" "${PLUGIN_SLUG}" >/dev/null )
 
 echo "Created ${ZIP_FILE}"
