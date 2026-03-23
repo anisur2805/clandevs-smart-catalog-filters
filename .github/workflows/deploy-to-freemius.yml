@@ -1,0 +1,24 @@
+name: Deploy to Freemius
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Freemius
+        uses: freemius/deploy@v2
+        with:
+          developer_id: ${{ secrets.FS_DEVELOPER_ID }}
+          plugin_id: ${{ secrets.FS_PLUGIN_ID }}
+          public_key: ${{ secrets.FS_PUBLIC_KEY }}
+          secret_key: ${{ secrets.FS_SECRET_KEY }}
+          zip_name: advanced-product-filter
+          zip_path: '.'
+          add_freemius_contributors: true
