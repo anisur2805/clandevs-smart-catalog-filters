@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 1.1.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -150,33 +150,18 @@ The plugin continues to work with all free features. Pro features will be locked
 
 == Changelog ==
 
-= 1.1.1 =
-* Simplified admin menu — Styling page is now the default landing page.
-* Shortened submenu labels to Settings, Styling, and Analytics.
-* Moved uninstall data cleanup from uninstall.php to Freemius after_uninstall hook.
-* Added first-path redirect for initial plugin activation.
-
-= 1.1.0 =
-* Added Freemius integration for Pro license management.
-* Added free/Pro feature tiers with clear upgrade prompts in admin.
-* Added Pro badge indicators on locked admin settings.
-* Added upgrade notice in Styling page for locked controls.
-* Brand, color, rating, custom attribute, and OR/AND logic filters now require Pro.
-* Graphite and Sunrise skins now require Pro.
-* Advanced color controls (9 additional), typography, layout, border radius, and custom CSS now require Pro.
-* Analytics dashboard now requires Pro.
-
 = 1.0.0 =
 * Initial public release.
-* Added AJAX product filtering with category, brand, color, attribute, price, rating, and availability filters.
-* Added shortcode support for embedding filters on custom pages.
-* Added active filter chips, clear-all actions, and per-page controls.
-* Added admin pages for filter visibility, styling controls, and analytics.
-* Improved shortcode and archive filter-query consistency.
-* Improved on-sale filtering behavior by using WooCommerce sale product IDs.
-* Improved filter URL stability for share/bookmark usage.
-* Improved multi-layout frontend behavior and filter option search scoping.
-* Improved analytics coverage for dynamic attributes and capped value cardinality.
+* AJAX product filtering with category, price, and availability filters (free).
+* Pro: brand, color, rating, custom attribute filters with OR/AND logic.
+* Shortcode support for embedding filters on custom pages.
+* Active filter chips, clear-all actions, and per-page controls.
+* Admin pages for filter visibility, styling controls, and analytics.
+* Freemius integration for Pro license management.
+* Free/Pro feature tiers with clear upgrade prompts in admin.
+* Mobile-friendly drawer, shareable filter URLs, and no-results state.
+* Classic skin with 6 color controls (free), Graphite and Sunrise skins (Pro).
+* Analytics dashboard for tracking filter usage (Pro).
 
 == Screenshots ==
 
@@ -190,11 +175,8 @@ Inline admin icons are based on Feather Icons (MIT License).
 
 == Upgrade Notice ==
 
-= 1.1.1 =
-Admin menu streamlined — Styling is now the default page. Uninstall cleanup uses Freemius hook.
-
-= 1.1.0 =
-Advanced Product Filter now offers a free tier and a Pro tier. Free users get category, price, and availability filters. Upgrade to Pro for brand, color, rating, attribute filters, analytics, and full styling controls.
+= 1.0.0 =
+Initial release. Free tier includes category, price, and availability filters. Upgrade to Pro for brand, color, rating, attribute filters, analytics, and full styling controls.
 
 = 1.0.0 =
 Initial public release of Advanced Product Filter.
