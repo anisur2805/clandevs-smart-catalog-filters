@@ -37,39 +37,45 @@ require_once __DIR__ . '/src/Autoloader.php';
 \AdvancedProductFilter\Autoloader::register( __DIR__ . '/src' );
 
 if ( ! function_exists( 'wfs_fs' ) ) {
-	// Create a helper function for easy SDK access.
+	/**
+	 * Create a helper function for easy Freemius SDK access.
+	 *
+	 * @return \Freemius
+	 */
 	function wfs_fs() {
 		global $wfs_fs;
 
 		if ( ! isset( $wfs_fs ) ) {
 			// Include Freemius SDK.
-			require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+			require_once __DIR__ . '/vendor/freemius/start.php';
 
-			$wfs_fs = fs_dynamic_init( array(
-				'id'                  => '26209',
-				'slug'                => 'advanced-product-filter',
-				'type'                => 'plugin',
-				'public_key'          => 'pk_c409d5141f9173a5c8ba6cf201103',
-				'is_premium'          => false,
-				'premium_suffix'      => 'Pro',
-				// If your plugin is a serviceware, set this option to false.
-				'has_premium_version' => true,
-				'has_addons'          => false,
-				'has_paid_plans'      => true,
-				'is_org_compliant'    => true,
-				// Automatically removed in the free version. If you're not using the
-				// auto-generated free version, delete this line before uploading to wp.org.
-				'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
-				'trial'               => array(
-					'days'               => 14,
-					'is_require_payment' => false,
-				),
-				'menu'                => array(
-					'slug'       => 'advanced-product-filter',
-					'first-path' => 'admin.php?page=advanced-product-filter',
-					'support'    => false,
-				),
-			) );
+			$wfs_fs = fs_dynamic_init(
+				array(
+					'id'                  => '26209',
+					'slug'                => 'advanced-product-filter',
+					'type'                => 'plugin',
+					'public_key'          => 'pk_c409d5141f9173a5c8ba6cf201103',
+					'is_premium'          => false,
+					'premium_suffix'      => 'Pro',
+					// If your plugin is a serviceware, set this option to false.
+					'has_premium_version' => true,
+					'has_addons'          => false,
+					'has_paid_plans'      => true,
+					'is_org_compliant'    => true,
+					// Automatically removed in the free version. If you're not using the
+					// auto-generated free version, delete this line before uploading to wp.org.
+					'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
+					'trial'               => array(
+						'days'               => 14,
+						'is_require_payment' => false,
+					),
+					'menu'                => array(
+						'slug'       => 'advanced-product-filter',
+						'first-path' => 'admin.php?page=advanced-product-filter',
+						'support'    => false,
+					),
+				)
+			);
 		}
 
 		return $wfs_fs;
