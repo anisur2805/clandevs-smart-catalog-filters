@@ -2,10 +2,10 @@
 /**
  * Shop filter controller.
  *
- * @package AdvancedProductFilter
+ * @package ClandevsSmartCatalogFilters
  */
 
-namespace AdvancedProductFilter;
+namespace ClandevsSmartCatalogFilters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class ShopFilters {
 	/** @var string */
-	private const SHORTCODE_TAG = 'advanced_product_filter';
+	private const SHORTCODE_TAG = 'clandevs_catalog_filters';
 
 	/** @var string */
-	private const LEGACY_SHORTCODE_TAG = 'woo_filters';
+	private const LEGACY_SHORTCODE_TAG = 'advanced_product_filter';
 
 	/** @var int */
 	private const MAX_PER_PAGE = 120;
@@ -265,12 +265,6 @@ final class ShopFilters {
 		}
 
 		$css = '.wf-shop-layout{' . implode( ';', $declarations ) . ';}';
-		if ( ! empty( $options['custom_css'] ) ) {
-			$safe_custom_css = str_replace( array( '<', '>', '"' ), '', (string) $options['custom_css'] );
-			if ( '' !== $safe_custom_css ) {
-				$css .= "\n" . $safe_custom_css;
-			}
-		}
 
 		$swatch_css = $this->get_color_swatch_css();
 		if ( '' !== $swatch_css ) {
@@ -425,10 +419,10 @@ final class ShopFilters {
 
 		echo '<div class="' . esc_attr( $layout_class ) . '">';
 		if ( $show_filters ) {
-			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'advanced-product-filter' ) . '</button>';
+			echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
 			echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-			echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'advanced-product-filter' ) . '">';
-			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'advanced-product-filter' ) . '">&times;</button>';
+			echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'clandevs-smart-catalog-filters' ) . '">';
+			echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'clandevs-smart-catalog-filters' ) . '">&times;</button>';
 			$this->render_filter_form();
 			echo '</div>';
 		}
@@ -511,10 +505,10 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-shop-layout alignwide ' . esc_attr( $this->get_layout_skin_class() ) . '">';
-		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'advanced-product-filter' ) . '</button>';
+		echo '<button type="button" class="wf-filter-toggle" aria-expanded="false">' . esc_html__( 'Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
 		echo '<div class="wf-sidebar-overlay" aria-hidden="true"></div>';
-		echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'advanced-product-filter' ) . '">';
-		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'advanced-product-filter' ) . '">&times;</button>';
+		echo '<div class="wf-sidebar" role="complementary" aria-label="' . esc_attr__( 'Shop filters', 'clandevs-smart-catalog-filters' ) . '">';
+		echo '<button type="button" class="wf-sidebar-close" aria-label="' . esc_attr__( 'Close filters', 'clandevs-smart-catalog-filters' ) . '">&times;</button>';
 		$this->render_filter_form();
 		echo '</div>';
 		echo '<div class="wf-products">';
@@ -570,11 +564,11 @@ final class ShopFilters {
 	 */
 	private function get_no_results_markup(): string {
 		$html  = '<div class="wf-no-results wf-no-results-card" role="status" aria-live="polite">';
-		$html .= '<h3>' . esc_html__( 'No products found', 'advanced-product-filter' ) . '</h3>';
-		$html .= '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'advanced-product-filter' ) . '</p>';
+		$html .= '<h3>' . esc_html__( 'No products found', 'clandevs-smart-catalog-filters' ) . '</h3>';
+		$html .= '<p>' . esc_html__( 'Try removing or changing some filters to find matching products.', 'clandevs-smart-catalog-filters' ) . '</p>';
 		$html .= '<div class="wf-empty-actions">';
-		$html .= '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'advanced-product-filter' ) . '</a>';
-		$html .= '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'advanced-product-filter' ) . '</a>';
+		$html .= '<a class="wf-btn wf-btn-primary" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all filters', 'clandevs-smart-catalog-filters' ) . '</a>';
+		$html .= '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $this->get_shop_page_url() ) . '">' . esc_html__( 'Back to shop', 'clandevs-smart-catalog-filters' ) . '</a>';
 		$html .= '</div>';
 		$html .= '</div>';
 
@@ -602,7 +596,7 @@ final class ShopFilters {
 			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
 		}
 		echo '</div>';
-		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'advanced-product-filter' ) . '</a>';
+		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'clandevs-smart-catalog-filters' ) . '</a>';
 		echo '</div>';
 	}
 
@@ -632,10 +626,10 @@ final class ShopFilters {
 			20 => '20',
 			40 => '40',
 			60 => '60',
-			0  => __( 'All', 'advanced-product-filter' ),
+			0  => __( 'All', 'clandevs-smart-catalog-filters' ),
 		);
 
-		echo '<div class="wf-per-page" aria-label="' . esc_attr__( 'Products per page', 'advanced-product-filter' ) . '">';
+		echo '<div class="wf-per-page" aria-label="' . esc_attr__( 'Products per page', 'clandevs-smart-catalog-filters' ) . '">';
 		foreach ( $choices as $value => $label ) {
 			$url        = $this->build_filter_url_for_per_page( (int) $value );
 			$active     = ( 0 === (int) $value && $current >= $total && $total > 0 ) || ( (int) $value > 0 && $current === (int) $value );
@@ -697,6 +691,14 @@ final class ShopFilters {
 
 		$list_suffix = (string) ++$this->filter_form_instance;
 
+		/**
+		 * Fires before the filter form renders.
+		 * Used by Pro add-on to inject additional filter blocks (e.g., date range).
+		 *
+		 * @param array $filter_options Current filter visibility options.
+		 */
+		do_action( 'cscf_before_filter_render', $filter_options );
+
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
 		$excluded_preserved = array( 'wf_cat', 'wf_brand', 'wf_color', 'wf_logic', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' );
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
@@ -707,46 +709,44 @@ final class ShopFilters {
 
 		if ( $show_categories ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Categories', 'advanced-product-filter' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Categories', 'clandevs-smart-catalog-filters' ) . '</h4>';
 			$this->render_categories( $list_suffix );
 			echo '</div>';
 		}
 
-		if ( $show_brands && '' !== $this->brand_taxonomy && License::can( 'brand_filter' ) ) {
+		if ( $show_brands && '' !== $this->brand_taxonomy ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Filter by Brands', 'advanced-product-filter' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Filter by Brands', 'clandevs-smart-catalog-filters' ) . '</h4>';
 			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands, false, $list_suffix );
 			echo '</div>';
 		}
 
-		if ( License::can( 'or_and_logic' ) ) {
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Multi-select Logic', 'advanced-product-filter' ) . '</h4>';
-			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'advanced-product-filter' ) . '</span></label>';
-			echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'advanced-product-filter' ) . '</span></label>';
-			echo '</div>';
-		}
+		echo '<div class="wf-filter-block">';
+		echo '<h4>' . esc_html__( 'Multi-select Logic', 'clandevs-smart-catalog-filters' ) . '</h4>';
+		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+		echo '</div>';
 
 		if ( $show_price ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Price', 'advanced-product-filter' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Price', 'clandevs-smart-catalog-filters' ) . '</h4>';
 			echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
 			echo '<div class="wf-price-range-inputs">';
-			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'advanced-product-filter' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
-			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'advanced-product-filter' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
+			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'clandevs-smart-catalog-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
+			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'clandevs-smart-catalog-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
 			echo '</div>';
 			echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
 			echo '</div>';
 			echo '<div class="wf-price-grid">';
-			echo '<label><span>' . esc_html__( 'Min', 'advanced-product-filter' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
-			echo '<label><span>' . esc_html__( 'Max', 'advanced-product-filter' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
+			echo '<label><span>' . esc_html__( 'Min', 'clandevs-smart-catalog-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
+			echo '<label><span>' . esc_html__( 'Max', 'clandevs-smart-catalog-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
 			echo '</div>';
 			echo '</div>';
 		}
 
-		if ( $show_rating && License::can( 'rating_filter' ) ) {
+		if ( $show_rating ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Customer Rating', 'advanced-product-filter' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Customer Rating', 'clandevs-smart-catalog-filters' ) . '</h4>';
 			for ( $i = 5; $i >= 1; $i-- ) {
 				echo '<label class="wf-rating">';
 				echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
@@ -758,33 +758,29 @@ final class ShopFilters {
 					echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" class="wf-star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
 				}
 				echo '</span>';
-				echo '<span class="wf-rating-text">' . esc_html__( '& up', 'advanced-product-filter' ) . '</span>';
+				echo '<span class="wf-rating-text">' . esc_html__( '& up', 'clandevs-smart-catalog-filters' ) . '</span>';
 				echo '</label>';
 			}
 			echo '<label class="wf-rating">';
 			echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
-			echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'advanced-product-filter' ) . '</span>';
+			echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'clandevs-smart-catalog-filters' ) . '</span>';
 			echo '</label>';
 			echo '</div>';
 		}
 
 		if ( $show_stock ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Availability', 'advanced-product-filter' ) . '</h4>';
-			echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'advanced-product-filter' ) . '</span></label>';
-			echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'advanced-product-filter' ) . '</span></label>';
+			echo '<h4>' . esc_html__( 'Availability', 'clandevs-smart-catalog-filters' ) . '</h4>';
+			echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
 			echo '</div>';
 		}
 
-		if ( $show_colors && '' !== $this->color_taxonomy && License::can( 'color_filter' ) ) {
+		if ( $show_colors && '' !== $this->color_taxonomy ) {
 			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Color', 'advanced-product-filter' ) . '</h4>';
+			echo '<h4>' . esc_html__( 'Color', 'clandevs-smart-catalog-filters' ) . '</h4>';
 			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors, true, $list_suffix );
 			echo '</div>';
-		}
-
-		if ( ! License::can( 'custom_attributes' ) ) {
-			$this->custom_attribute_taxonomies = array();
 		}
 
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
@@ -800,10 +796,18 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-actions">';
-		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'advanced-product-filter' ) . '</button>';
-		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'advanced-product-filter' ) . '</a>';
+		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
+		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'clandevs-smart-catalog-filters' ) . '</a>';
 		echo '</div>';
 		echo '</form>';
+
+		/**
+		 * Fires after the filter form renders.
+		 * Used by Pro add-on to inject comparison buttons or other UI.
+		 *
+		 * @param array $filter_options Current filter visibility options.
+		 */
+		do_action( 'cscf_after_filter_render', $filter_options );
 	}
 
 	/**
@@ -819,13 +823,13 @@ final class ShopFilters {
 		}
 
 		echo '<div class="wf-active-filters">';
-		echo '<h5>' . esc_html__( 'Active Filters', 'advanced-product-filter' ) . '</h5>';
+		echo '<h5>' . esc_html__( 'Active Filters', 'clandevs-smart-catalog-filters' ) . '</h5>';
 		echo '<div class="wf-chip-list">';
 		foreach ( $chips as $chip ) {
 			echo '<a class="wf-chip" href="' . esc_url( (string) $chip['url'] ) . '">' . esc_html( (string) $chip['label'] ) . ' <span aria-hidden="true">&times;</span></a>';
 		}
 		echo '</div>';
-		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'advanced-product-filter' ) . '</a>';
+		echo '<a class="wf-clear-all" href="' . esc_url( $this->build_clear_filters_url() ) . '">' . esc_html__( 'Clear all', 'clandevs-smart-catalog-filters' ) . '</a>';
 		echo '</div>';
 	}
 
@@ -844,17 +848,17 @@ final class ShopFilters {
 			if ( $term instanceof \WP_Term ) {
 				$chips[] = array(
 					/* translators: %s: product category name. */
-					'label' => sprintf( __( 'Category: %s', 'advanced-product-filter' ), $term->name ),
+					'label' => sprintf( __( 'Category: %s', 'clandevs-smart-catalog-filters' ), $term->name ),
 					'url'   => $this->build_remove_filter_url( 'wf_cat' ),
 				);
 			}
 		}
 
 		if ( isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
-			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'advanced-product-filter' ) ) );
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'clandevs-smart-catalog-filters' ) ) );
 		}
 		if ( isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
-			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'advanced-product-filter' ) ) );
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'clandevs-smart-catalog-filters' ) ) );
 		}
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -865,7 +869,7 @@ final class ShopFilters {
 		$multiselect_mode = $this->get_request_multiselect_mode();
 		if ( 'and' === $multiselect_mode ) {
 			$chips[] = array(
-				'label' => __( 'Logic: AND', 'advanced-product-filter' ),
+				'label' => __( 'Logic: AND', 'clandevs-smart-catalog-filters' ),
 				'url'   => $this->build_remove_filter_url( 'wf_logic' ),
 			);
 		}
@@ -874,7 +878,7 @@ final class ShopFilters {
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $min_price ) {
 			$chips[] = array(
 				/* translators: %s: minimum price with currency symbol. */
-				'label' => sprintf( __( 'Min: %s', 'advanced-product-filter' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
+				'label' => sprintf( __( 'Min: %s', 'clandevs-smart-catalog-filters' ), wp_strip_all_tags( wc_price( (float) $min_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'min_price' ),
 			);
 		}
@@ -883,7 +887,7 @@ final class ShopFilters {
 		if ( isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'] && null !== $max_price ) {
 			$chips[] = array(
 				/* translators: %s: maximum price with currency symbol. */
-				'label' => sprintf( __( 'Max: %s', 'advanced-product-filter' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
+				'label' => sprintf( __( 'Max: %s', 'clandevs-smart-catalog-filters' ), wp_strip_all_tags( wc_price( (float) $max_price ), true ) ),
 				'url'   => $this->build_remove_filter_url( 'max_price' ),
 			);
 		}
@@ -892,21 +896,21 @@ final class ShopFilters {
 		if ( isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'] && $rating > 0 && $rating <= 5 ) {
 			$chips[] = array(
 				/* translators: %d: star rating threshold. */
-				'label' => sprintf( __( '%d stars & up', 'advanced-product-filter' ), $rating ),
+				'label' => sprintf( __( '%d stars & up', 'clandevs-smart-catalog-filters' ), $rating ),
 				'url'   => $this->build_remove_filter_url( 'rating_filter' ),
 			);
 		}
 
 		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
 			$chips[] = array(
-				'label' => __( 'Stock: In stock', 'advanced-product-filter' ),
+				'label' => __( 'Stock: In stock', 'clandevs-smart-catalog-filters' ),
 				'url'   => $this->build_remove_filter_url( 'wf_in_stock' ),
 			);
 		}
 
 		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
 			$chips[] = array(
-				'label' => __( 'Sale: On sale', 'advanced-product-filter' ),
+				'label' => __( 'Sale: On sale', 'clandevs-smart-catalog-filters' ),
 				'url'   => $this->build_remove_filter_url( 'wf_on_sale' ),
 			);
 		}
@@ -940,7 +944,7 @@ final class ShopFilters {
 		$list_id = 'wf-cat-list-' . sanitize_key( $list_suffix );
 
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-cat-list">';
-		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'advanced-product-filter' ) . '</span></label></li>';
+		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'clandevs-smart-catalog-filters' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
 			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
 			$is_active   = $selected === $term->slug;
@@ -976,7 +980,7 @@ final class ShopFilters {
 		);
 
 		if ( empty( $terms ) ) {
-			echo '<p class="wf-empty">' . esc_html__( 'No options found.', 'advanced-product-filter' ) . '</p>';
+			echo '<p class="wf-empty">' . esc_html__( 'No options found.', 'clandevs-smart-catalog-filters' ) . '</p>';
 			return;
 		}
 
@@ -984,7 +988,7 @@ final class ShopFilters {
 
 		if ( count( $terms ) > 7 ) {
 			echo '<div class="wf-option-search-wrap">';
-			echo '<input type="search" class="wf-option-search" data-list-id="' . esc_attr( $list_id ) . '" placeholder="' . esc_attr__( 'Search options...', 'advanced-product-filter' ) . '" aria-label="' . esc_attr__( 'Search filter options', 'advanced-product-filter' ) . '" />';
+			echo '<input type="search" class="wf-option-search" data-list-id="' . esc_attr( $list_id ) . '" placeholder="' . esc_attr__( 'Search options...', 'clandevs-smart-catalog-filters' ) . '" aria-label="' . esc_attr__( 'Search filter options', 'clandevs-smart-catalog-filters' ) . '" />';
 			echo '</div>';
 		}
 
@@ -1157,7 +1161,7 @@ final class ShopFilters {
 		$current_url = $this->get_archive_url();
 		$page_base   = remove_query_arg( array( 'paged', 'product-page' ), $current_url );
 
-		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'advanced-product-filter' ) . '">';
+		echo '<nav class="woocommerce-pagination" aria-label="' . esc_attr__( 'Product Pagination', 'clandevs-smart-catalog-filters' ) . '">';
 		echo wp_kses_post(
 			paginate_links(
 				array(

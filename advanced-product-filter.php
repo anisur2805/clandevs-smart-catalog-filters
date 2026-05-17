@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Advanced Product Filter
- * Plugin URI: https://clandevs.com/advancedproductfilter/
- * Description: Filter WooCommerce products by category, price, and availability for free. Upgrade to Pro for brand, color, rating, analytics, and full styling.
- * Version: 1.0.2
+ * Plugin Name: Clandevs Smart Catalog Filters
+ * Plugin URI: https://clandevs.com/smart-catalog-filters/
+ * Description: Filter WooCommerce products by category, price, availability, brand, color, rating, and custom attributes. AJAX-powered with analytics, full styling controls, and multiple skins.
+ * Version: 2.0.0
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
@@ -13,89 +13,76 @@
  * WC tested up to: 10.0
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: advanced-product-filter
+ * Text Domain: clandevs-smart-catalog-filters
  * Requires Plugins: woocommerce
  * Domain Path: /languages
  *
- * @package AdvancedProductFilter
+ * @package ClandevsSmartCatalogFilters
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! defined( 'APF_PLUGIN_URL' ) ) {
-	define( 'APF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+if ( defined( 'CSCF_VERSION' ) ) {
+	// Bail if another instance of this plugin is already loaded (e.g. free + pro).
+	return;
 }
 
-if ( ! defined( 'APF_VERSION' ) ) {
-	define( 'APF_VERSION', '1.0.2' );
-}
+define( 'CSCF_VERSION', '2.0.0' );
+define( 'CSCF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once __DIR__ . '/src/Autoloader.php';
+\ClandevsSmartCatalogFilters\Autoloader::register( __DIR__ . '/src' );
 
-\AdvancedProductFilter\Autoloader::register( __DIR__ . '/src' );
+if ( ! function_exists( 'cscf_fs' ) ) {
+	// Create a helper function for easy SDK access.
+	function cscf_fs() {
+		global $cscf_fs;
 
-if ( ! function_exists( 'wfs_fs' ) ) {
-	/**
-	 * Create a helper function for easy Freemius SDK access.
-	 *
-	 * @return \Freemius
-	 */
-	function wfs_fs() {
-		global $wfs_fs;
-
-		if ( ! isset( $wfs_fs ) ) {
+		if ( ! isset( $cscf_fs ) ) {
 			// Include Freemius SDK.
-			require_once __DIR__ . '/vendor/freemius/start.php';
+			require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
 
-			$wfs_fs = fs_dynamic_init(
-				array(
-					'id'                  => '26209',
-					'slug'                => 'advanced-product-filter',
-					'type'                => 'plugin',
-					'public_key'          => 'pk_c409d5141f9173a5c8ba6cf201103',
-					'is_premium'          => false,
-					'premium_suffix'      => 'Pro',
-					// If your plugin is a serviceware, set this option to false.
-					'has_premium_version' => true,
-					'has_addons'          => false,
-					'has_paid_plans'      => true,
-					'is_org_compliant'    => true,
-					// Automatically removed in the free version. If you're not using the
-					// auto-generated free version, delete this line before uploading to wp.org.
-					'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
-					'trial'               => array(
-						'days'               => 14,
-						'is_require_payment' => false,
-					),
-					'menu'                => array(
-						'slug'       => 'advanced-product-filter',
-						'first-path' => 'admin.php?page=advanced-product-filter',
-						'support'    => false,
-					),
-				)
-			);
+			$cscf_fs = fs_dynamic_init( array(
+				'id'                  => '29823',
+				'slug'                => 'clandevs-smart-catalog-filters',
+				'premium_slug'        => 'clandevs-smart-catalog-filters-pro',
+				'type'                => 'plugin',
+				'public_key'          => 'pk_653dc3a7f5f02e24d22bf27d57500',
+				'is_premium'          => false,
+				'premium_suffix'      => 'Gold',
+				'has_premium_version' => true,
+				'has_addons'          => false,
+				'has_paid_plans'      => true,
+				'is_org_compliant'    => true,
+				'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
+				'menu'                => array(
+					'slug'           => 'clandevs-smart-catalog-filters',
+					'first-path'     => 'admin.php?page=clandevs-smart-catalog-filters',
+					'support'        => false,
+				),
+			) );
 		}
 
-		return $wfs_fs;
+		return $cscf_fs;
 	}
 
 	// Init Freemius.
-	wfs_fs();
+	cscf_fs();
 	// Signal that SDK was initiated.
-	do_action( 'wfs_fs_loaded' );
+	do_action( 'cscf_fs_loaded' );
 }
 
 // Freemius uninstall hook — replaces uninstall.php.
-wfs_fs()->add_action( 'after_uninstall', 'wfs_fs_uninstall_cleanup' );
+cscf_fs()->add_action( 'after_uninstall', 'cscf_uninstall_cleanup' );
 
 /**
  * Clean up plugin data on uninstall via Freemius.
  *
  * @return void
  */
-function wfs_fs_uninstall_cleanup() {
+function cscf_uninstall_cleanup() {
 	$options = get_option( 'wf_filter_options', array() );
 	$delete  = is_array( $options ) && isset( $options['delete_data_on_uninstall'] ) && 'yes' === $options['delete_data_on_uninstall'];
 
@@ -113,13 +100,10 @@ add_filter(
 	'plugin_action_links_' . plugin_basename( __FILE__ ),
 	static function ( array $links ): array {
 		$custom_links = array(
-			'<a href="' . esc_url( admin_url( 'admin.php?page=advanced-product-filter' ) ) . '">' . esc_html__( 'Styling', 'advanced-product-filter' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'advanced-product-filter' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=clandevs-smart-catalog-filters' ) ) . '">' . esc_html__( 'Styling', 'clandevs-smart-catalog-filters' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'clandevs-smart-catalog-filters' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'clandevs-smart-catalog-filters' ) . '</a>',
 		);
-
-		if ( \AdvancedProductFilter\License::can( 'analytics' ) ) {
-			$custom_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'advanced-product-filter' ) . '</a>';
-		}
 
 		return array_merge( $custom_links, $links );
 	}
@@ -147,12 +131,12 @@ add_action(
 					if ( ! current_user_can( 'activate_plugins' ) ) {
 						return;
 					}
-					echo '<div class="notice notice-error"><p>' . esc_html__( 'Advanced Product Filter requires WooCommerce to be installed and active.', 'advanced-product-filter' ) . '</p></div>';
+					echo '<div class="notice notice-error"><p>' . esc_html__( 'Clandevs Smart Catalog Filters requires WooCommerce to be installed and active.', 'clandevs-smart-catalog-filters' ) . '</p></div>';
 				}
 			);
 			return;
 		}
 
-		\AdvancedProductFilter\Plugin::instance( __FILE__ )->boot();
+		\ClandevsSmartCatalogFilters\Plugin::instance( __FILE__ )->boot();
 	}
 );

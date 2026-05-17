@@ -20,3 +20,13 @@ coverage/
 
 # Composer lock is not required for this plugin package
 composer.lock
+
+# Build zips and build dirs
+*.zip
+.build/
+
+# Pro vendor (managed separately)
+pro/vendor/
+
+# Claude Code
+.claude/

@@ -2,10 +2,10 @@
 /**
  * Style settings controller.
  *
- * @package AdvancedProductFilter
+ * @package ClandevsSmartCatalogFilters
  */
 
-namespace AdvancedProductFilter;
+namespace ClandevsSmartCatalogFilters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,7 +19,7 @@ final class StyleSettings {
 	private const OPTION_KEY = 'wf_style_options';
 
 	/** @var string */
-	private const PAGE_SLUG = 'advanced-product-filter';
+	private const PAGE_SLUG = 'clandevs-smart-catalog-filters';
 
 	/** @var string */
 	private const RESET_ACTION = 'wf_reset_styles';
@@ -43,7 +43,7 @@ final class StyleSettings {
 	 */
 	public function handle_reset_request(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage Advanced Product Filter styles.', 'advanced-product-filter' ) );
+			wp_die( esc_html__( 'You are not allowed to manage Clandevs Smart Catalog Filters styles.', 'clandevs-smart-catalog-filters' ) );
 		}
 
 		check_admin_referer( self::RESET_ACTION );
@@ -70,15 +70,15 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'toplevel_page_advanced-product-filter' !== $hook ) {
+		if ( 'toplevel_page_clandevs-smart-catalog-filters' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_style(
 			'wf-admin-styles',
-			APF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			CSCF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
-			APF_VERSION
+			CSCF_VERSION
 		);
 	}
 
@@ -100,50 +100,43 @@ final class StyleSettings {
 
 		add_settings_section(
 			'wf_style_section_main',
-			__( 'Design Controls', 'advanced-product-filter' ),
+			__( 'Design Controls', 'clandevs-smart-catalog-filters' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			'preset_skin',
-			__( 'Default Skin', 'advanced-product-filter' ),
+			__( 'Default Skin', 'clandevs-smart-catalog-filters' ),
 			array( $this, 'render_skin_field' ),
 			self::PAGE_SLUG,
 			'wf_style_section_main'
 		);
 
-		$this->register_color_field( 'accent_color', __( 'Accent Color', 'advanced-product-filter' ) );
-		$this->register_color_field( 'sidebar_bg_color', __( 'Sidebar Background', 'advanced-product-filter' ) );
-		$this->register_color_field( 'sidebar_border_color', __( 'Sidebar Border', 'advanced-product-filter' ) );
-		$this->register_color_field( 'heading_color', __( 'Heading Color', 'advanced-product-filter' ) );
-		$this->register_color_field( 'text_color', __( 'Body Text Color', 'advanced-product-filter' ) );
-		$this->register_color_field( 'muted_text_color', __( 'Muted Text Color', 'advanced-product-filter' ) );
-		$this->register_color_field( 'chip_bg_color', __( 'Filter Chip Background', 'advanced-product-filter' ) );
-		$this->register_color_field( 'chip_border_color', __( 'Filter Chip Border', 'advanced-product-filter' ) );
-		$this->register_color_field( 'button_bg_color', __( 'Primary Button Background', 'advanced-product-filter' ) );
-		$this->register_color_field( 'button_text_color', __( 'Primary Button Text', 'advanced-product-filter' ) );
-		$this->register_color_field( 'input_bg_color', __( 'Input Background', 'advanced-product-filter' ) );
-		$this->register_color_field( 'control_border_color', __( 'Input/Control Border', 'advanced-product-filter' ) );
-		$this->register_color_field( 'no_results_bg_color', __( 'No Results Background', 'advanced-product-filter' ) );
-		$this->register_color_field( 'no_results_border_color', __( 'No Results Border', 'advanced-product-filter' ) );
-		$this->register_color_field( 'no_results_shadow_color', __( 'No Results Shadow', 'advanced-product-filter' ) );
-		$this->register_text_field( 'font_family', __( 'Font Family', 'advanced-product-filter' ) );
-		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'advanced-product-filter' ), 10, 48, 1 );
-		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'advanced-product-filter' ), 180, 600, 1 );
-		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'advanced-product-filter' ), 0, 80, 1 );
-		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'advanced-product-filter' ), 0, 60, 1 );
-		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'advanced-product-filter' ), 0, 60, 1 );
-		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'advanced-product-filter' ), 0, 60, 1 );
-		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'advanced-product-filter' ), 0, 60, 1 );
+		$this->register_color_field( 'accent_color', __( 'Accent Color', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'sidebar_bg_color', __( 'Sidebar Background', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'sidebar_border_color', __( 'Sidebar Border', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'heading_color', __( 'Heading Color', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'text_color', __( 'Body Text Color', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'muted_text_color', __( 'Muted Text Color', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'chip_bg_color', __( 'Filter Chip Background', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'chip_border_color', __( 'Filter Chip Border', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'button_bg_color', __( 'Primary Button Background', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'button_text_color', __( 'Primary Button Text', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'input_bg_color', __( 'Input Background', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'control_border_color', __( 'Input/Control Border', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'no_results_bg_color', __( 'No Results Background', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'no_results_border_color', __( 'No Results Border', 'clandevs-smart-catalog-filters' ) );
+		$this->register_color_field( 'no_results_shadow_color', __( 'No Results Shadow', 'clandevs-smart-catalog-filters' ) );
+		$this->register_text_field( 'font_family', __( 'Font Family', 'clandevs-smart-catalog-filters' ) );
+		$this->register_number_field( 'font_size', __( 'Base Font Size (px)', 'clandevs-smart-catalog-filters' ), 10, 48, 1 );
+		$this->register_number_field( 'sidebar_width', __( 'Sidebar Width (px)', 'clandevs-smart-catalog-filters' ), 180, 600, 1 );
+		$this->register_number_field( 'layout_gap', __( 'Sidebar/Product Gap (px)', 'clandevs-smart-catalog-filters' ), 0, 80, 1 );
+		$this->register_number_field( 'sidebar_radius', __( 'Sidebar Radius (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
+		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
+		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
+		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
 
-		add_settings_field(
-			'custom_css',
-			__( 'Custom CSS', 'advanced-product-filter' ),
-			array( $this, 'render_custom_css_field' ),
-			self::PAGE_SLUG,
-			'wf_style_section_main'
-		);
 	}
 
 	/**
@@ -154,8 +147,8 @@ final class StyleSettings {
 	public function register_menu(): void {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
-			__( 'Advanced Product Filter Styling', 'advanced-product-filter' ),
-			__( 'Styling', 'advanced-product-filter' ),
+			__( 'Catalog Filter Styling', 'clandevs-smart-catalog-filters' ),
+			__( 'Styling', 'clandevs-smart-catalog-filters' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' ),
@@ -180,8 +173,8 @@ final class StyleSettings {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
 				</div>
 				<div>
-					<h1><?php esc_html_e( 'Advanced Product Filter Styling', 'advanced-product-filter' ); ?></h1>
-					<p><?php esc_html_e( 'Customize the appearance of your shop filters', 'advanced-product-filter' ); ?></p>
+					<h1><?php esc_html_e( 'Clandevs Smart Catalog Filters Styling', 'clandevs-smart-catalog-filters' ); ?></h1>
+					<p><?php esc_html_e( 'Customize the appearance of your shop filters', 'clandevs-smart-catalog-filters' ); ?></p>
 				</div>
 			</div>
 
@@ -190,7 +183,7 @@ final class StyleSettings {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Style settings saved.', 'advanced-product-filter' ); ?>
+							<?php esc_html_e( 'Style settings saved.', 'clandevs-smart-catalog-filters' ); ?>
 						</p>
 					</div>
 				</div>
@@ -204,7 +197,7 @@ final class StyleSettings {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Style settings have been reset to defaults.', 'advanced-product-filter' ); ?>
+							<?php esc_html_e( 'Style settings have been reset to defaults.', 'clandevs-smart-catalog-filters' ); ?>
 						</p>
 					</div>
 				</div>
@@ -212,8 +205,8 @@ final class StyleSettings {
 
 			<div class="wf-admin-card">
 				<div class="wf-admin-card-header">
-					<h2><?php esc_html_e( 'Design Controls', 'advanced-product-filter' ); ?></h2>
-					<p><?php esc_html_e( 'Choose a preset skin and fine-tune colors and typography.', 'advanced-product-filter' ); ?></p>
+					<h2><?php esc_html_e( 'Design Controls', 'clandevs-smart-catalog-filters' ); ?></h2>
+					<p><?php esc_html_e( 'Choose a preset skin and fine-tune colors and typography.', 'clandevs-smart-catalog-filters' ); ?></p>
 				</div>
 				<div class="wf-admin-card-body">
 					<form action="options.php" method="post">
@@ -221,7 +214,7 @@ final class StyleSettings {
 						<table class="form-table">
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Default Skin', 'advanced-product-filter' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Default Skin', 'clandevs-smart-catalog-filters' ); ?></label>
 								</th>
 								<td>
 									<select name="<?php echo esc_attr( self::OPTION_KEY ); ?>[preset_skin]" class="wf-admin-select">
@@ -239,13 +232,13 @@ final class StyleSettings {
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Colors', 'advanced-product-filter' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Colors', 'clandevs-smart-catalog-filters' ); ?></h3>
 
 						<div class="wf-admin-grid-2">
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Accent Color', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Accent Color', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'accent_color' ); ?>
@@ -253,7 +246,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Background', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Background', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'sidebar_bg_color' ); ?>
@@ -261,7 +254,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Border', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Border', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'sidebar_border_color' ); ?>
@@ -269,7 +262,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Heading Color', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Heading Color', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'heading_color' ); ?>
@@ -277,7 +270,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Body Text Color', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Body Text Color', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'text_color' ); ?>
@@ -285,18 +278,17 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Muted Text Color', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Muted Text Color', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'muted_text_color' ); ?>
 									</td>
 								</tr>
 							</table>
-							<?php if ( License::can( 'full_styling' ) ) : ?>
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Background', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Background', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'chip_bg_color' ); ?>
@@ -304,7 +296,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Border', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Filter Chip Border', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'chip_border_color' ); ?>
@@ -312,7 +304,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Background', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Background', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'button_bg_color' ); ?>
@@ -320,7 +312,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Text', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Primary Button Text', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'button_text_color' ); ?>
@@ -328,7 +320,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Input Background', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Input Background', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'input_bg_color' ); ?>
@@ -336,7 +328,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Input/Control Border', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Input/Control Border', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'control_border_color' ); ?>
@@ -344,7 +336,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'No Results Background', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Background', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'no_results_bg_color' ); ?>
@@ -352,7 +344,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'No Results Border', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Border', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'no_results_border_color' ); ?>
@@ -360,30 +352,23 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'No Results Shadow', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'No Results Shadow', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php $this->render_color_field_with_preview( 'no_results_shadow_color' ); ?>
 									</td>
 								</tr>
 							</table>
-							<?php else : ?>
-							<div style="display:flex;align-items:center;justify-content:center;padding:20px;">
-								<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-pro-badge" style="font-size:12px;padding:6px 14px;"><?php esc_html_e( '9 more color controls with Pro', 'advanced-product-filter' ); ?></a>
-							</div>
-							<?php endif; ?>
 						</div>
-
-						<?php if ( License::can( 'full_styling' ) ) : ?>
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Typography & Layout', 'advanced-product-filter' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Typography & Layout', 'clandevs-smart-catalog-filters' ); ?></h3>
 
 						<table class="form-table">
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Font Family', 'advanced-product-filter' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Font Family', 'clandevs-smart-catalog-filters' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -395,7 +380,7 @@ final class StyleSettings {
 							</tr>
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Base Font Size (px)', 'advanced-product-filter' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Base Font Size (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -407,7 +392,7 @@ final class StyleSettings {
 							</tr>
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Width (px)', 'advanced-product-filter' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Width (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -419,7 +404,7 @@ final class StyleSettings {
 							</tr>
 							<tr>
 								<th scope="row">
-									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar/Product Gap (px)', 'advanced-product-filter' ); ?></label>
+									<label class="wf-admin-label"><?php esc_html_e( 'Sidebar/Product Gap (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 								</th>
 								<td>
 									<?php
@@ -433,13 +418,13 @@ final class StyleSettings {
 
 						<hr class="wf-admin-divider" />
 
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Border Radius', 'advanced-product-filter' ); ?></h3>
+						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Border Radius', 'clandevs-smart-catalog-filters' ); ?></h3>
 
 						<div class="wf-admin-grid-2">
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Radius (px)', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Sidebar Radius (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -451,7 +436,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Input Radius (px)', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Input Radius (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -465,7 +450,7 @@ final class StyleSettings {
 							<table class="form-table">
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Button Radius (px)', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Button Radius (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -477,7 +462,7 @@ final class StyleSettings {
 								</tr>
 								<tr>
 									<th scope="row">
-										<label class="wf-admin-label"><?php esc_html_e( 'Section Spacing (px)', 'advanced-product-filter' ); ?></label>
+										<label class="wf-admin-label"><?php esc_html_e( 'Section Spacing (px)', 'clandevs-smart-catalog-filters' ); ?></label>
 									</th>
 									<td>
 										<?php
@@ -489,41 +474,6 @@ final class StyleSettings {
 								</tr>
 							</table>
 						</div>
-
-						<?php endif; ?>
-
-						<?php if ( License::can( 'custom_css' ) ) : ?>
-
-						<hr class="wf-admin-divider" />
-
-						<h3 class="wf-admin-section-title"><?php esc_html_e( 'Custom CSS', 'advanced-product-filter' ); ?></h3>
-
-						<table class="form-table">
-							<tr>
-								<td colspan="2">
-									<?php
-									$options = self::get_options();
-									$value   = isset( $options['custom_css'] ) ? (string) $options['custom_css'] : '';
-									?>
-									<textarea class="wf-admin-textarea" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[custom_css]" rows="8" placeholder=".wf-shop-layout { /* your custom styles */ }"><?php echo esc_textarea( $value ); ?></textarea>
-									<p class="description wf-admin-help"><?php esc_html_e( 'CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results', 'advanced-product-filter' ); ?></p>
-								</td>
-							</tr>
-						</table>
-
-						<?php endif; ?>
-
-						<?php if ( ! License::can( 'full_styling' ) || ! License::can( 'custom_css' ) ) : ?>
-
-						<hr class="wf-admin-divider" />
-
-						<div class="wf-admin-upgrade-notice">
-							<h3><?php esc_html_e( 'Unlock Full Styling Controls', 'advanced-product-filter' ); ?></h3>
-							<p><?php esc_html_e( 'Typography, layout, border radius, and custom CSS are available with Pro.', 'advanced-product-filter' ); ?></p>
-							<a href="<?php echo esc_url( License::get_upgrade_url() ); ?>" class="wf-admin-submit"><?php esc_html_e( 'Upgrade to Pro', 'advanced-product-filter' ); ?></a>
-						</div>
-
-						<?php endif; ?>
 
 						<?php
 						$reset_url = wp_nonce_url(
@@ -537,11 +487,11 @@ final class StyleSettings {
 						<div class="wf-admin-submit-wrap" style="display: flex; align-items: center; gap: 16px;">
 							<button type="submit" class="wf-admin-submit">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-								<?php esc_html_e( 'Save Styles', 'advanced-product-filter' ); ?>
+								<?php esc_html_e( 'Save Styles', 'clandevs-smart-catalog-filters' ); ?>
 							</button>
-							<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'advanced-product-filter' ); ?>">
+							<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all style settings to defaults?', 'clandevs-smart-catalog-filters' ); ?>">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-								<?php esc_html_e( 'Reset to Defaults', 'advanced-product-filter' ); ?>
+								<?php esc_html_e( 'Reset to Defaults', 'clandevs-smart-catalog-filters' ); ?>
 							</a>
 						</div>
 					</form>
@@ -573,7 +523,7 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function render_section_intro(): void {
-		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results.', 'advanced-product-filter' ) . '</p>';
+		echo '<p>' . esc_html__( 'Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results.', 'clandevs-smart-catalog-filters' ) . '</p>';
 	}
 
 	/**
@@ -703,17 +653,6 @@ final class StyleSettings {
 		echo '<input type="number" class="small-text" min="' . esc_attr( (string) $min ) . '" max="' . esc_attr( (string) $max ) . '" step="' . esc_attr( (string) $step ) . '" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( (string) $value ) . '" />';
 	}
 
-	/**
-	 * Render custom CSS textarea.
-	 *
-	 * @return void
-	 */
-	public function render_custom_css_field(): void {
-		$options = self::get_options();
-		$value   = isset( $options['custom_css'] ) ? (string) $options['custom_css'] : '';
-
-		echo '<textarea name="' . esc_attr( self::OPTION_KEY ) . '[custom_css]" rows="8" class="large-text code">' . esc_textarea( $value ) . '</textarea>';
-	}
 
 	/**
 	 * Sanitize settings payload.
@@ -780,11 +719,6 @@ final class StyleSettings {
 			}
 		}
 
-		$custom_css = isset( $raw['custom_css'] ) ? wp_unslash( (string) $raw['custom_css'] ) : '';
-		$custom_css = wp_strip_all_tags( $custom_css );
-		if ( '' !== $custom_css ) {
-			$sanitized['custom_css'] = $custom_css;
-		}
 
 		return $sanitized;
 	}
@@ -841,7 +775,6 @@ final class StyleSettings {
 			'control_radius'          => '10',
 			'button_radius'           => '12',
 			'section_spacing'         => '18',
-			'custom_css'              => '',
 		);
 	}
 
@@ -851,19 +784,11 @@ final class StyleSettings {
 	 * @return array<string, string>
 	 */
 	private static function get_skin_choices(): array {
-		$skins = array(
-			'classic' => __( 'Classic', 'advanced-product-filter' ),
+		return array(
+			'classic'  => __( 'Classic', 'clandevs-smart-catalog-filters' ),
+			'graphite' => __( 'Graphite', 'clandevs-smart-catalog-filters' ),
+			'sunrise'  => __( 'Sunrise', 'clandevs-smart-catalog-filters' ),
 		);
-
-		if ( License::can( 'extra_skins' ) ) {
-			$skins['graphite'] = __( 'Graphite', 'advanced-product-filter' );
-			$skins['sunrise']  = __( 'Sunrise', 'advanced-product-filter' );
-		} else {
-			$skins['graphite'] = __( 'Graphite (Pro)', 'advanced-product-filter' );
-			$skins['sunrise']  = __( 'Sunrise (Pro)', 'advanced-product-filter' );
-		}
-
-		return $skins;
 	}
 
 	/**
@@ -876,11 +801,6 @@ final class StyleSettings {
 		$skin = sanitize_key( $skin );
 
 		if ( ! array_key_exists( $skin, self::get_skin_choices() ) ) {
-			return 'classic';
-		}
-
-		$pro_skins = array( 'graphite', 'sunrise' );
-		if ( in_array( $skin, $pro_skins, true ) && ! License::can( 'extra_skins' ) ) {
 			return 'classic';
 		}
 

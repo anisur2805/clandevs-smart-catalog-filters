@@ -9,15 +9,24 @@ __MACOSX
 .vscode
 .editorconfig
 .phpunit.result.cache
+.openclaude
 
 # Build output
 /dist
 /_dist
+.build
 node_modules
 
 # Development and test files
 tests
 scripts
+documentation
+
+# Pro add-on (built separately)
+pro
+
+# Build tools
+Makefile
 
 # Vendor dev dependencies (keep vendor/freemius for Freemius SDK)
 vendor/autoload.php

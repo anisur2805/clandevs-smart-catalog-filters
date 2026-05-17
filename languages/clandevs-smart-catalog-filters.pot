@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced Product Filter 1.0.0\n"
+"Project-Id-Version: Clandevs Smart Catalog Filters 2.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/advanced-product-filter\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2026-03-19T17:50:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: advanced-product-filter\n"
+"X-Domain: clandevs-smart-catalog-filters\n"
 
 #. Plugin Name of the plugin
 #: advanced-product-filter.php

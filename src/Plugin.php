@@ -2,10 +2,10 @@
 /**
  * Main plugin service container.
  *
- * @package AdvancedProductFilter
+ * @package ClandevsSmartCatalogFilters
  */
 
-namespace AdvancedProductFilter;
+namespace ClandevsSmartCatalogFilters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -86,7 +86,7 @@ final class Plugin {
 	private function __construct( string $plugin_file ) {
 		$this->plugin_file = $plugin_file;
 		$this->plugin_url  = plugin_dir_url( $plugin_file );
-		$this->version     = defined( 'APF_VERSION' ) ? APF_VERSION : '1.0.0';
+		$this->version     = defined( 'CSCF_VERSION' ) ? CSCF_VERSION : '1.0.0';
 	}
 
 	/**
@@ -127,5 +127,13 @@ final class Plugin {
 
 		$this->analytics = new Analytics();
 		$this->analytics->register_hooks();
+
+		/**
+		 * Fires after all free plugin services have been booted.
+		 * The Pro add-on uses this to boot its own services.
+		 *
+		 * @param self $plugin Plugin instance.
+		 */
+		do_action( 'cscf_booted', $this );
 	}
 }

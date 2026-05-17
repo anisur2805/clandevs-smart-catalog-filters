@@ -2,10 +2,10 @@
 /**
  * Analytics tracking and reporting.
  *
- * @package AdvancedProductFilter
+ * @package ClandevsSmartCatalogFilters
  */
 
-namespace AdvancedProductFilter;
+namespace ClandevsSmartCatalogFilters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -33,14 +33,7 @@ final class Analytics {
 	 * @return void
 	 */
 	public function register_hooks(): void {
-		// Always register the cron flush handler so buffered data is not lost
-		// during license state changes or grace periods.
 		add_action( 'wf_flush_analytics_buffer', array( $this, 'flush_analytics_buffer' ) );
-
-		if ( ! License::can( 'analytics' ) ) {
-			return;
-		}
-
 		add_action( 'pre_get_posts', array( $this, 'track_shop_filter_usage' ), 30 );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
@@ -54,22 +47,22 @@ final class Analytics {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'advanced-product-filter_page_wf-filter-analytics' !== $hook ) {
+		if ( 'clandevs-smart-catalog-filters_page_wf-filter-analytics' !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_style(
 			'wf-admin-styles',
-			APF_PLUGIN_URL . 'assets/css/wf-admin.css',
+			CSCF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
-			APF_VERSION
+			CSCF_VERSION
 		);
 
 		wp_enqueue_script(
 			'wf-admin-scripts',
-			APF_PLUGIN_URL . 'assets/js/wf-admin.js',
+			CSCF_PLUGIN_URL . 'assets/js/wf-admin.js',
 			array(),
-			APF_VERSION,
+			CSCF_VERSION,
 			true
 		);
 	}
@@ -82,8 +75,8 @@ final class Analytics {
 	public function register_menu(): void {
 		add_submenu_page(
 			AdminMenu::get_menu_slug(),
-			__( 'Advanced Product Filter Analytics', 'advanced-product-filter' ),
-			__( 'Analytics', 'advanced-product-filter' ),
+			__( 'Catalog Filter Analytics', 'clandevs-smart-catalog-filters' ),
+			__( 'Analytics', 'clandevs-smart-catalog-filters' ),
 			'manage_woocommerce',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -120,7 +113,7 @@ final class Analytics {
 	 */
 	public function handle_reset_request(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage Advanced Product Filter analytics.', 'advanced-product-filter' ) );
+			wp_die( esc_html__( 'You are not allowed to manage Clandevs Smart Catalog Filters analytics.', 'clandevs-smart-catalog-filters' ) );
 		}
 
 		check_admin_referer( self::RESET_ACTION );
@@ -163,8 +156,8 @@ final class Analytics {
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
 				</div>
 				<div>
-					<h1><?php esc_html_e( 'Advanced Product Filter Analytics', 'advanced-product-filter' ); ?></h1>
-					<p><?php esc_html_e( 'Track how customers use filters on your shop', 'advanced-product-filter' ); ?></p>
+					<h1><?php esc_html_e( 'Clandevs Smart Catalog Filters Analytics', 'clandevs-smart-catalog-filters' ); ?></h1>
+					<p><?php esc_html_e( 'Track how customers use filters on your shop', 'clandevs-smart-catalog-filters' ); ?></p>
 				</div>
 			</div>
 
@@ -176,7 +169,7 @@ final class Analytics {
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
 						<p class="wf-admin-success-text">
 							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-							<?php esc_html_e( 'Analytics data has been reset.', 'advanced-product-filter' ); ?>
+							<?php esc_html_e( 'Analytics data has been reset.', 'clandevs-smart-catalog-filters' ); ?>
 						</p>
 					</div>
 				</div>
@@ -184,23 +177,23 @@ final class Analytics {
 
 			<div class="wf-admin-stats-grid">
 				<div class="wf-admin-stat-card">
-					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Total Filter Events', 'advanced-product-filter' ); ?></div>
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Total Filter Events', 'clandevs-smart-catalog-filters' ); ?></div>
 					<div class="wf-admin-stat-card-value"><?php echo esc_html( number_format_i18n( $total_events ) ); ?></div>
 				</div>
 				<div class="wf-admin-stat-card">
-					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Distinct Filter Values', 'advanced-product-filter' ); ?></div>
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Distinct Filter Values', 'clandevs-smart-catalog-filters' ); ?></div>
 					<div class="wf-admin-stat-card-value"><?php echo esc_html( number_format_i18n( $distinct_filters ) ); ?></div>
 				</div>
 				<div class="wf-admin-stat-card">
-					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Last Event', 'advanced-product-filter' ); ?></div>
+					<div class="wf-admin-stat-card-label"><?php esc_html_e( 'Last Event', 'clandevs-smart-catalog-filters' ); ?></div>
 					<div class="wf-admin-stat-card-value wf-admin-stat-card-value--small"><?php echo esc_html( $last_event_display ); ?></div>
 				</div>
 			</div>
 
 			<div class="wf-admin-card">
 				<div class="wf-admin-card-header">
-					<h2><?php esc_html_e( 'Top Used Filters', 'advanced-product-filter' ); ?></h2>
-					<p><?php esc_html_e( 'Usage data updates when customers apply filters on the shop archive.', 'advanced-product-filter' ); ?></p>
+					<h2><?php esc_html_e( 'Top Used Filters', 'clandevs-smart-catalog-filters' ); ?></h2>
+					<p><?php esc_html_e( 'Usage data updates when customers apply filters on the shop archive.', 'clandevs-smart-catalog-filters' ); ?></p>
 				</div>
 				<div class="wf-admin-card-body wf-admin-card-body-tight">
 					<?php if ( empty( $rows ) ) : ?>
@@ -208,15 +201,15 @@ final class Analytics {
 							<div class="wf-admin-empty-icon">
 								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
 							</div>
-							<p><?php esc_html_e( 'No analytics data yet. Filter usage will appear here once customers start using the filters.', 'advanced-product-filter' ); ?></p>
+							<p><?php esc_html_e( 'No analytics data yet. Filter usage will appear here once customers start using the filters.', 'clandevs-smart-catalog-filters' ); ?></p>
 						</div>
 					<?php else : ?>
 						<table class="wf-admin-table">
 							<thead>
 								<tr>
-									<th><?php esc_html_e( 'Filter Type', 'advanced-product-filter' ); ?></th>
-									<th><?php esc_html_e( 'Value', 'advanced-product-filter' ); ?></th>
-									<th><?php esc_html_e( 'Events', 'advanced-product-filter' ); ?></th>
+									<th><?php esc_html_e( 'Filter Type', 'clandevs-smart-catalog-filters' ); ?></th>
+									<th><?php esc_html_e( 'Value', 'clandevs-smart-catalog-filters' ); ?></th>
+									<th><?php esc_html_e( 'Events', 'clandevs-smart-catalog-filters' ); ?></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -245,9 +238,9 @@ final class Analytics {
 					self::RESET_ACTION
 				);
 				?>
-				<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all analytics data?', 'advanced-product-filter' ); ?>">
+				<a href="<?php echo esc_url( $reset_url ); ?>" class="wf-admin-reset-btn" data-confirm="<?php echo esc_attr__( 'Are you sure you want to reset all analytics data?', 'clandevs-smart-catalog-filters' ); ?>">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-					<?php esc_html_e( 'Reset Analytics Data', 'advanced-product-filter' ); ?>
+					<?php esc_html_e( 'Reset Analytics Data', 'clandevs-smart-catalog-filters' ); ?>
 				</a>
 			</div>
 		</div>
@@ -557,12 +550,12 @@ final class Analytics {
 	 */
 	private function format_timestamp_for_admin( string $timestamp_gmt ): string {
 		if ( '' === $timestamp_gmt ) {
-			return __( 'No data yet', 'advanced-product-filter' );
+			return __( 'No data yet', 'clandevs-smart-catalog-filters' );
 		}
 
 		$unix = strtotime( $timestamp_gmt . ' UTC' );
 		if ( false === $unix ) {
-			return __( 'Unknown', 'advanced-product-filter' );
+			return __( 'Unknown', 'clandevs-smart-catalog-filters' );
 		}
 
 		return wp_date(
@@ -579,14 +572,14 @@ final class Analytics {
 	 */
 	private function get_translated_filter_type_label( string $type_key ): string {
 		$labels = array(
-			'category'     => __( 'Category', 'advanced-product-filter' ),
-			'brand'        => __( 'Brand', 'advanced-product-filter' ),
-			'color'        => __( 'Color', 'advanced-product-filter' ),
-			'logic'        => __( 'Logic', 'advanced-product-filter' ),
-			'rating'       => __( 'Rating', 'advanced-product-filter' ),
-			'min_price'    => __( 'Minimum Price', 'advanced-product-filter' ),
-			'max_price'    => __( 'Maximum Price', 'advanced-product-filter' ),
-			'availability' => __( 'Availability', 'advanced-product-filter' ),
+			'category'     => __( 'Category', 'clandevs-smart-catalog-filters' ),
+			'brand'        => __( 'Brand', 'clandevs-smart-catalog-filters' ),
+			'color'        => __( 'Color', 'clandevs-smart-catalog-filters' ),
+			'logic'        => __( 'Logic', 'clandevs-smart-catalog-filters' ),
+			'rating'       => __( 'Rating', 'clandevs-smart-catalog-filters' ),
+			'min_price'    => __( 'Minimum Price', 'clandevs-smart-catalog-filters' ),
+			'max_price'    => __( 'Maximum Price', 'clandevs-smart-catalog-filters' ),
+			'availability' => __( 'Availability', 'clandevs-smart-catalog-filters' ),
 		);
 
 		if ( isset( $labels[ $type_key ] ) ) {
@@ -601,7 +594,7 @@ final class Analytics {
 
 			return sprintf(
 				/* translators: %s: attribute taxonomy name */
-				__( 'Attribute: %s', 'advanced-product-filter' ),
+				__( 'Attribute: %s', 'clandevs-smart-catalog-filters' ),
 				$this->humanize_key( $taxonomy )
 			);
 		}
@@ -617,10 +610,10 @@ final class Analytics {
 	 */
 	private function get_translated_filter_value_label( string $value_key ): string {
 		$labels = array(
-			'in_stock' => __( 'In stock', 'advanced-product-filter' ),
-			'on_sale'  => __( 'On sale', 'advanced-product-filter' ),
-			'and'      => __( 'AND', 'advanced-product-filter' ),
-			'or'       => __( 'OR', 'advanced-product-filter' ),
+			'in_stock' => __( 'In stock', 'clandevs-smart-catalog-filters' ),
+			'on_sale'  => __( 'On sale', 'clandevs-smart-catalog-filters' ),
+			'and'      => __( 'AND', 'clandevs-smart-catalog-filters' ),
+			'or'       => __( 'OR', 'clandevs-smart-catalog-filters' ),
 		);
 
 		if ( isset( $labels[ $value_key ] ) ) {

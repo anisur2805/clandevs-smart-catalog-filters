@@ -2,10 +2,10 @@
 /**
  * Admin menu controller.
  *
- * @package AdvancedProductFilter
+ * @package ClandevsSmartCatalogFilters
  */
 
-namespace AdvancedProductFilter;
+namespace ClandevsSmartCatalogFilters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class AdminMenu {
 	/** @var string */
-	private const MENU_SLUG = 'advanced-product-filter';
+	private const MENU_SLUG = 'clandevs-smart-catalog-filters';
 
 	/**
 	 * Register hooks.
@@ -46,13 +46,21 @@ final class AdminMenu {
 	 */
 	public function register_menu(): void {
 		add_menu_page(
-			__( 'Advanced Product Filter', 'advanced-product-filter' ),
-			__( 'Advanced Product Filter', 'advanced-product-filter' ),
+			__( 'Clandevs Smart Catalog Filters', 'clandevs-smart-catalog-filters' ),
+			__( 'Clandevs Smart Catalog Filters', 'clandevs-smart-catalog-filters' ),
 			'manage_woocommerce',
 			self::MENU_SLUG,
 			'__return_null',
 			'dashicons-filter',
 			56
 		);
+
+		/**
+		 * Fires after the main plugin menu is registered.
+		 * The Pro add-on uses this to register its own submenu pages.
+		 *
+		 * @param string $menu_slug The main menu slug.
+		 */
+		do_action( 'cscf_admin_menu_registered', self::MENU_SLUG );
 	}
 }

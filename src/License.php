@@ -1,88 +1,41 @@
 <?php
 /**
- * Central feature gating for free/pro tiers.
+ * Feature availability helper.
  *
- * @package AdvancedProductFilter
+ * All features are fully available in the WordPress.org version.
+ * This class is retained for backward compatibility with any code
+ * that references License::can() or License::get_upgrade_url().
+ *
+ * @package ClandevsSmartCatalogFilters
  */
 
-namespace AdvancedProductFilter;
+namespace ClandevsSmartCatalogFilters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Checks whether a given feature is available on the current plan.
+ * All features are always available.
  */
 final class License {
-	/**
-	 * Features that require a paid plan.
-	 *
-	 * @var array<int, string>
-	 */
-	private static $pro_features = array(
-		'brand_filter',
-		'rating_filter',
-		'color_filter',
-		'custom_attributes',
-		'analytics',
-		'full_styling',
-		'custom_css',
-		'or_and_logic',
-		'extra_skins',
-	);
 
 	/**
-	 * Check whether the current site can use a feature.
-	 *
-	 * Free features always return true. Pro features return true only
-	 * when the user has an active paid license via Freemius.
+	 * Check whether a feature is available. Always returns true.
 	 *
 	 * @param string $feature Feature key.
 	 * @return bool
 	 */
 	public static function can( string $feature ): bool {
-		if ( ! in_array( $feature, self::$pro_features, true ) ) {
-			return true;
-		}
-
-		return self::is_paying();
+		return true;
 	}
 
 	/**
-	 * Whether the current site has an active paid plan.
-	 *
-	 * @return bool
-	 */
-	public static function is_paying(): bool {
-		if ( ! function_exists( 'wfs_fs' ) ) {
-			return false;
-		}
-
-		$fs = wfs_fs();
-
-		return $fs->is_paying() || $fs->is_trial();
-	}
-
-	/**
-	 * Get upgrade URL. Returns empty string when Freemius is unavailable.
+	 * Get upgrade URL. Returns empty string (no premium version).
 	 *
 	 * @return string
 	 */
 	public static function get_upgrade_url(): string {
-		if ( ! function_exists( 'wfs_fs' ) ) {
-			return '';
-		}
-
-		return wfs_fs()->get_upgrade_url();
-	}
-
-	/**
-	 * Get the list of pro feature keys.
-	 *
-	 * @return array<int, string>
-	 */
-	public static function get_pro_features(): array {
-		return self::$pro_features;
+		return '';
 	}
 }
