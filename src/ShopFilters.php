@@ -168,7 +168,7 @@ final class ShopFilters {
 
 		$classes[] = 'woocommerce';
 		$classes[] = 'woocommerce-page';
-		$classes[] = 'wf-shortcode-page';
+		$classes[] = 'cscf-shortcode-page';
 
 		return array_values( array_unique( $classes ) );
 	}
@@ -186,7 +186,7 @@ final class ShopFilters {
 		$style_dependencies = wp_style_is( 'woocommerce-general', 'registered' ) ? array( 'woocommerce-general' ) : array();
 
 		wp_enqueue_style(
-			'wf-shop-filters',
+			'cscf-shop-filters',
 			$this->plugin_url . 'assets/css/wf-shop.css',
 			$style_dependencies,
 			$this->asset_version
@@ -194,7 +194,7 @@ final class ShopFilters {
 		$this->enqueue_inline_styles();
 
 		wp_enqueue_script(
-			'wf-shop-filters',
+			'cscf-shop-filters',
 			$this->plugin_url . 'assets/js/wf-shop.js',
 			array(),
 			$this->asset_version,
@@ -291,7 +291,7 @@ final class ShopFilters {
 			$css .= "\n" . $swatch_css;
 		}
 
-		wp_add_inline_style( 'wf-shop-filters', $css );
+		wp_add_inline_style( 'cscf-shop-filters', $css );
 	}
 
 	/**

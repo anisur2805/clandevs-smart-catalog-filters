@@ -44,7 +44,7 @@ final class FilterSettings {
 		}
 
 		wp_enqueue_style(
-			'wf-admin-styles',
+			'cscf-admin-styles',
 			CSCF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
 			CSCF_VERSION

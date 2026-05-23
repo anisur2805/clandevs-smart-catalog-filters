@@ -75,11 +75,55 @@ final class StyleSettings {
 		}
 
 		wp_enqueue_style(
-			'wf-admin-styles',
+			'cscf-admin-styles',
 			CSCF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
 			CSCF_VERSION
 		);
+
+		add_action( 'admin_footer', array( $this, 'render_color_picker_script' ) );
+	}
+
+	/**
+	 * Print inline JS to sync color picker, preview, and hex input.
+	 *
+	 * @return void
+	 */
+	public function render_color_picker_script(): void {
+		if ( 'toplevel_page_clandevs-smart-catalog-filters' !== $GLOBALS['hook_suffix'] ?? '' ) {
+			return;
+		}
+		?>
+		<script>
+		(function(){
+			function cscfSyncColor(key, val){
+				document.querySelectorAll('.wf-admin-input-color[data-cscf-color="'+key+'"]').forEach(function(el){
+					el.value = val;
+				});
+				document.querySelectorAll('input[type="hidden"][data-cscf-color="'+key+'"]').forEach(function(el){
+					el.value = val;
+				});
+				document.querySelectorAll('.wf-admin-input-color-hex[data-cscf-color="'+key+'"]').forEach(function(el){
+					el.value = val;
+				});
+				var preview = document.querySelector('[data-cscf-preview="'+key+'"]');
+				if(preview) preview.style.background = val;
+			}
+			document.querySelectorAll('.wf-admin-input-color').forEach(function(el){
+				el.addEventListener('change', function(){
+					cscfSyncColor(this.getAttribute('data-cscf-color'), this.value);
+				});
+			});
+			document.querySelectorAll('.wf-admin-input-color-hex').forEach(function(el){
+				el.addEventListener('input', function(){
+					if(/^#[0-9a-fA-F]{6}$/.test(this.value)){
+						cscfSyncColor(this.getAttribute('data-cscf-color'), this.value);
+					}
+				});
+			});
+		})();
+		</script>
+		<?php
 	}
 
 	/**
@@ -509,11 +553,14 @@ final class StyleSettings {
 	 */
 	public function render_color_field_with_preview( string $key ): void {
 		$options = self::get_options();
-		$value   = isset( $options[ $key ] ) ? (string) $options[ $key ] : '';
+		$value   = isset( $options[ $key ] ) ? (string) $options[ $key ] : '#000000';
+		$hex     = sanitize_hex_color( $value );
 
 		echo '<div class="wf-admin-color-row">';
-		echo '<input type="color" class="wf-admin-input wf-admin-input-color" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" />';
-		echo '<span class="wf-admin-color-hex">' . esc_html( $value ) . '</span>';
+		echo '<input type="hidden" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $hex ) . '" data-cscf-color="' . esc_attr( $key ) . '" />';
+		echo '<input type="color" class="wf-admin-input-color" value="' . esc_attr( $hex ) . '" data-cscf-color="' . esc_attr( $key ) . '" />';
+		echo '<div class="wf-admin-color-preview" style="background:' . esc_attr( $hex ) . ';" data-cscf-preview="' . esc_attr( $key ) . '"></div>';
+		echo '<input type="text" class="wf-admin-input-color-hex" value="' . esc_attr( $hex ) . '" maxlength="7" data-cscf-color="' . esc_attr( $key ) . '" />';
 		echo '</div>';
 	}
 
@@ -617,9 +664,15 @@ final class StyleSettings {
 	public function render_color_field( array $args ): void {
 		$key     = isset( $args['key'] ) ? sanitize_key( (string) $args['key'] ) : '';
 		$options = self::get_options();
-		$value   = isset( $options[ $key ] ) ? (string) $options[ $key ] : '';
+		$value   = isset( $options[ $key ] ) ? (string) $options[ $key ] : '#000000';
+		$hex     = sanitize_hex_color( $value );
 
-		echo '<input type="color" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" />';
+		echo '<div class="wf-admin-color-row">';
+		echo '<input type="hidden" name="' . esc_attr( self::OPTION_KEY ) . '[' . esc_attr( $key ) . ']" value="' . esc_attr( $hex ) . '" data-cscf-color="' . esc_attr( $key ) . '" />';
+		echo '<input type="color" class="wf-admin-input-color" value="' . esc_attr( $hex ) . '" data-cscf-color="' . esc_attr( $key ) . '" />';
+		echo '<div class="wf-admin-color-preview" style="background:' . esc_attr( $hex ) . ';" data-cscf-preview="' . esc_attr( $key ) . '"></div>';
+		echo '<input type="text" class="wf-admin-input-color-hex" value="' . esc_attr( $hex ) . '" maxlength="7" data-cscf-color="' . esc_attr( $key ) . '" />';
+		echo '</div>';
 	}
 
 	/**

@@ -2,7 +2,7 @@
 Contributors: anisur8294, anisur2805
 Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 Stable tag: 2.0.0

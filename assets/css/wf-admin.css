@@ -135,10 +135,74 @@
 }
 
 .wf-admin-input-color {
-  width: 60px;
-  height: 38px;
-  padding: 2px;
+  width: 44px;
+  height: 36px;
+  padding: 3px;
   cursor: pointer;
+  border: 2px solid var(--wf-admin-border);
+  border-radius: var(--wf-admin-radius-sm);
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wf-admin-input-color:hover {
+  border-color: var(--wf-admin-accent);
+}
+
+.wf-admin-input-color:focus {
+  outline: none;
+  border-color: var(--wf-admin-accent);
+  box-shadow: 0 0 0 3px rgba(11, 106, 120, 0.12);
+}
+
+.wf-admin-color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wf-admin-color-preview {
+  width: 40px;
+  height: 36px;
+  border-radius: var(--wf-admin-radius-sm);
+  border: 2px solid var(--wf-admin-border);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.wf-admin-color-preview:hover {
+  border-color: var(--wf-admin-accent);
+}
+
+.wf-admin-color-hex {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--wf-admin-text-muted);
+  background: #f8fafc;
+  padding: 6px 10px;
+  border: 1px solid var(--wf-admin-border);
+  border-radius: var(--wf-admin-radius-sm);
+  letter-spacing: 0.02em;
+  user-select: all;
+}
+
+.wf-admin-input-color-hex {
+  width: 80px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: monospace;
+  border: 1px solid var(--wf-admin-border);
+  border-radius: var(--wf-admin-radius-sm);
+  background: #f8fafc;
+  color: var(--wf-admin-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wf-admin-input-color-hex:focus {
+  outline: none;
+  border-color: var(--wf-admin-accent);
+  box-shadow: 0 0 0 3px rgba(11, 106, 120, 0.12);
 }
 
 .wf-admin-select {
@@ -433,24 +497,4 @@
   .wf-admin-stats-grid {
     grid-template-columns: 1fr;
   }
-}
-
-.wf-admin-color-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.wf-admin-color-preview {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--wf-admin-radius-sm);
-  border: 1px solid var(--wf-admin-border);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-
-.wf-admin-color-hex {
-  font-family: monospace;
-  font-size: 13px;
-  color: var(--wf-admin-text-muted);
 }

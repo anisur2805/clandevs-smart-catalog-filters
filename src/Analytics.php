@@ -52,14 +52,14 @@ final class Analytics {
 		}
 
 		wp_enqueue_style(
-			'wf-admin-styles',
+			'cscf-admin-styles',
 			CSCF_PLUGIN_URL . 'assets/css/wf-admin.css',
 			array(),
 			CSCF_VERSION
 		);
 
 		wp_enqueue_script(
-			'wf-admin-scripts',
+			'cscf-admin-scripts',
 			CSCF_PLUGIN_URL . 'assets/js/wf-admin.js',
 			array(),
 			CSCF_VERSION,

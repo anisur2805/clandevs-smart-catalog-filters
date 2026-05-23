@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers primary Advanced Product Filter admin menu.
+ * Registers primary Clandevs Smart Catalog Filters admin menu.
  */
 final class AdminMenu {
 	/** @var string */
