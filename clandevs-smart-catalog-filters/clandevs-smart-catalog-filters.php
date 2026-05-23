@@ -3,7 +3,7 @@
  * Plugin Name: Clandevs Smart Catalog Filters
  * Plugin URI: https://github.com/anisur2805/clandevs-smart-catalog-filters/
  * Description: Filter WooCommerce products by category, price, availability, brand, color, rating, and custom attributes. AJAX-powered with analytics, full styling controls, and multiple skins.
- * Version: 2.0.3
+ * Version: 2.0.2
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
@@ -29,20 +29,59 @@ if ( defined( 'CSCF_VERSION' ) ) {
 	return;
 }
 
-define( 'CSCF_VERSION', '2.0.3' );
+define( 'CSCF_VERSION', '2.0.2' );
 define( 'CSCF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once __DIR__ . '/src/Autoloader.php';
 \ClandevsSmartCatalogFilters\Autoloader::register( __DIR__ . '/src' );
 
-register_deactivation_hook( __FILE__, 'cscf_deactivate' );
+if ( ! function_exists( 'cscf_fs' ) ) {
+	// Create a helper function for easy SDK access.
+	function cscf_fs() {
+		global $cscf_fs;
+
+		if ( ! isset( $cscf_fs ) ) {
+			// Include Freemius SDK.
+			require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+
+			$cscf_fs = fs_dynamic_init( array(
+				'id'                  => '29823',
+				'slug'                => 'clandevs-smart-catalog-filters',
+				'type'                => 'plugin',
+				'public_key'          => 'pk_653dc3a7f5f02e24d22bf27d57500',
+				'is_premium'          => false,
+				'has_premium_version' => false,
+				'has_addons'          => false,
+				'has_paid_plans'      => false,
+				'is_org_compliant'    => true,
+				'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
+				'menu'                => array(
+					'slug'           => 'clandevs-smart-catalog-filters',
+					'first-path'     => 'admin.php?page=clandevs-smart-catalog-filters',
+					'support'        => false,
+					'account'        => false,
+				),
+			) );
+		}
+
+		return $cscf_fs;
+	}
+
+	// Init Freemius.
+	cscf_fs();
+	// Signal that SDK was initiated.
+	do_action( 'cscf_fs_loaded' );
+}
+
+// Freemius uninstall hook — replaces uninstall.php.
+cscf_fs()->add_action( 'after_uninstall', 'cscf_uninstall_cleanup' );
 
 /**
- * Clean up plugin data on deactivation.
+ * Clean up plugin data on uninstall via Freemius.
  *
  * @return void
  */
-function cscf_deactivate() {
+function cscf_uninstall_cleanup() {
 	$options = get_option( 'cscf_filter_options', array() );
 	$delete  = is_array( $options ) && isset( $options['delete_data_on_uninstall'] ) && 'yes' === $options['delete_data_on_uninstall'];
 

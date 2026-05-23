@@ -19,5 +19,8 @@
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
     }
+  },
+  "require": {
+    "freemius/wordpress-sdk": "^2.13"
   }
 }

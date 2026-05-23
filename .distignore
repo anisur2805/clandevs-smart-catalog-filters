@@ -28,22 +28,8 @@ pro
 # Build tools
 Makefile
 
-# Vendor dev dependencies (keep vendor/freemius for Freemius SDK)
-vendor/autoload.php
-vendor/bin
-vendor/composer
-vendor/dealerdirect
-vendor/doctrine
-vendor/myclabs
-vendor/nikic
-vendor/phar-io
-vendor/phpcompatibility
-vendor/phpcsstandards
-vendor/phpunit
-vendor/sebastian
-vendor/squizlabs
-vendor/theseer
-vendor/wp-coding-standards
+# Vendor dev dependencies
+vendor
 phpcs.xml.dist
 phpunit.xml.dist
 composer.json
