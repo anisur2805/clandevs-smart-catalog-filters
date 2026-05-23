@@ -37,7 +37,7 @@ class AdvancedAnalytics {
 	}
 
 	public function render_page(): void {
-		$data = get_option( 'wf_analytics_data', array() );
+		$data = get_option( 'cscf_analytics_data', array() );
 		$from = isset( $_GET['cscf_from'] ) ? sanitize_text_field( wp_unslash( $_GET['cscf_from'] ) ) : gmdate( 'Y-m-d', strtotime( '-30 days' ) );
 		$to   = isset( $_GET['cscf_to'] ) ? sanitize_text_field( wp_unslash( $_GET['cscf_to'] ) ) : gmdate( 'Y-m-d' );
 		echo '<div class="wrap">';
@@ -61,7 +61,7 @@ class AdvancedAnalytics {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_die( 'Unauthorized.' );
 		}
-		$data     = get_option( 'wf_analytics_data', array() );
+		$data     = get_option( 'cscf_analytics_data', array() );
 		$top_data = is_array( $data ) && isset( $data['top_filters'] ) && is_array( $data['top_filters'] ) ? $data['top_filters'] : array();
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename=cscf-analytics-' . gmdate( 'Y-m-d' ) . '.csv' );

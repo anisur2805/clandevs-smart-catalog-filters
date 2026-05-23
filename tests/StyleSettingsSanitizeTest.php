@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use AdvancedProductFilter\StyleSettings;
+use ClandevsSmartCatalogFilters\StyleSettings;
 
 final class StyleSettingsSanitizeTest extends TestCase {
 	/** @var StyleSettings */
@@ -17,27 +17,14 @@ final class StyleSettingsSanitizeTest extends TestCase {
 		$this->subject = new StyleSettings();
 	}
 
-	public function test_custom_css_strips_html_tags(): void {
+	public function test_custom_css_is_rejected(): void {
 		$raw = array(
 			'custom_css' => '.wf-sidebar { color: red; } </style><script>alert(1)</script>',
 		);
 
 		$result = $this->subject->sanitize_settings( $raw );
 
-		self::assertArrayHasKey( 'custom_css', $result );
-		self::assertStringNotContainsString( '<script>', $result['custom_css'] );
-		self::assertStringNotContainsString( '</style>', $result['custom_css'] );
-		self::assertStringContainsString( '.wf-sidebar', $result['custom_css'] );
-	}
-
-	public function test_custom_css_allows_valid_css(): void {
-		$raw = array(
-			'custom_css' => '.wf-sidebar { background: #fff; border-radius: 8px; }',
-		);
-
-		$result = $this->subject->sanitize_settings( $raw );
-
-		self::assertSame( '.wf-sidebar { background: #fff; border-radius: 8px; }', $result['custom_css'] );
+		self::assertArrayNotHasKey( 'custom_css', $result );
 	}
 
 	public function test_font_family_strips_quotes(): void {

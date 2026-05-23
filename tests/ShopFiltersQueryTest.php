@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use AdvancedProductFilter\ShopFilters;
+use ClandevsSmartCatalogFilters\ShopFilters;
 
 final class ShopFiltersQueryTest extends TestCase {
     /** @var ShopFilters */
@@ -34,7 +34,7 @@ final class ShopFiltersQueryTest extends TestCase {
     }
 
     public function test_multiselect_mode_accepts_and(): void {
-        $_GET['wf_logic'] = 'and';
+        $_GET['cscf_logic'] = 'and';
 
         $mode = $this->invokePrivate('get_request_multiselect_mode');
 
@@ -42,17 +42,17 @@ final class ShopFiltersQueryTest extends TestCase {
     }
 
     public function test_slug_list_is_normalized_and_deduplicated(): void {
-        $_GET['wf_brand'] = array('Apple', 'apple', 'ASUS', '');
+        $_GET['cscf_brand'] = array('Apple', 'apple', 'ASUS', '');
 
-        $list = $this->invokePrivate('get_request_slug_list', 'wf_brand');
+        $list = $this->invokePrivate('get_request_slug_list', 'cscf_brand');
 
         self::assertSame(array('apple', 'asus'), $list);
     }
 
     public function test_request_filter_clauses_use_and_operator_when_selected(): void {
-        $_GET['wf_logic'] = 'and';
-        $_GET['wf_brand'] = array('apple', 'asus');
-        $_GET['wf_color'] = array('red', 'blue');
+        $_GET['cscf_logic'] = 'and';
+        $_GET['cscf_brand'] = array('apple', 'asus');
+        $_GET['cscf_color'] = array('red', 'blue');
 
         $clauses = $this->invokePrivate('get_request_filter_clauses');
         $tax = $clauses['tax'];
@@ -63,7 +63,7 @@ final class ShopFiltersQueryTest extends TestCase {
     }
 
     public function test_request_filter_clauses_include_dynamic_attribute_key(): void {
-        $_GET['wf_attr_pa_size'] = array('small', 'medium');
+        $_GET['cscf_attr_pa_size'] = array('small', 'medium');
 
         $clauses = $this->invokePrivate('get_request_filter_clauses');
         $tax = $clauses['tax'];
@@ -82,22 +82,22 @@ final class ShopFiltersQueryTest extends TestCase {
     }
 
     public function test_current_query_args_strips_nonce_and_empty_values(): void {
-        $_GET['wf_nonce'] = 'abc';
-        $_GET['wf_brand'] = array('apple', '');
+        $_GET['cscf_nonce'] = 'abc';
+        $_GET['cscf_brand'] = array('apple', '');
         $_GET['paged'] = '2';
         $_GET['_ignored'] = '1';
 
         $args = $this->invokePrivate('get_current_query_args');
 
-        self::assertArrayHasKey('wf_brand', $args);
-        self::assertSame(array('apple'), $args['wf_brand']);
+        self::assertArrayHasKey('cscf_brand', $args);
+        self::assertSame(array('apple'), $args['cscf_brand']);
         self::assertArrayHasKey('paged', $args);
-        self::assertArrayNotHasKey('wf_nonce', $args);
+        self::assertArrayNotHasKey('cscf_nonce', $args);
         self::assertArrayNotHasKey('_ignored', $args);
     }
 
     public function test_on_sale_filter_uses_post_in_ids(): void {
-        $_GET['wf_on_sale'] = '1';
+        $_GET['cscf_on_sale'] = '1';
 
         $clauses = $this->invokePrivate('get_request_filter_clauses');
 

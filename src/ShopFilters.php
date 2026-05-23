@@ -19,7 +19,7 @@ final class ShopFilters {
 	private const SHORTCODE_TAG = 'clandevs_catalog_filters';
 
 	/** @var string */
-	private const LEGACY_SHORTCODE_TAG = 'advanced_product_filter';
+	private const LEGACY_SHORTCODE_TAG = 'cscf_legacy_filter';
 
 	/** @var int */
 	private const MAX_PER_PAGE = 120;
@@ -31,7 +31,7 @@ final class ShopFilters {
 	private const TERM_LIMIT = 40;
 
 	/** @var string */
-	private const CACHE_GROUP = 'wf_shop_filters';
+	private const CACHE_GROUP = 'cscf_shop_filters';
 
 	/** @var string */
 	private $brand_taxonomy = '';
@@ -127,7 +127,7 @@ final class ShopFilters {
 	 */
 	public function invalidate_filter_cache( ...$args ): void {
 		unset( $args );
-		update_option( 'wf_cache_last_changed', (string) microtime( true ), false );
+		update_option( 'cscf_cache_last_changed', (string) microtime( true ), false );
 	}
 
 	/**
@@ -233,7 +233,7 @@ final class ShopFilters {
 	private function enqueue_inline_styles(): void {
 		$options = StyleSettings::get_options();
 
-		$variables = array(
+		$raw_variables = array(
 			'--wf-accent'          => isset( $options['accent_color'] ) ? (string) $options['accent_color'] : '#0b6a78',
 			'--wf-sidebar-bg'      => isset( $options['sidebar_bg_color'] ) ? (string) $options['sidebar_bg_color'] : '#ffffff',
 			'--wf-sidebar-border'  => isset( $options['sidebar_border_color'] ) ? (string) $options['sidebar_border_color'] : '#e5e8ee',
@@ -246,7 +246,6 @@ final class ShopFilters {
 			'--wf-button-text'     => isset( $options['button_text_color'] ) ? (string) $options['button_text_color'] : '#ffffff',
 			'--wf-input-bg'        => isset( $options['input_bg_color'] ) ? (string) $options['input_bg_color'] : '#ffffff',
 			'--wf-control-border'  => isset( $options['control_border_color'] ) ? (string) $options['control_border_color'] : '#cbd5e1',
-			'--wf-font-family'     => isset( $options['font_family'] ) ? (string) $options['font_family'] : 'inherit',
 			'--wf-font-size'       => ( isset( $options['font_size'] ) ? absint( $options['font_size'] ) : 16 ) . 'px',
 			'--wf-sidebar-width'   => ( isset( $options['sidebar_width'] ) ? absint( $options['sidebar_width'] ) : 280 ) . 'px',
 			'--wf-layout-gap'      => ( isset( $options['layout_gap'] ) ? absint( $options['layout_gap'] ) : 24 ) . 'px',
@@ -259,8 +258,29 @@ final class ShopFilters {
 			'--wf-empty-shadow'    => $this->hex_to_rgba( isset( $options['no_results_shadow_color'] ) ? (string) $options['no_results_shadow_color'] : '#0f172a', 0.16 ),
 		);
 
+		$font_family = isset( $options['font_family'] ) ? (string) $options['font_family'] : 'inherit';
+		$font_family = preg_replace( '/[^a-zA-Z0-9,\-\s\'"]/', '', $font_family );
+		if ( '' === $font_family ) {
+			$font_family = 'inherit';
+		}
+		$raw_variables['--wf-font-family'] = $font_family;
+
+		$color_keys = array(
+			'--wf-accent', '--wf-sidebar-bg', '--wf-sidebar-border', '--wf-heading-color',
+			'--wf-text-color', '--wf-muted-text', '--wf-chip-bg', '--wf-chip-border',
+			'--wf-button-bg', '--wf-button-text', '--wf-input-bg', '--wf-control-border',
+			'--wf-empty-bg', '--wf-empty-border',
+		);
+
 		$declarations = array();
-		foreach ( $variables as $name => $value ) {
+		foreach ( $raw_variables as $name => $value ) {
+			if ( in_array( $name, $color_keys, true ) ) {
+				$sanitized = sanitize_hex_color( $value );
+				if ( null === $sanitized ) {
+					continue;
+				}
+				$value = $sanitized;
+			}
 			$declarations[] = $name . ':' . trim( (string) $value );
 		}
 
@@ -319,7 +339,7 @@ final class ShopFilters {
 			return $per_page;
 		}
 
-		$requested = $this->get_request_absint( 'wf_per_page' );
+		$requested = $this->get_request_absint( 'cscf_per_page' );
 		if ( $requested > 0 && $requested <= self::MAX_PER_PAGE ) {
 			return $requested;
 		}
@@ -465,7 +485,7 @@ final class ShopFilters {
 		if ( function_exists( 'wc_setup_loop' ) ) {
 			wc_setup_loop(
 				array(
-					'name'         => 'wf_shortcode',
+					'name'         => 'cscf_shortcode',
 					'is_shortcode' => true,
 					'is_paginated' => $query->max_num_pages > 1,
 					'total'        => (int) $query->found_posts,
@@ -615,7 +635,7 @@ final class ShopFilters {
 			return;
 		}
 
-		$current = $this->get_request_absint( 'wf_per_page' );
+		$current = $this->get_request_absint( 'cscf_per_page' );
 		if ( $current <= 0 ) {
 			$current = (int) $wp_query->get( 'posts_per_page' );
 		}
@@ -655,8 +675,8 @@ final class ShopFilters {
 		$show_colors     = isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'];
 
 		$action              = $this->get_archive_url();
-		$selected_brands     = $this->get_request_slug_list( 'wf_brand' );
-		$selected_colors     = $this->get_request_slug_list( 'wf_color' );
+		$selected_brands     = $this->get_request_slug_list( 'cscf_brand' );
+		$selected_colors     = $this->get_request_slug_list( 'cscf_color' );
 		$selected_attributes = array();
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$request_key                         = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -664,8 +684,8 @@ final class ShopFilters {
 		}
 		$multiselect_mode = $this->get_request_multiselect_mode();
 		$selected_rating  = $this->get_request_absint( 'rating_filter' );
-		$in_stock_only    = $this->get_request_flag( 'wf_in_stock' );
-		$on_sale_only     = $this->get_request_flag( 'wf_on_sale' );
+		$in_stock_only    = $this->get_request_flag( 'cscf_in_stock' );
+		$on_sale_only     = $this->get_request_flag( 'cscf_on_sale' );
 		$min_price        = null;
 		$max_price        = null;
 		$slider_min       = 0.0;
@@ -700,7 +720,7 @@ final class ShopFilters {
 		do_action( 'cscf_before_filter_render', $filter_options );
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
-		$excluded_preserved = array( 'wf_cat', 'wf_brand', 'wf_color', 'wf_logic', 'min_price', 'max_price', 'rating_filter', 'wf_in_stock', 'wf_on_sale', 'paged', 'product-page' );
+		$excluded_preserved = array( 'cscf_cat', 'cscf_brand', 'cscf_color', 'cscf_logic', 'min_price', 'max_price', 'rating_filter', 'cscf_in_stock', 'cscf_on_sale', 'paged', 'product-page' );
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$excluded_preserved[] = $this->get_attribute_request_key( $attribute_taxonomy );
 		}
@@ -717,14 +737,14 @@ final class ShopFilters {
 		if ( $show_brands && '' !== $this->brand_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Filter by Brands', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->brand_taxonomy, 'wf_brand[]', 'wf_brand', $selected_brands, false, $list_suffix );
+			$this->render_term_checkboxes( $this->brand_taxonomy, 'cscf_brand[]', 'cscf_brand', $selected_brands, false, $list_suffix );
 			echo '</div>';
 		}
 
 		echo '<div class="wf-filter-block">';
 		echo '<h4>' . esc_html__( 'Multi-select Logic', 'clandevs-smart-catalog-filters' ) . '</h4>';
-		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
-		echo '<label class="wf-radio"><input type="radio" name="wf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+		echo '<label class="wf-radio"><input type="radio" name="cscf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+		echo '<label class="wf-radio"><input type="radio" name="cscf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
 		echo '</div>';
 
 		if ( $show_price ) {
@@ -771,15 +791,15 @@ final class ShopFilters {
 		if ( $show_stock ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Availability', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			echo '<label class="wf-radio"><input type="checkbox" name="wf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
-			echo '<label class="wf-radio"><input type="checkbox" name="wf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="checkbox" name="cscf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+			echo '<label class="wf-radio"><input type="checkbox" name="cscf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
 			echo '</div>';
 		}
 
 		if ( $show_colors && '' !== $this->color_taxonomy ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Color', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->color_taxonomy, 'wf_color[]', 'wf_color', $selected_colors, true, $list_suffix );
+			$this->render_term_checkboxes( $this->color_taxonomy, 'cscf_color[]', 'cscf_color', $selected_colors, true, $list_suffix );
 			echo '</div>';
 		}
 
@@ -842,23 +862,23 @@ final class ShopFilters {
 		$filter_options = FilterSettings::get_options();
 		$chips          = array();
 
-		$selected_category = $this->get_request_slug( 'wf_cat' );
+		$selected_category = $this->get_request_slug( 'cscf_cat' );
 		if ( isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'] && '' !== $selected_category ) {
 			$term = get_term_by( 'slug', $selected_category, 'product_cat' );
 			if ( $term instanceof \WP_Term ) {
 				$chips[] = array(
 					/* translators: %s: product category name. */
 					'label' => sprintf( __( 'Category: %s', 'clandevs-smart-catalog-filters' ), $term->name ),
-					'url'   => $this->build_remove_filter_url( 'wf_cat' ),
+					'url'   => $this->build_remove_filter_url( 'cscf_cat' ),
 				);
 			}
 		}
 
 		if ( isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
-			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'wf_brand', __( 'Brand', 'clandevs-smart-catalog-filters' ) ) );
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->brand_taxonomy, 'cscf_brand', __( 'Brand', 'clandevs-smart-catalog-filters' ) ) );
 		}
 		if ( isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
-			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'wf_color', __( 'Color', 'clandevs-smart-catalog-filters' ) ) );
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'cscf_color', __( 'Color', 'clandevs-smart-catalog-filters' ) ) );
 		}
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -870,7 +890,7 @@ final class ShopFilters {
 		if ( 'and' === $multiselect_mode ) {
 			$chips[] = array(
 				'label' => __( 'Logic: AND', 'clandevs-smart-catalog-filters' ),
-				'url'   => $this->build_remove_filter_url( 'wf_logic' ),
+				'url'   => $this->build_remove_filter_url( 'cscf_logic' ),
 			);
 		}
 
@@ -901,17 +921,17 @@ final class ShopFilters {
 			);
 		}
 
-		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
+		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'cscf_in_stock' ) ) {
 			$chips[] = array(
 				'label' => __( 'Stock: In stock', 'clandevs-smart-catalog-filters' ),
-				'url'   => $this->build_remove_filter_url( 'wf_in_stock' ),
+				'url'   => $this->build_remove_filter_url( 'cscf_in_stock' ),
 			);
 		}
 
-		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
+		if ( isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'cscf_on_sale' ) ) {
 			$chips[] = array(
 				'label' => __( 'Sale: On sale', 'clandevs-smart-catalog-filters' ),
-				'url'   => $this->build_remove_filter_url( 'wf_on_sale' ),
+				'url'   => $this->build_remove_filter_url( 'cscf_on_sale' ),
 			);
 		}
 
@@ -925,7 +945,7 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_categories( string $list_suffix = '' ): void {
-		$selected              = $this->get_request_slug( 'wf_cat' );
+		$selected              = $this->get_request_slug( 'cscf_cat' );
 		$use_contextual_counts = $this->has_filter_query_args();
 		$terms                 = $this->get_terms_cached(
 			array(
@@ -944,14 +964,14 @@ final class ShopFilters {
 		$list_id = 'wf-cat-list-' . sanitize_key( $list_suffix );
 
 		echo '<ul id="' . esc_attr( $list_id ) . '" class="wf-cat-list">';
-		echo '<li><label><input type="radio" name="wf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'clandevs-smart-catalog-filters' ) . '</span></label></li>';
+		echo '<li><label><input type="radio" name="cscf_cat" value="" ' . checked( $selected, '', false ) . ' /> <span>' . esc_html__( 'All Categories', 'clandevs-smart-catalog-filters' ) . '</span></label></li>';
 		foreach ( $terms as $term ) {
-			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'wf_cat' ) : (int) $term->count;
+			$live_count  = $use_contextual_counts ? $this->get_contextual_term_count( 'product_cat', $term->slug, 'cscf_cat' ) : (int) $term->count;
 			$is_active   = $selected === $term->slug;
 			$disabled    = ! $is_active && 0 === $live_count;
 			$label_class = $disabled ? 'is-disabled' : '';
 
-			echo '<li><label class="' . esc_attr( $label_class ) . '"><input type="radio" name="wf_cat" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
+			echo '<li><label class="' . esc_attr( $label_class ) . '"><input type="radio" name="cscf_cat" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
 		}
 		echo '</ul>';
 	}
@@ -1055,7 +1075,7 @@ final class ShopFilters {
 		$args = $this->get_current_query_args();
 
 		unset( $args['paged'], $args['product-page'] );
-		$args['wf_per_page'] = 0 === $value ? self::MAX_PER_PAGE : $value;
+		$args['cscf_per_page'] = 0 === $value ? self::MAX_PER_PAGE : $value;
 
 		return add_query_arg( $args, $this->get_archive_url() );
 	}
@@ -1076,7 +1096,7 @@ final class ShopFilters {
 			'posts_per_page' => min( self::MAX_PER_PAGE, $per_page ),
 		);
 
-		$request_category = $this->get_request_slug( 'wf_cat' );
+		$request_category = $this->get_request_slug( 'cscf_cat' );
 		$forced_taxonomy  = '';
 		if ( '' === $request_category && '' !== $forced_category ) {
 			$forced_taxonomy = $forced_category;
@@ -1265,15 +1285,15 @@ final class ShopFilters {
 	private function build_clear_filters_url(): string {
 		$args = $this->get_current_query_args();
 		unset(
-			$args['wf_cat'],
-			$args['wf_brand'],
-			$args['wf_color'],
-			$args['wf_logic'],
+			$args['cscf_cat'],
+			$args['cscf_brand'],
+			$args['cscf_color'],
+			$args['cscf_logic'],
 			$args['min_price'],
 			$args['max_price'],
 			$args['rating_filter'],
-			$args['wf_in_stock'],
-			$args['wf_on_sale'],
+			$args['cscf_in_stock'],
+			$args['cscf_on_sale'],
 			$args['paged'],
 			$args['product-page']
 		);
@@ -1292,6 +1312,7 @@ final class ShopFilters {
 	private function get_current_query_args(): array {
 		$args = array();
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter URL parameters. Nonces would break shareable filter URLs. All values are sanitized below.
 		foreach ( $_GET as $key => $value ) {
 			$normalized_key = sanitize_key( (string) $key );
 			if ( '' === $normalized_key ) {
@@ -1344,6 +1365,7 @@ final class ShopFilters {
 			return '';
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter parameter. Nonces would break shareable filter URLs. Value is sanitized via sanitize_title().
 		return sanitize_title( wp_unslash( (string) $_GET[ $key ] ) );
 	}
 
@@ -1358,6 +1380,7 @@ final class ShopFilters {
 			return 0;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter parameter. Nonces would break shareable filter URLs. Value is sanitized via absint().
 		return absint( wp_unslash( (string) $_GET[ $key ] ) );
 	}
 
@@ -1377,11 +1400,12 @@ final class ShopFilters {
 	 * @return string
 	 */
 	private function get_request_multiselect_mode(): string {
-		if ( ! isset( $_GET['wf_logic'] ) ) {
+		if ( ! isset( $_GET['cscf_logic'] ) ) {
 			return 'or';
 		}
 
-		$value = sanitize_key( wp_unslash( (string) $_GET['wf_logic'] ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter parameter. Nonces would break shareable filter URLs. Value is sanitized via sanitize_key().
+		$value = sanitize_key( wp_unslash( (string) $_GET['cscf_logic'] ) );
 
 		return 'and' === $value ? 'and' : 'or';
 	}
@@ -1397,7 +1421,7 @@ final class ShopFilters {
 			return null;
 		}
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Dynamic key is validated and unslashed in this helper.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Frontend read-only filter parameter. Nonces would break shareable filter URLs. Value is sanitized via wc_format_decimal().
 		$raw = wc_format_decimal( wp_unslash( (string) $_GET[ $key ] ) );
 		if ( '' === (string) $raw ) {
 			return null;
@@ -1422,7 +1446,7 @@ final class ShopFilters {
 			return array();
 		}
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Dynamic key is validated and each item is unslashed in this helper.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Frontend read-only filter parameter. Nonces would break shareable filter URLs. Each item is sanitized via sanitize_title().
 		$raw = $_GET[ $key ];
 		if ( is_array( $raw ) ) {
 			$values = array_map(
@@ -1465,8 +1489,8 @@ final class ShopFilters {
 		$meta_clauses = array();
 		$post_in      = array();
 
-		if ( ! isset( $excluded['wf_cat'] ) && isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'] ) {
-			$selected_category = $this->get_request_slug( 'wf_cat' );
+		if ( ! isset( $excluded['cscf_cat'] ) && isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'] ) {
+			$selected_category = $this->get_request_slug( 'cscf_cat' );
 			if ( '' !== $selected_category ) {
 				$tax_clauses[] = array(
 					'taxonomy' => 'product_cat',
@@ -1476,8 +1500,8 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['wf_brand'] ) && isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
-			$selected_brands = $this->get_request_slug_list( 'wf_brand' );
+		if ( ! isset( $excluded['cscf_brand'] ) && isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'] ) {
+			$selected_brands = $this->get_request_slug_list( 'cscf_brand' );
 			if ( '' !== $this->brand_taxonomy && ! empty( $selected_brands ) ) {
 				$tax_clauses[] = array(
 					'taxonomy' => $this->brand_taxonomy,
@@ -1488,8 +1512,8 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['wf_color'] ) && isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
-			$selected_colors = $this->get_request_slug_list( 'wf_color' );
+		if ( ! isset( $excluded['cscf_color'] ) && isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
+			$selected_colors = $this->get_request_slug_list( 'cscf_color' );
 			if ( '' !== $this->color_taxonomy && ! empty( $selected_colors ) ) {
 				$tax_clauses[] = array(
 					'taxonomy' => $this->color_taxonomy,
@@ -1552,7 +1576,7 @@ final class ShopFilters {
 			}
 		}
 
-		if ( ! isset( $excluded['wf_in_stock'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_in_stock' ) ) {
+		if ( ! isset( $excluded['cscf_in_stock'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'cscf_in_stock' ) ) {
 			$stock_ids = $this->get_in_stock_product_ids();
 			if ( empty( $stock_ids ) ) {
 				$stock_ids = array( 0 );
@@ -1560,7 +1584,7 @@ final class ShopFilters {
 			$post_in = empty( $post_in ) ? $stock_ids : array_intersect( $post_in, $stock_ids );
 		}
 
-		if ( ! isset( $excluded['wf_on_sale'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'wf_on_sale' ) ) {
+		if ( ! isset( $excluded['cscf_on_sale'] ) && isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'] && $this->get_request_flag( 'cscf_on_sale' ) ) {
 			$sale_ids = $this->get_on_sale_product_ids();
 			$post_in  = empty( $post_in ) ? $sale_ids : array_intersect( $post_in, $sale_ids );
 			if ( empty( $post_in ) ) {
@@ -1870,7 +1894,7 @@ final class ShopFilters {
 	 * @return string
 	 */
 	private function get_attribute_request_key( string $taxonomy ): string {
-		return 'wf_attr_' . sanitize_key( $taxonomy );
+		return 'cscf_attr_' . sanitize_key( $taxonomy );
 	}
 
 	/**
@@ -2034,25 +2058,27 @@ final class ShopFilters {
 	 */
 	private function has_filter_query_args(): bool {
 		$filter_keys = array(
-			'wf_cat',
-			'wf_brand',
-			'wf_color',
-			'wf_logic',
+			'cscf_cat',
+			'cscf_brand',
+			'cscf_color',
+			'cscf_logic',
 			'min_price',
 			'max_price',
 			'rating_filter',
-			'wf_in_stock',
-			'wf_on_sale',
+			'cscf_in_stock',
+			'cscf_on_sale',
 		);
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter detection. Nonces would break shareable filter URLs.
 		foreach ( $filter_keys as $key ) {
 			if ( isset( $_GET[ $key ] ) ) {
 				return true;
 			}
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter detection. Nonces would break shareable filter URLs.
 		foreach ( $_GET as $key => $value ) {
-			if ( 0 === strpos( sanitize_key( (string) $key ), 'wf_attr_' ) ) {
+			if ( 0 === strpos( sanitize_key( (string) $key ), 'cscf_attr_' ) ) {
 				return true;
 			}
 		}
@@ -2192,10 +2218,10 @@ final class ShopFilters {
 	 * @return string
 	 */
 	private function get_cache_last_changed(): string {
-		$last_changed = get_option( 'wf_cache_last_changed', '' );
+		$last_changed = get_option( 'cscf_cache_last_changed', '' );
 		if ( ! is_string( $last_changed ) || '' === $last_changed ) {
 			$last_changed = (string) microtime( true );
-			update_option( 'wf_cache_last_changed', $last_changed, false );
+			update_option( 'cscf_cache_last_changed', $last_changed, false );
 		}
 
 		return $last_changed;

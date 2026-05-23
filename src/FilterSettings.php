@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class FilterSettings {
 	/** @var string */
-	private const OPTION_KEY = 'wf_filter_options';
+	private const OPTION_KEY = 'cscf_filter_options';
 
 	/** @var string */
-	private const PAGE_SLUG = 'wf-filter-settings';
+	private const PAGE_SLUG = 'cscf-filter-settings';
 
 	/**
 	 * Register class hooks.
@@ -39,7 +39,7 @@ final class FilterSettings {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'clandevs-smart-catalog-filters_page_wf-filter-settings' !== $hook ) {
+		if ( 'clandevs-smart-catalog-filters_page_cscf-filter-settings' !== $hook ) {
 			return;
 		}
 
@@ -58,7 +58,7 @@ final class FilterSettings {
 	 */
 	public function register_settings(): void {
 		register_setting(
-			'wf_filter_settings',
+			'cscf_filter_settings',
 			self::OPTION_KEY,
 			array(
 				'type'              => 'array',
@@ -68,7 +68,7 @@ final class FilterSettings {
 		);
 
 		add_settings_section(
-			'wf_filter_section_main',
+			'cscf_filter_section_main',
 			__( 'Filter Visibility', 'clandevs-smart-catalog-filters' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
@@ -133,7 +133,7 @@ final class FilterSettings {
 			<?php endif; ?>
 
 			<form action="options.php" method="post">
-				<?php settings_fields( 'wf_filter_settings' ); ?>
+				<?php settings_fields( 'cscf_filter_settings' ); ?>
 
 				<div class="wf-admin-card">
 					<div class="wf-admin-card-header">
@@ -231,7 +231,7 @@ final class FilterSettings {
 			$label,
 			array( $this, 'render_checkbox_field' ),
 			self::PAGE_SLUG,
-			'wf_filter_section_main',
+			'cscf_filter_section_main',
 			array(
 				'key' => $key,
 			)

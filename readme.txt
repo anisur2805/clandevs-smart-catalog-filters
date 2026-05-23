@@ -40,7 +40,7 @@ Clandevs Smart Catalog Filters helps shoppers quickly find products using powerf
 = Shortcodes =
 
 * `[clandevs_catalog_filters]` — display filters on any page.
-* `[advanced_product_filter]` — legacy shortcode (still supported).
+* `[cscf_legacy_filter]` — legacy shortcode (still supported).
 
 = Privacy =
 
@@ -90,7 +90,7 @@ The plugin uses its own CSS for filter UI and is designed to work with any WooCo
 * All features fully available — no premium gating
 * Removed custom CSS feature for wp.org compliance
 * Updated shortcode to `[clandevs_catalog_filters]`
-* Legacy shortcode `[advanced_product_filter]` still supported
+* Legacy shortcode `[cscf_legacy_filter]` still supported
 
 = 1.0.2 =
 * Freemius SDK updated to 2.13.1

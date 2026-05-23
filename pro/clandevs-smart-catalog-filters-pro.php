@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Clandevs Smart Catalog Filters Pro
- * Plugin URI: https://clandevs.com/smart-catalog-filters/
+ * Plugin URI: https://github.com/anisur2805/clandevs-smart-catalog-filters/
  * Description: Premium add-on for Clandevs Smart Catalog Filters. Adds presets, advanced analytics, comparison, visual swatches, SEO URLs, and more.
  * Version: 2.0.0
  * Author: Anisur Rahman

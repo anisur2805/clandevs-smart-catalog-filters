@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class StyleSettings {
 	/** @var string */
-	private const OPTION_KEY = 'wf_style_options';
+	private const OPTION_KEY = 'cscf_style_options';
 
 	/** @var string */
 	private const PAGE_SLUG = 'clandevs-smart-catalog-filters';
 
 	/** @var string */
-	private const RESET_ACTION = 'wf_reset_styles';
+	private const RESET_ACTION = 'cscf_reset_styles';
 
 	/**
 	 * Register class hooks.
@@ -50,7 +50,7 @@ final class StyleSettings {
 
 		delete_option( self::OPTION_KEY );
 
-		set_transient( 'wf_styles_reset_notice', '1', 30 );
+		set_transient( 'cscf_styles_reset_notice', '1', 30 );
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -89,7 +89,7 @@ final class StyleSettings {
 	 */
 	public function register_settings(): void {
 		register_setting(
-			'wf_style_settings',
+			'cscf_style_settings',
 			self::OPTION_KEY,
 			array(
 				'type'              => 'array',
@@ -99,7 +99,7 @@ final class StyleSettings {
 		);
 
 		add_settings_section(
-			'wf_style_section_main',
+			'cscf_style_section_main',
 			__( 'Design Controls', 'clandevs-smart-catalog-filters' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
@@ -110,7 +110,7 @@ final class StyleSettings {
 			__( 'Default Skin', 'clandevs-smart-catalog-filters' ),
 			array( $this, 'render_skin_field' ),
 			self::PAGE_SLUG,
-			'wf_style_section_main'
+			'cscf_style_section_main'
 		);
 
 		$this->register_color_field( 'accent_color', __( 'Accent Color', 'clandevs-smart-catalog-filters' ) );
@@ -190,8 +190,8 @@ final class StyleSettings {
 			<?php endif; ?>
 
 			<?php
-			if ( get_transient( 'wf_styles_reset_notice' ) ) :
-				delete_transient( 'wf_styles_reset_notice' );
+			if ( get_transient( 'cscf_styles_reset_notice' ) ) :
+				delete_transient( 'cscf_styles_reset_notice' );
 				?>
 				<div class="wf-admin-card wf-admin-success-card">
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
@@ -210,7 +210,7 @@ final class StyleSettings {
 				</div>
 				<div class="wf-admin-card-body">
 					<form action="options.php" method="post">
-						<?php settings_fields( 'wf_style_settings' ); ?>
+						<?php settings_fields( 'cscf_style_settings' ); ?>
 						<table class="form-table">
 							<tr>
 								<th scope="row">
@@ -555,7 +555,7 @@ final class StyleSettings {
 			$label,
 			array( $this, 'render_color_field' ),
 			self::PAGE_SLUG,
-			'wf_style_section_main',
+			'cscf_style_section_main',
 			array(
 				'key' => $key,
 			)
@@ -575,7 +575,7 @@ final class StyleSettings {
 			$label,
 			array( $this, 'render_text_field' ),
 			self::PAGE_SLUG,
-			'wf_style_section_main',
+			'cscf_style_section_main',
 			array(
 				'key' => $key,
 			)
@@ -598,7 +598,7 @@ final class StyleSettings {
 			$label,
 			array( $this, 'render_number_field' ),
 			self::PAGE_SLUG,
-			'wf_style_section_main',
+			'cscf_style_section_main',
 			array(
 				'key'  => $key,
 				'min'  => $min,

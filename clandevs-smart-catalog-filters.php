@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Clandevs Smart Catalog Filters
- * Plugin URI: https://clandevs.com/smart-catalog-filters/
+ * Plugin URI: https://github.com/anisur2805/clandevs-smart-catalog-filters/
  * Description: Filter WooCommerce products by category, price, availability, brand, color, rating, and custom attributes. AJAX-powered with analytics, full styling controls, and multiple skins.
  * Version: 2.0.0
  * Author: Anisur Rahman

@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Analytics {
 	/** @var string */
-	private const OPTION_KEY = 'wf_analytics_data';
+	private const OPTION_KEY = 'cscf_analytics_data';
 
 	/** @var string */
-	private const PAGE_SLUG = 'wf-filter-analytics';
+	private const PAGE_SLUG = 'cscf-filter-analytics';
 
 	/** @var string */
-	private const RESET_ACTION = 'wf_reset_analytics';
+	private const RESET_ACTION = 'cscf_reset_analytics';
 
 	/** @var int */
 	private const MAX_DISTINCT_VALUES_PER_TYPE = 500;
@@ -33,7 +33,7 @@ final class Analytics {
 	 * @return void
 	 */
 	public function register_hooks(): void {
-		add_action( 'wf_flush_analytics_buffer', array( $this, 'flush_analytics_buffer' ) );
+		add_action( 'cscf_flush_analytics_buffer', array( $this, 'flush_analytics_buffer' ) );
 		add_action( 'pre_get_posts', array( $this, 'track_shop_filter_usage' ), 30 );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
@@ -47,7 +47,7 @@ final class Analytics {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'clandevs-smart-catalog-filters_page_wf-filter-analytics' !== $hook ) {
+		if ( 'clandevs-smart-catalog-filters_page_cscf-filter-analytics' !== $hook ) {
 			return;
 		}
 
@@ -120,7 +120,7 @@ final class Analytics {
 
 		delete_option( self::OPTION_KEY );
 
-		set_transient( 'wf_analytics_reset_notice', '1', 30 );
+		set_transient( 'cscf_analytics_reset_notice', '1', 30 );
 
 		wp_safe_redirect(
 			add_query_arg(
@@ -162,8 +162,8 @@ final class Analytics {
 			</div>
 
 				<?php
-				if ( get_transient( 'wf_analytics_reset_notice' ) ) :
-					delete_transient( 'wf_analytics_reset_notice' );
+				if ( get_transient( 'cscf_analytics_reset_notice' ) ) :
+					delete_transient( 'cscf_analytics_reset_notice' );
 					?>
 				<div class="wf-admin-card wf-admin-success-card">
 					<div class="wf-admin-card-body wf-admin-card-body-compact">
@@ -263,13 +263,14 @@ final class Analytics {
 	 * @return bool
 	 */
 	private function has_filter_parameters(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter detection. Nonces would break shareable filter URLs.
 		foreach ( array_keys( $_GET ) as $key ) {
 			$normalized = sanitize_key( (string) $key );
 			if ( in_array( $normalized, $this->get_supported_filter_keys(), true ) ) {
 				return true;
 			}
 
-			if ( 0 === strpos( $normalized, 'wf_attr_' ) ) {
+			if ( 0 === strpos( $normalized, 'cscf_attr_' ) ) {
 				return true;
 			}
 		}
@@ -284,15 +285,15 @@ final class Analytics {
 	 */
 	private function get_supported_filter_keys(): array {
 		return array(
-			'wf_cat',
-			'wf_brand',
-			'wf_color',
-			'wf_logic',
+			'cscf_cat',
+			'cscf_brand',
+			'cscf_color',
+			'cscf_logic',
 			'min_price',
 			'max_price',
 			'rating_filter',
-			'wf_in_stock',
-			'wf_on_sale',
+			'cscf_in_stock',
+			'cscf_on_sale',
 		);
 	}
 
@@ -304,17 +305,17 @@ final class Analytics {
 	private function get_request_filters(): array {
 		$filters = array();
 
-		$category = $this->get_request_slug( 'wf_cat' );
+		$category = $this->get_request_slug( 'cscf_cat' );
 		if ( '' !== $category ) {
 			$filters['category'] = array( $category );
 		}
 
-		$brands = $this->get_request_slug_list( 'wf_brand' );
+		$brands = $this->get_request_slug_list( 'cscf_brand' );
 		if ( ! empty( $brands ) ) {
 			$filters['brand'] = $brands;
 		}
 
-		$colors = $this->get_request_slug_list( 'wf_color' );
+		$colors = $this->get_request_slug_list( 'cscf_color' );
 		if ( ! empty( $colors ) ) {
 			$filters['color'] = $colors;
 		}
@@ -339,24 +340,25 @@ final class Analytics {
 			$filters['max_price'] = array( $this->format_decimal( $max_price ) );
 		}
 
-		if ( $this->get_request_flag( 'wf_in_stock' ) ) {
+		if ( $this->get_request_flag( 'cscf_in_stock' ) ) {
 			$filters['availability'] = array( 'in_stock' );
 		}
 
-		if ( $this->get_request_flag( 'wf_on_sale' ) ) {
+		if ( $this->get_request_flag( 'cscf_on_sale' ) ) {
 			if ( ! isset( $filters['availability'] ) ) {
 				$filters['availability'] = array();
 			}
 			$filters['availability'][] = 'on_sale';
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Frontend read-only filter parameter collection. Nonces would break shareable filter URLs.
 		foreach ( array_keys( $_GET ) as $key ) {
 			$request_key = sanitize_key( (string) $key );
-			if ( 0 !== strpos( $request_key, 'wf_attr_' ) ) {
+			if ( 0 !== strpos( $request_key, 'cscf_attr_' ) ) {
 				continue;
 			}
 
-			$taxonomy = substr( $request_key, strlen( 'wf_attr_' ) );
+			$taxonomy = substr( $request_key, strlen( 'cscf_attr_' ) );
 			if ( '' === $taxonomy ) {
 				continue;
 			}
@@ -382,7 +384,7 @@ final class Analytics {
 	 * @return void
 	 */
 	private function persist_filter_event( array $filters ): void {
-		$buffer_key = 'wf_analytics_buffer';
+		$buffer_key = 'cscf_analytics_buffer';
 		$buffer     = get_transient( $buffer_key );
 		if ( ! is_array( $buffer ) ) {
 			$buffer = array();
@@ -399,8 +401,8 @@ final class Analytics {
 		} else {
 			set_transient( $buffer_key, $buffer, 300 );
 
-			if ( ! wp_next_scheduled( 'wf_flush_analytics_buffer' ) ) {
-				wp_schedule_single_event( time() + 60, 'wf_flush_analytics_buffer' );
+			if ( ! wp_next_scheduled( 'cscf_flush_analytics_buffer' ) ) {
+				wp_schedule_single_event( time() + 60, 'cscf_flush_analytics_buffer' );
 			}
 		}
 	}
@@ -412,7 +414,7 @@ final class Analytics {
 	 * @return void
 	 */
 	public function flush_analytics_buffer( ?array $buffer = null ): void {
-		$buffer_key = 'wf_analytics_buffer';
+		$buffer_key = 'cscf_analytics_buffer';
 		if ( null === $buffer ) {
 			$buffer = get_transient( $buffer_key );
 			if ( ! is_array( $buffer ) || empty( $buffer ) ) {
@@ -737,7 +739,7 @@ final class Analytics {
 	 * @return string
 	 */
 	private function get_request_logic_mode(): string {
-		$raw_value = $this->get_unslashed_request_value( 'wf_logic' );
+		$raw_value = $this->get_unslashed_request_value( 'cscf_logic' );
 		if ( null === $raw_value || is_array( $raw_value ) ) {
 			return 'or';
 		}

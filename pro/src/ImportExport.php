@@ -36,7 +36,7 @@ class ImportExport {
 			$settings = array(
 				'filter'  => \ClandevsSmartCatalogFilters\FilterSettings::get_options(),
 				'style'   => \ClandevsSmartCatalogFilters\StyleSettings::get_options(),
-				'analytics' => get_option( 'wf_analytics_data', array() ),
+				'analytics' => get_option( 'cscf_analytics_data', array() ),
 				'presets'  => get_option( 'cscf_presets', array() ),
 				'swatches' => get_option( 'cscf_visual_swatches', array() ),
 				'order'    => get_option( 'cscf_filter_order', array() ),
@@ -54,10 +54,10 @@ class ImportExport {
 				$data = json_decode( $json, true );
 				if ( is_array( $data ) ) {
 					if ( isset( $data['filter'] ) ) {
-						update_option( 'wf_filter_options', $data['filter'] );
+						update_option( 'cscf_filter_options', $data['filter'] );
 					}
 					if ( isset( $data['style'] ) ) {
-						update_option( 'wf_style_options', $data['style'] );
+						update_option( 'cscf_style_options', $data['style'] );
 					}
 					if ( isset( $data['presets'] ) ) {
 						update_option( 'cscf_presets', $data['presets'] );

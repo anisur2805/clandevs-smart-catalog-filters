@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use AdvancedProductFilter\Analytics;
+use ClandevsSmartCatalogFilters\Analytics;
 
 final class AnalyticsRequestTest extends TestCase {
 	/** @var Analytics */
@@ -25,7 +25,7 @@ final class AnalyticsRequestTest extends TestCase {
 	}
 
 	public function test_has_filter_parameters_detects_dynamic_attribute_key(): void {
-		$_GET['wf_attr_pa_size'] = array( 'small' );
+		$_GET['cscf_attr_pa_size'] = array( 'small' );
 
 		$has_filters = $this->invokePrivate( 'has_filter_parameters' );
 
@@ -33,7 +33,7 @@ final class AnalyticsRequestTest extends TestCase {
 	}
 
 	public function test_request_filters_include_dynamic_attribute_values(): void {
-		$_GET['wf_attr_pa_size'] = array( 'Large', 'large', '' );
+		$_GET['cscf_attr_pa_size'] = array( 'Large', 'large', '' );
 
 		$filters = $this->invokePrivate( 'get_request_filters' );
 
