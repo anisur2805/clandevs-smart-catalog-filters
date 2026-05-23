@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,7 +85,7 @@ The plugin uses its own CSS for filter UI and is designed to work with any WooCo
 
 == Changelog ==
 
-= 2.0.0 =
+= 2.0.1 =
 * Renamed plugin to "Clandevs Smart Catalog Filters"
 * All features fully available — no premium gating
 * Removed custom CSS feature for wp.org compliance
@@ -103,7 +103,7 @@ The plugin uses its own CSS for filter UI and is designed to work with any WooCo
 
 == Upgrade Notice ==
 
-= 2.0.0 =
+= 2.0.1 =
 Major update: plugin renamed and all features unlocked. Legacy shortcode still works.
 
 == License ==
