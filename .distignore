@@ -22,9 +22,6 @@ tests
 scripts
 documentation
 
-# Pro add-on (built separately)
-pro
-
 # Build tools
 Makefile
 

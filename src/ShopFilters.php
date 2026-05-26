@@ -367,9 +367,27 @@ final class ShopFilters {
 		}
 
 		$clauses      = $this->get_request_filter_clauses();
-		$tax_clauses  = $clauses['tax'];
-		$meta_clauses = $clauses['meta'];
-		$post_in      = $clauses['post_in'];
+		$filter_options = FilterSettings::get_options();
+
+		/**
+		 * Filter the product query arguments before they are applied.
+		 * The Pro add-on uses this to inject additional query clauses (date range, variation, SEO URLs).
+		 *
+		 * @param array $query_args   Query args with keys: tax_query, meta_query, post__in.
+		 * @param array $filter_options Current filter visibility options.
+		 */
+		$query_args   = apply_filters(
+			'cscf_query_args',
+			array(
+				'tax_query'  => ! empty( $clauses['tax'] ) ? $clauses['tax'] : array(),
+				'meta_query' => ! empty( $clauses['meta'] ) ? $clauses['meta'] : array(),
+				'post__in'   => ! empty( $clauses['post_in'] ) ? $clauses['post_in'] : array(),
+			),
+			$filter_options
+		);
+		$tax_clauses  = isset( $query_args['tax_query'] ) ? (array) $query_args['tax_query'] : array();
+		$meta_clauses = isset( $query_args['meta_query'] ) ? (array) $query_args['meta_query'] : array();
+		$post_in      = isset( $query_args['post__in'] ) ? (array) $query_args['post__in'] : array();
 
 		if ( ! empty( $tax_clauses ) ) {
 			$query->set( 'tax_query', $this->merge_query_clauses( (array) $query->get( 'tax_query' ), $tax_clauses ) );
@@ -381,6 +399,10 @@ final class ShopFilters {
 
 		if ( ! empty( $post_in ) ) {
 			$query->set( 'post__in', $this->merge_post_in_values( $query->get( 'post__in' ), $post_in ) );
+		}
+
+		if ( isset( $query_args['date_query'] ) && ! empty( $query_args['date_query'] ) ) {
+			$query->set( 'date_query', $query_args['date_query'] );
 		}
 	}
 
@@ -1128,16 +1150,33 @@ final class ShopFilters {
 			);
 		}
 
-		if ( ! empty( $clauses['tax'] ) ) {
-			$query_args['tax_query'] = $this->merge_query_clauses( array(), $clauses['tax'] );
+		$filter_options = FilterSettings::get_options();
+
+		/** This filter is documented in src/ShopFilters.php :: apply_filters_to_main_query() */
+		$filtered = apply_filters(
+			'cscf_query_args',
+			array(
+				'tax_query'  => ! empty( $clauses['tax'] ) ? $clauses['tax'] : array(),
+				'meta_query' => ! empty( $clauses['meta'] ) ? $clauses['meta'] : array(),
+				'post__in'   => ! empty( $clauses['post_in'] ) ? $clauses['post_in'] : array(),
+			),
+			$filter_options
+		);
+
+		if ( ! empty( $filtered['tax_query'] ) ) {
+			$query_args['tax_query'] = $this->merge_query_clauses( array(), (array) $filtered['tax_query'] );
 		}
 
-		if ( ! empty( $clauses['meta'] ) ) {
-			$query_args['meta_query'] = $this->merge_query_clauses( array(), $clauses['meta'] );
+		if ( ! empty( $filtered['meta_query'] ) ) {
+			$query_args['meta_query'] = $this->merge_query_clauses( array(), (array) $filtered['meta_query'] );
 		}
 
-		if ( ! empty( $clauses['post_in'] ) ) {
-			$query_args['post__in'] = $clauses['post_in'];
+		if ( ! empty( $filtered['post__in'] ) ) {
+			$query_args['post__in'] = (array) $filtered['post__in'];
+		}
+
+		if ( ! empty( $filtered['date_query'] ) ) {
+			$query_args['date_query'] = $filtered['date_query'];
 		}
 
 		return new \WP_Query( $query_args );
@@ -2196,6 +2235,15 @@ final class ShopFilters {
 			'min' => $min,
 			'max' => $max,
 		);
+
+		/**
+		 * Filter the price boundaries for the price slider.
+		 * The Pro add-on uses this to convert prices for multi-currency setups.
+		 *
+		 * @param array  $bounds  Price bounds with keys: min, max.
+		 * @param string $context Where the bounds are used ('slider').
+		 */
+		$bounds = apply_filters( 'cscf_price_bounds', $bounds, 'slider' );
 
 		wp_cache_set( $cache_key, $bounds, self::CACHE_GROUP, 300 );
 

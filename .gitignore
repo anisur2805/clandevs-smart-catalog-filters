@@ -25,8 +25,5 @@ composer.lock
 *.zip
 .build/
 
-# Pro vendor (managed separately)
-pro/vendor/
-
 # Claude Code
 .claude/
