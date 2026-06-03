@@ -36,6 +36,9 @@ Clandevs Smart Catalog Filters helps shoppers quickly find products using powerf
 * **Typography & layout** — font family, font size, sidebar width, gap, and border radius controls.
 * **Analytics dashboard** — track how customers use filters with top-filter reports.
 * **Admin filter visibility** — toggle each filter on or off from Settings.
+* **Elementor widget** — drag-and-drop filter sidebar widget for Elementor.
+* **WooCommerce Blocks** — native Gutenberg block for the block editor.
+* **Drag-and-drop ordering** — reorder filter sections visually from admin.
 
 = Shortcodes =
 

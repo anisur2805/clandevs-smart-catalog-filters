@@ -695,6 +695,7 @@ final class ShopFilters {
 		$show_rating     = isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'];
 		$show_stock      = isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'];
 		$show_colors     = isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'];
+		$show_apply_button = ! isset( $filter_options['show_apply_button'] ) || 'yes' === $filter_options['show_apply_button'];
 
 		$action              = $this->get_archive_url();
 		$selected_brands     = $this->get_request_slug_list( 'cscf_brand' );
@@ -749,96 +750,150 @@ final class ShopFilters {
 		$this->render_preserved_fields( $excluded_preserved );
 		$this->render_active_filters();
 
-		if ( $show_categories ) {
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Categories', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			$this->render_categories( $list_suffix );
-			echo '</div>';
-		}
-
-		if ( $show_brands && '' !== $this->brand_taxonomy ) {
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Filter by Brands', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->brand_taxonomy, 'cscf_brand[]', 'cscf_brand', $selected_brands, false, $list_suffix );
-			echo '</div>';
-		}
-
-		echo '<div class="wf-filter-block">';
-		echo '<h4>' . esc_html__( 'Multi-select Logic', 'clandevs-smart-catalog-filters' ) . '</h4>';
-		echo '<label class="wf-radio"><input type="radio" name="cscf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
-		echo '<label class="wf-radio"><input type="radio" name="cscf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
-		echo '</div>';
-
-		if ( $show_price ) {
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Price', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
-			echo '<div class="wf-price-range-inputs">';
-			echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'clandevs-smart-catalog-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
-			echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'clandevs-smart-catalog-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
-			echo '</div>';
-			echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
-			echo '</div>';
-			echo '<div class="wf-price-grid">';
-			echo '<label><span>' . esc_html__( 'Min', 'clandevs-smart-catalog-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
-			echo '<label><span>' . esc_html__( 'Max', 'clandevs-smart-catalog-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
-			echo '</div>';
-			echo '</div>';
-		}
-
-		if ( $show_rating ) {
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Customer Rating', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			for ( $i = 5; $i >= 1; $i-- ) {
-				echo '<label class="wf-rating">';
-				echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
-				echo '<span class="wf-rating-stars">';
-				for ( $s = 0; $s < $i; $s++ ) {
-					echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-				}
-				for ( $s = $i; $s < 5; $s++ ) {
-					echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" class="wf-star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-				}
-				echo '</span>';
-				echo '<span class="wf-rating-text">' . esc_html__( '& up', 'clandevs-smart-catalog-filters' ) . '</span>';
-				echo '</label>';
+		$render_availability = function () use ( $show_stock, $in_stock_only, $on_sale_only ) {
+			if ( ! $show_stock ) {
+				return;
 			}
-			echo '<label class="wf-rating">';
-			echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
-			echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'clandevs-smart-catalog-filters' ) . '</span>';
-			echo '</label>';
-			echo '</div>';
-		}
 
-		if ( $show_stock ) {
 			echo '<div class="wf-filter-block">';
 			echo '<h4>' . esc_html__( 'Availability', 'clandevs-smart-catalog-filters' ) . '</h4>';
 			echo '<label class="wf-radio"><input type="checkbox" name="cscf_in_stock" value="1" ' . checked( $in_stock_only, true, false ) . ' /> <span>' . esc_html__( 'In stock only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
 			echo '<label class="wf-radio"><input type="checkbox" name="cscf_on_sale" value="1" ' . checked( $on_sale_only, true, false ) . ' /> <span>' . esc_html__( 'On sale only', 'clandevs-smart-catalog-filters' ) . '</span></label>';
 			echo '</div>';
+		};
+		$availability_rendered = false;
+
+		$section_renderers = array(
+			'categories' => function () use ( $show_categories, $list_suffix ) {
+				if ( ! $show_categories ) {
+					return;
+				}
+
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Categories', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				$this->render_categories( $list_suffix );
+				echo '</div>';
+			},
+			'brands'     => function () use ( $show_brands, $list_suffix ) {
+				if ( ! $show_brands || '' === $this->brand_taxonomy ) {
+					return;
+				}
+
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Filter by Brands', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				$this->render_term_checkboxes( $this->brand_taxonomy, 'cscf_brand[]', 'cscf_brand', $this->get_request_slug_list( 'cscf_brand' ), false, $list_suffix );
+				echo '</div>';
+			},
+			'logic'      => function () use ( $multiselect_mode ) {
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Multi-select Logic', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				echo '<label class="wf-radio"><input type="radio" name="cscf_logic" value="or" ' . checked( $multiselect_mode, 'or', false ) . ' /> <span>' . esc_html__( 'Match any selected option (OR)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+				echo '<label class="wf-radio"><input type="radio" name="cscf_logic" value="and" ' . checked( $multiselect_mode, 'and', false ) . ' /> <span>' . esc_html__( 'Match all selected options (AND)', 'clandevs-smart-catalog-filters' ) . '</span></label>';
+				echo '</div>';
+			},
+			'price'      => function () use ( $show_price, $slider_min, $slider_max, $current_min, $current_max, $min_price, $max_price ) {
+				if ( ! $show_price ) {
+					return;
+				}
+
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Price', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				echo '<div class="wf-price-slider" data-min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" data-max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" data-step="0.01">';
+				echo '<div class="wf-price-range-inputs">';
+				echo '<input class="wf-price-range wf-price-range-min" type="range" aria-label="' . esc_attr__( 'Minimum price', 'clandevs-smart-catalog-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_min ) ) . '" />';
+				echo '<input class="wf-price-range wf-price-range-max" type="range" aria-label="' . esc_attr__( 'Maximum price', 'clandevs-smart-catalog-filters' ) . '" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" value="' . esc_attr( $this->format_decimal_for_input( $current_max ) ) . '" />';
+				echo '</div>';
+				echo '<div class="wf-price-track"><span class="wf-price-track-fill"></span></div>';
+				echo '</div>';
+				echo '<div class="wf-price-grid">';
+				echo '<label><span>' . esc_html__( 'Min', 'clandevs-smart-catalog-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="min_price" value="' . esc_attr( $this->format_decimal_for_input( $min_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" /></label>';
+				echo '<label><span>' . esc_html__( 'Max', 'clandevs-smart-catalog-filters' ) . '</span><input type="number" min="' . esc_attr( $this->format_decimal_for_input( $slider_min ) ) . '" max="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" step="0.01" name="max_price" value="' . esc_attr( $this->format_decimal_for_input( $max_price ) ) . '" placeholder="' . esc_attr( $this->format_decimal_for_input( $slider_max ) ) . '" /></label>';
+				echo '</div>';
+				echo '</div>';
+			},
+			'rating'     => function () use ( $show_rating, $selected_rating, $render_availability, &$availability_rendered ) {
+				if ( ! $show_rating ) {
+					return;
+				}
+
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Customer Rating', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				for ( $i = 5; $i >= 1; $i-- ) {
+					echo '<label class="wf-rating">';
+					echo '<input type="radio" name="rating_filter" value="' . esc_attr( (string) $i ) . '" ' . checked( $selected_rating, $i, false ) . ' />';
+					echo '<span class="wf-rating-stars">';
+					for ( $s = 0; $s < $i; $s++ ) {
+						echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+					}
+					for ( $s = $i; $s < 5; $s++ ) {
+						echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14" class="wf-star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+					}
+					echo '</span>';
+					echo '<span class="wf-rating-text">' . esc_html__( '& up', 'clandevs-smart-catalog-filters' ) . '</span>';
+					echo '</label>';
+				}
+				echo '<label class="wf-rating">';
+				echo '<input type="radio" name="rating_filter" value="" ' . checked( $selected_rating, 0, false ) . ' />';
+				echo '<span class="wf-rating-text">' . esc_html__( 'Any', 'clandevs-smart-catalog-filters' ) . '</span>';
+				echo '</label>';
+				echo '</div>';
+
+				$render_availability();
+				$availability_rendered = true;
+			},
+			'colors'     => function () use ( $show_colors, $list_suffix ) {
+				if ( ! $show_colors || '' === $this->color_taxonomy ) {
+					return;
+				}
+
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Color', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				$this->render_term_checkboxes( $this->color_taxonomy, 'cscf_color[]', 'cscf_color', $this->get_request_slug_list( 'cscf_color' ), true, $list_suffix );
+				echo '</div>';
+			},
+			'attributes' => function () use ( $selected_attributes, $list_suffix ) {
+				foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
+					$request_key        = $this->get_attribute_request_key( $attribute_taxonomy );
+					$field_name         = $request_key . '[]';
+					$selected           = isset( $selected_attributes[ $request_key ] ) && is_array( $selected_attributes[ $request_key ] ) ? $selected_attributes[ $request_key ] : array();
+					$is_color_attribute = $this->is_color_like_taxonomy( $attribute_taxonomy );
+
+					echo '<div class="wf-filter-block">';
+					echo '<h4>' . esc_html( $this->get_attribute_display_label( $attribute_taxonomy ) ) . '</h4>';
+					$this->render_term_checkboxes( $attribute_taxonomy, $field_name, $request_key, $selected, $is_color_attribute, $list_suffix );
+					echo '</div>';
+				}
+			},
+		);
+
+		$ordered_sections = FilterOrdering::get_filter_order();
+		$rendered_sections = array();
+
+		foreach ( $ordered_sections as $section_key ) {
+			if ( ! isset( $section_renderers[ $section_key ] ) ) {
+				continue;
+			}
+
+			$section_renderers[ $section_key ]();
+			$rendered_sections[ $section_key ] = true;
 		}
 
-		if ( $show_colors && '' !== $this->color_taxonomy ) {
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html__( 'Color', 'clandevs-smart-catalog-filters' ) . '</h4>';
-			$this->render_term_checkboxes( $this->color_taxonomy, 'cscf_color[]', 'cscf_color', $selected_colors, true, $list_suffix );
-			echo '</div>';
+		foreach ( $section_renderers as $section_key => $render_section ) {
+			if ( isset( $rendered_sections[ $section_key ] ) ) {
+				continue;
+			}
+
+			$render_section();
 		}
 
-		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
-			$request_key        = $this->get_attribute_request_key( $attribute_taxonomy );
-			$field_name         = $request_key . '[]';
-			$selected           = isset( $selected_attributes[ $request_key ] ) && is_array( $selected_attributes[ $request_key ] ) ? $selected_attributes[ $request_key ] : array();
-			$is_color_attribute = $this->is_color_like_taxonomy( $attribute_taxonomy );
-
-			echo '<div class="wf-filter-block">';
-			echo '<h4>' . esc_html( $this->get_attribute_display_label( $attribute_taxonomy ) ) . '</h4>';
-			$this->render_term_checkboxes( $attribute_taxonomy, $field_name, $request_key, $selected, $is_color_attribute, $list_suffix );
-			echo '</div>';
+		if ( ! $availability_rendered ) {
+			$render_availability();
 		}
 
-		echo '<div class="wf-actions">';
-		echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
+		echo '<div class="' . esc_attr( $show_apply_button ? 'wf-actions' : 'wf-empty-actions' ) . '">';
+		if ( $show_apply_button ) {
+			echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
+		}
 		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'clandevs-smart-catalog-filters' ) . '</a>';
 		echo '</div>';
 		echo '</form>';
@@ -1044,7 +1099,10 @@ final class ShopFilters {
 			echo '<li>';
 			echo '<label class="' . esc_attr( $label_class ) . '">';
 			echo '<input type="checkbox" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $checked, true, false ) . ' />';
-			if ( $show_color_swatch ) {
+			$swatch_image = $this->get_term_swatch_image_url( $term );
+			if ( '' !== $swatch_image ) {
+				echo '<span class="wf-term-swatch"><img src="' . esc_url( $swatch_image ) . '" alt="" aria-hidden="true" /></span>';
+			} elseif ( $show_color_swatch ) {
 				$swatch_hex = $this->get_term_color_hex( $term );
 				if ( '' !== $swatch_hex ) {
 					$term_id = absint( $term->term_id );
@@ -1984,6 +2042,27 @@ final class ShopFilters {
 		$name_color = sanitize_hex_color( (string) $term->name );
 
 		return is_string( $name_color ) ? $name_color : '';
+	}
+
+	/**
+	 * Resolve a Pro visual swatch image URL for a term.
+	 *
+	 * @param \WP_Term $term Term object.
+	 * @return string
+	 */
+	private function get_term_swatch_image_url( \WP_Term $term ): string {
+		if ( ! class_exists( '\ClandevsSmartCatalogFiltersPro\VisualSwatches' ) ) {
+			return '';
+		}
+
+		$swatches = \ClandevsSmartCatalogFiltersPro\VisualSwatches::get_swatches();
+		$image_id = isset( $swatches[ $term->term_id ] ) ? absint( $swatches[ $term->term_id ] ) : 0;
+		if ( $image_id <= 0 ) {
+			return '';
+		}
+
+		$image_url = wp_get_attachment_image_url( $image_id, 'thumbnail' );
+		return is_string( $image_url ) ? $image_url : '';
 	}
 
 	/**

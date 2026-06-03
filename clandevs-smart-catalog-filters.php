@@ -60,7 +60,7 @@ add_filter(
 	'plugin_action_links_' . plugin_basename( __FILE__ ),
 	static function ( array $links ): array {
 		$custom_links = array(
-			'<a href="' . esc_url( admin_url( 'admin.php?page=clandevs-smart-catalog-filters' ) ) . '">' . esc_html__( 'Styling', 'clandevs-smart-catalog-filters' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=cscf-style-settings' ) ) . '">' . esc_html__( 'Styling', 'clandevs-smart-catalog-filters' ) . '</a>',
 			'<a href="' . esc_url( admin_url( 'admin.php?page=cscf-filter-settings' ) ) . '">' . esc_html__( 'Settings', 'clandevs-smart-catalog-filters' ) . '</a>',
 			'<a href="' . esc_url( admin_url( 'admin.php?page=cscf-filter-analytics' ) ) . '">' . esc_html__( 'Analytics', 'clandevs-smart-catalog-filters' ) . '</a>',
 		);

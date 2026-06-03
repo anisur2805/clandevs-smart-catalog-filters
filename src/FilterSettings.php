@@ -80,6 +80,7 @@ final class FilterSettings {
 		$this->register_checkbox_field( 'show_rating', __( 'Show Customer Rating', 'clandevs-smart-catalog-filters' ) );
 		$this->register_checkbox_field( 'show_availability', __( 'Show Availability', 'clandevs-smart-catalog-filters' ) );
 		$this->register_checkbox_field( 'show_colors', __( 'Show Color', 'clandevs-smart-catalog-filters' ) );
+		$this->register_checkbox_field( 'show_apply_button', __( 'Show Apply Filters Button', 'clandevs-smart-catalog-filters' ) );
 	}
 
 	/**
@@ -167,6 +168,10 @@ final class FilterSettings {
 								'show_colors'       => array(
 									'label'   => __( 'Show Color Filter', 'clandevs-smart-catalog-filters' ),
 									'feature' => 'color_filter',
+								),
+								'show_apply_button' => array(
+									'label'   => __( 'Show Apply Filters Button', 'clandevs-smart-catalog-filters' ),
+									'feature' => 'apply_button',
 								),
 							);
 
@@ -303,6 +308,7 @@ final class FilterSettings {
 			'show_rating'              => 'yes',
 			'show_availability'        => 'yes',
 			'show_colors'              => 'yes',
+			'show_apply_button'        => 'yes',
 			'delete_data_on_uninstall' => 'no',
 		);
 	}

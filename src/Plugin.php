@@ -128,6 +128,15 @@ final class Plugin {
 		$this->analytics = new Analytics();
 		$this->analytics->register_hooks();
 
+		$elementor = new ElementorWidget();
+		$elementor->register_hooks();
+
+		$blocks = new BlocksIntegration();
+		$blocks->register_hooks();
+
+		$filter_ordering = new FilterOrdering();
+		$filter_ordering->register_hooks();
+
 		/**
 		 * Fires after all free plugin services have been booted.
 		 * The Pro add-on uses this to boot its own services.

@@ -19,7 +19,7 @@ final class StyleSettings {
 	private const OPTION_KEY = 'cscf_style_options';
 
 	/** @var string */
-	private const PAGE_SLUG = 'clandevs-smart-catalog-filters';
+	private const PAGE_SLUG = 'cscf-style-settings';
 
 	/** @var string */
 	private const RESET_ACTION = 'cscf_reset_styles';
@@ -70,7 +70,7 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( string $hook ): void {
-		if ( 'toplevel_page_clandevs-smart-catalog-filters' !== $hook ) {
+		if ( 'clandevs-smart-catalog-filters_page_cscf-style-settings' !== $hook ) {
 			return;
 		}
 
@@ -90,7 +90,8 @@ final class StyleSettings {
 	 * @return void
 	 */
 	public function render_color_picker_script(): void {
-		if ( 'toplevel_page_clandevs-smart-catalog-filters' !== $GLOBALS['hook_suffix'] ?? '' ) {
+		$hook_suffix = isset( $GLOBALS['hook_suffix'] ) ? (string) $GLOBALS['hook_suffix'] : '';
+		if ( 'clandevs-smart-catalog-filters_page_cscf-style-settings' !== $hook_suffix ) {
 			return;
 		}
 		?>
@@ -841,6 +842,9 @@ final class StyleSettings {
 			'classic'  => __( 'Classic', 'clandevs-smart-catalog-filters' ),
 			'graphite' => __( 'Graphite', 'clandevs-smart-catalog-filters' ),
 			'sunrise'  => __( 'Sunrise', 'clandevs-smart-catalog-filters' ),
+			'midnight' => __( 'Midnight', 'clandevs-smart-catalog-filters' ),
+			'sage'     => __( 'Sage', 'clandevs-smart-catalog-filters' ),
+			'sand'     => __( 'Sand', 'clandevs-smart-catalog-filters' ),
 		);
 	}
 
@@ -903,6 +907,60 @@ final class StyleSettings {
 					'no_results_bg_color'     => '#fffaf5',
 					'no_results_border_color' => '#fed7aa',
 					'no_results_shadow_color' => '#7c2d12',
+				);
+			case 'midnight':
+				return array(
+					'accent_color'            => '#818cf8',
+					'sidebar_bg_color'        => '#111827',
+					'sidebar_border_color'    => '#374151',
+					'heading_color'           => '#f9fafb',
+					'text_color'              => '#e5e7eb',
+					'muted_text_color'        => '#9ca3af',
+					'chip_bg_color'           => '#1f2937',
+					'chip_border_color'       => '#4b5563',
+					'button_bg_color'         => '#4f46e5',
+					'button_text_color'       => '#ffffff',
+					'input_bg_color'          => '#111827',
+					'control_border_color'    => '#4b5563',
+					'no_results_bg_color'     => '#111827',
+					'no_results_border_color' => '#374151',
+					'no_results_shadow_color' => '#000000',
+				);
+			case 'sage':
+				return array(
+					'accent_color'            => '#4d7c0f',
+					'sidebar_bg_color'        => '#f7faf5',
+					'sidebar_border_color'    => '#d7e3d0',
+					'heading_color'           => '#1f2937',
+					'text_color'              => '#243324',
+					'muted_text_color'        => '#64748b',
+					'chip_bg_color'           => '#f0f7ed',
+					'chip_border_color'       => '#b7d3aa',
+					'button_bg_color'         => '#4d7c0f',
+					'button_text_color'       => '#ffffff',
+					'input_bg_color'          => '#ffffff',
+					'control_border_color'    => '#b7d3aa',
+					'no_results_bg_color'     => '#f7faf5',
+					'no_results_border_color' => '#d7e3d0',
+					'no_results_shadow_color' => '#1f2937',
+				);
+			case 'sand':
+				return array(
+					'accent_color'            => '#b45309',
+					'sidebar_bg_color'        => '#fffbf5',
+					'sidebar_border_color'    => '#f3d7b0',
+					'heading_color'           => '#78350f',
+					'text_color'              => '#7c2d12',
+					'muted_text_color'        => '#9a3412',
+					'chip_bg_color'           => '#fff7ed',
+					'chip_border_color'       => '#f0c38a',
+					'button_bg_color'         => '#b45309',
+					'button_text_color'       => '#ffffff',
+					'input_bg_color'          => '#ffffff',
+					'control_border_color'    => '#f0c38a',
+					'no_results_bg_color'     => '#fffbf5',
+					'no_results_border_color' => '#f3d7b0',
+					'no_results_shadow_color' => '#78350f',
 				);
 			case 'classic':
 			default:
