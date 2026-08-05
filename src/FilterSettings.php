@@ -210,6 +210,15 @@ final class FilterSettings {
 					</button>
 				</div>
 			</form>
+			<?php
+			/**
+			 * Fires after the filter settings form.
+			 *
+			 * The Pro add-on uses this to render the drag-and-drop filter
+			 * ordering list on this screen.
+			 */
+			do_action( 'cscf_filter_settings_after_form' );
+			?>
 		</div>
 		<?php
 	}
