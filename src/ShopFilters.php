@@ -747,6 +747,18 @@ final class ShopFilters {
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$excluded_preserved[] = $this->get_attribute_request_key( $attribute_taxonomy );
 		}
+
+		/**
+		 * Filters the request keys excluded from the preserved hidden fields.
+		 *
+		 * Add-ons that render their own inputs inside the filter form must
+		 * register their request keys here to avoid duplicate form fields.
+		 *
+		 * @param array $excluded_preserved Request keys excluded from hidden fields.
+		 * @param array $filter_options     Current filter visibility options.
+		 */
+		$excluded_preserved = (array) apply_filters( 'cscf_preserved_excluded_keys', $excluded_preserved, $filter_options );
+
 		$this->render_preserved_fields( $excluded_preserved );
 		$this->render_active_filters();
 
@@ -865,6 +877,18 @@ final class ShopFilters {
 				}
 			},
 		);
+
+		/**
+		 * Filters the filter form section renderers.
+		 *
+		 * Each value is a callable that echoes one filter block. Sections not
+		 * present in the saved ordering render after the ordered ones. Used by
+		 * the Pro add-on to inject extra filter blocks inside the form.
+		 *
+		 * @param array $section_renderers Map of section key to renderer callable.
+		 * @param array $filter_options    Current filter visibility options.
+		 */
+		$section_renderers = (array) apply_filters( 'cscf_filter_sections', $section_renderers, $filter_options );
 
 		$ordered_sections = FilterOrdering::get_filter_order();
 		$rendered_sections = array();
