@@ -100,7 +100,7 @@ final class AdminMenu {
 			),
 		);
 
-		if ( class_exists( '\ClandevsSmartCatalogFiltersPro\ProPlugin' ) ) {
+		if ( self::is_pro_active() ) {
 			$links[] = array(
 				'title' => __( 'Import / Export', 'clandevs-smart-catalog-filters' ),
 				'text'  => __( 'Backup or restore filter, style, and Pro settings.', 'clandevs-smart-catalog-filters' ),
@@ -129,5 +129,29 @@ final class AdminMenu {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Whether the Pro add-on is installed and licensed.
+	 *
+	 * The Pro autoloader registers its classes regardless of licence state, so
+	 * class_exists() alone would advertise Pro-only screens to users who cannot
+	 * open them. Older Pro builds have no is_active(), so their presence alone
+	 * still counts as active.
+	 *
+	 * @return bool
+	 */
+	private static function is_pro_active(): bool {
+		$pro = '\ClandevsSmartCatalogFiltersPro\ProPlugin';
+
+		if ( ! class_exists( $pro ) ) {
+			return false;
+		}
+
+		if ( ! method_exists( $pro, 'is_active' ) ) {
+			return true;
+		}
+
+		return (bool) call_user_func( array( $pro, 'is_active' ) );
 	}
 }
