@@ -2,10 +2,10 @@
 Contributors: anisur8294
 Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,16 @@ The plugin uses its own CSS for filter UI and is designed to work with any WooCo
 
 == Changelog ==
 
+= 2.0.4 =
+* Stopped advertising Pro Import/Export screen to unlicensed users.
+* Added hook after the filter settings form.
+* Added filter-form extension hooks for the Pro add-on.
+
+= 2.0.3 =
+* Stopped advertising Pro Import/Export screen to unlicensed users.
+* Added hook after the filter settings form.
+* Added filter-form extension hooks for the Pro add-on.
+
 = 2.0.2 =
 * Restored Freemius SDK for opt-in telemetry and updates
 * Fixed contributors list — removed invalid WordPress.org username
@@ -111,6 +121,12 @@ The plugin uses its own CSS for filter UI and is designed to work with any WooCo
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.0.4 =
+Bug fixes and Pro hook additions.
+
+= 2.0.3 =
+Bug fixes and Pro hook additions.
 
 = 2.0.2 =
 Freemius SDK restored, contributors and description fixed.
