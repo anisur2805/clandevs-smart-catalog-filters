@@ -128,6 +128,9 @@ final class Plugin {
 		$this->analytics = new Analytics();
 		$this->analytics->register_hooks();
 
+		$review_prompt = new ReviewPrompt();
+		$review_prompt->register_hooks();
+
 		$elementor = new ElementorWidget();
 		$elementor->register_hooks();
 

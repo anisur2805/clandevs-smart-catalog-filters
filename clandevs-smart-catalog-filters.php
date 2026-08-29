@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Clandevs Smart Catalog Filters
+ * Plugin Name: Clandevs — WooCommerce Product Filter
  * Plugin URI: https://github.com/anisur2805/clandevs-smart-catalog-filters/
  * Description: Filter WooCommerce products by category, price, availability, brand, color, rating, and custom attributes. AJAX-powered with analytics, full styling controls, and multiple skins.
  * Version: 2.0.4
@@ -35,7 +35,19 @@ define( 'CSCF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 require_once __DIR__ . '/src/Autoloader.php';
 \ClandevsSmartCatalogFilters\Autoloader::register( __DIR__ . '/src' );
 
+register_activation_hook( __FILE__, 'cscf_activate' );
 register_deactivation_hook( __FILE__, 'cscf_deactivate' );
+
+/**
+ * Initialize plugin data on activation.
+ *
+ * @return void
+ */
+function cscf_activate() {
+	\ClandevsSmartCatalogFilters\ReviewPrompt::record_filter_use();
+	update_option( 'cscf_activation_time', (string) time(), false );
+	update_option( 'cscf_filter_use_count', 0, false );
+}
 
 /**
  * Clean up plugin data on deactivation.

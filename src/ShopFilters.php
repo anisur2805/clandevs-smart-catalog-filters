@@ -39,6 +39,9 @@ final class ShopFilters {
 	/** @var string */
 	private $color_taxonomy = '';
 
+	/** @var string */
+	private $tag_taxonomy = '';
+
 	/** @var array<int, string> */
 	private $custom_attribute_taxonomies = array();
 
@@ -139,6 +142,7 @@ final class ShopFilters {
 		$this->brand_taxonomy              = $this->resolve_taxonomy( array( 'pa_brand', 'product_brand', 'brand' ) );
 		$this->color_taxonomy              = $this->resolve_taxonomy( array( 'pa_color', 'color' ) );
 		$this->custom_attribute_taxonomies = $this->get_filterable_attribute_taxonomies();
+		$this->tag_taxonomy                = $this->resolve_tag_taxonomy();
 	}
 
 	/**
@@ -266,10 +270,20 @@ final class ShopFilters {
 		$raw_variables['--wf-font-family'] = $font_family;
 
 		$color_keys = array(
-			'--wf-accent', '--wf-sidebar-bg', '--wf-sidebar-border', '--wf-heading-color',
-			'--wf-text-color', '--wf-muted-text', '--wf-chip-bg', '--wf-chip-border',
-			'--wf-button-bg', '--wf-button-text', '--wf-input-bg', '--wf-control-border',
-			'--wf-empty-bg', '--wf-empty-border',
+			'--wf-accent',
+			'--wf-sidebar-bg',
+			'--wf-sidebar-border',
+			'--wf-heading-color',
+			'--wf-text-color',
+			'--wf-muted-text',
+			'--wf-chip-bg',
+			'--wf-chip-border',
+			'--wf-button-bg',
+			'--wf-button-text',
+			'--wf-input-bg',
+			'--wf-control-border',
+			'--wf-empty-bg',
+			'--wf-empty-border',
 		);
 
 		$declarations = array();
@@ -366,7 +380,7 @@ final class ShopFilters {
 			return;
 		}
 
-		$clauses      = $this->get_request_filter_clauses();
+		$clauses        = $this->get_request_filter_clauses();
 		$filter_options = FilterSettings::get_options();
 
 		/**
@@ -688,18 +702,20 @@ final class ShopFilters {
 	 * @return void
 	 */
 	private function render_filter_form(): void {
-		$filter_options  = FilterSettings::get_options();
-		$show_categories = isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'];
-		$show_brands     = isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'];
-		$show_price      = isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'];
-		$show_rating     = isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'];
-		$show_stock      = isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'];
-		$show_colors     = isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'];
+		$filter_options    = FilterSettings::get_options();
+		$show_categories   = isset( $filter_options['show_categories'] ) && 'yes' === $filter_options['show_categories'];
+		$show_brands       = isset( $filter_options['show_brands'] ) && 'yes' === $filter_options['show_brands'];
+		$show_price        = isset( $filter_options['show_price'] ) && 'yes' === $filter_options['show_price'];
+		$show_rating       = isset( $filter_options['show_rating'] ) && 'yes' === $filter_options['show_rating'];
+		$show_stock        = isset( $filter_options['show_availability'] ) && 'yes' === $filter_options['show_availability'];
+		$show_colors       = isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'];
+		$show_tags         = isset( $filter_options['show_tags'] ) && 'yes' === $filter_options['show_tags'];
 		$show_apply_button = ! isset( $filter_options['show_apply_button'] ) || 'yes' === $filter_options['show_apply_button'];
 
 		$action              = $this->get_archive_url();
 		$selected_brands     = $this->get_request_slug_list( 'cscf_brand' );
 		$selected_colors     = $this->get_request_slug_list( 'cscf_color' );
+		$selected_tags       = $this->get_request_slug_list( 'cscf_tag' );
 		$selected_attributes = array();
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$request_key                         = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -743,7 +759,7 @@ final class ShopFilters {
 		do_action( 'cscf_before_filter_render', $filter_options );
 
 		echo '<form class="wf-filter-form" method="get" action="' . esc_url( $action ) . '">';
-		$excluded_preserved = array( 'cscf_cat', 'cscf_brand', 'cscf_color', 'cscf_logic', 'min_price', 'max_price', 'rating_filter', 'cscf_in_stock', 'cscf_on_sale', 'paged', 'product-page' );
+		$excluded_preserved = array( 'cscf_cat', 'cscf_brand', 'cscf_color', 'cscf_tag', 'cscf_logic', 'min_price', 'max_price', 'rating_filter', 'cscf_in_stock', 'cscf_on_sale', 'paged', 'product-page' );
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$excluded_preserved[] = $this->get_attribute_request_key( $attribute_taxonomy );
 		}
@@ -762,7 +778,7 @@ final class ShopFilters {
 		$this->render_preserved_fields( $excluded_preserved );
 		$this->render_active_filters();
 
-		$render_availability = function () use ( $show_stock, $in_stock_only, $on_sale_only ) {
+		$render_availability   = function () use ( $show_stock, $in_stock_only, $on_sale_only ) {
 			if ( ! $show_stock ) {
 				return;
 			}
@@ -774,6 +790,8 @@ final class ShopFilters {
 			echo '</div>';
 		};
 		$availability_rendered = false;
+
+		$selected_tags = $this->get_request_slug_list( 'cscf_tag' );
 
 		$section_renderers = array(
 			'categories' => function () use ( $show_categories, $list_suffix ) {
@@ -863,6 +881,16 @@ final class ShopFilters {
 				$this->render_term_checkboxes( $this->color_taxonomy, 'cscf_color[]', 'cscf_color', $this->get_request_slug_list( 'cscf_color' ), true, $list_suffix );
 				echo '</div>';
 			},
+			'tags'       => function () use ( $show_tags, $list_suffix ) {
+				if ( ! $show_tags || '' === $this->tag_taxonomy ) {
+					return;
+				}
+
+				echo '<div class="wf-filter-block">';
+				echo '<h4>' . esc_html__( 'Product Tags', 'clandevs-smart-catalog-filters' ) . '</h4>';
+				$this->render_term_checkboxes( $this->tag_taxonomy, 'cscf_tag[]', 'cscf_tag', $this->get_request_slug_list( 'cscf_tag' ), false, $list_suffix );
+				echo '</div>';
+			},
 			'attributes' => function () use ( $selected_attributes, $list_suffix ) {
 				foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 					$request_key        = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -890,7 +918,7 @@ final class ShopFilters {
 		 */
 		$section_renderers = (array) apply_filters( 'cscf_filter_sections', $section_renderers, $filter_options );
 
-		$ordered_sections = FilterOrdering::get_filter_order();
+		$ordered_sections  = FilterOrdering::get_filter_order();
 		$rendered_sections = array();
 
 		foreach ( $ordered_sections as $section_key ) {
@@ -980,6 +1008,9 @@ final class ShopFilters {
 		}
 		if ( isset( $filter_options['show_colors'] ) && 'yes' === $filter_options['show_colors'] ) {
 			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->color_taxonomy, 'cscf_color', __( 'Color', 'clandevs-smart-catalog-filters' ) ) );
+		}
+		if ( isset( $filter_options['show_tags'] ) && 'yes' === $filter_options['show_tags'] ) {
+			$chips = array_merge( $chips, $this->get_term_chips_from_selected( $this->tag_taxonomy, 'cscf_tag', __( 'Product Tag', 'clandevs-smart-catalog-filters' ) ) );
 		}
 		foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
 			$request_key = $this->get_attribute_request_key( $attribute_taxonomy );
@@ -1409,6 +1440,7 @@ final class ShopFilters {
 			$args['cscf_cat'],
 			$args['cscf_brand'],
 			$args['cscf_color'],
+			$args['cscf_tag'],
 			$args['cscf_logic'],
 			$args['min_price'],
 			$args['max_price'],
@@ -2164,6 +2196,15 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Resolve product tag taxonomy.
+	 *
+	 * @return string
+	 */
+	private function resolve_tag_taxonomy(): string {
+		return taxonomy_exists( 'product_tag' ) ? 'product_tag' : '';
+	}
+
+	/**
 	 * Get current archive URL.
 	 *
 	 * @return string
@@ -2203,6 +2244,7 @@ final class ShopFilters {
 			'cscf_cat',
 			'cscf_brand',
 			'cscf_color',
+			'cscf_tag',
 			'cscf_logic',
 			'min_price',
 			'max_price',

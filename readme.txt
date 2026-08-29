@@ -1,4 +1,4 @@
-=== Clandevs Smart Catalog Filters ===
+=== Clandevs — WooCommerce Product Filter ===
 Contributors: anisur8294
 Tags: woocommerce, product filter, ajax filter, shop filters, ecommerce
 Requires at least: 6.0
@@ -9,36 +9,51 @@ Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Filter WooCommerce products by category, price, brand, color, rating, and attributes with AJAX filtering.
+AJAX-powered WooCommerce product filter with category, attribute, price, rating, color, brand, and tag filters. Includes mobile drawer, Elementor widget, Gutenberg block, analytics, and shareable filter URLs.
 
 == Description ==
 
-Clandevs Smart Catalog Filters helps shoppers quickly find products using powerful AJAX-powered filters. All features are fully available — no premium upgrades or license keys required.
+Clandevs — WooCommerce Product Filter helps shoppers quickly find products using powerful AJAX-powered filters. All features are fully available — no premium upgrades or license keys required.
 
-= Features =
+= Filter Types =
 
-* **Category filter** — let shoppers browse by product category.
-* **Brand filter** — multi-select brand filtering with auto-detected taxonomies.
-* **Color filter** — visual color swatches from WooCommerce attributes or custom taxonomy.
-* **Customer rating filter** — filter by star ratings with visual stars.
-* **Custom attribute filters** — automatically detect and display all WooCommerce custom attributes.
-* **Price range slider** — dual-handle slider with synced min/max inputs.
-* **Availability filters** — "In stock only" and "On sale only" checkboxes.
-* **OR/AND multi-select logic** — match any or all selected options.
-* **AJAX filtering** — instant updates without full page reload.
-* **Shareable filter URLs** — filtered results can be bookmarked and shared.
-* **Active filter chips** — visual indicators with individual remove and clear-all actions.
-* **Mobile-friendly drawer** — responsive sidebar that collapses into a toggleable drawer.
-* **Shortcode support** — use `[clandevs_catalog_filters]` to embed filters on any page.
-* **Per-page switcher** — let shoppers control how many products are displayed.
-* **No-results state** — styled empty state card when no products match.
-* **3 skins** — Classic, Graphite, and Sunrise with 15 color controls.
-* **Typography & layout** — font family, font size, sidebar width, gap, and border radius controls.
-* **Analytics dashboard** — track how customers use filters with top-filter reports.
-* **Admin filter visibility** — toggle each filter on or off from Settings.
-* **Elementor widget** — drag-and-drop filter sidebar widget for Elementor.
-* **WooCommerce Blocks** — native Gutenberg block for the block editor.
-* **Drag-and-drop ordering** — reorder filter sections visually from admin.
+* Filter by category, attribute, price, rating, color, brand, and product tags.
+* Auto-detect WooCommerce custom attributes and display them as filter lists.
+* Price range slider with synced min/max inputs.
+* Customer rating filter with visual star display.
+* Availability filters for in-stock and on-sale products.
+* Color swatches and brand filters with visual term support.
+
+= User Experience =
+
+* AJAX filtering — instant updates without full page reload.
+* Shareable filter URLs — bookmark and share filtered results.
+* Active filter chips with individual remove and clear-all actions.
+* Mobile-friendly drawer — responsive sidebar that collapses into a toggleable drawer.
+* Contextual product counts — show how many products match each filter option.
+* Show more / Show less for long filter lists.
+* Hierarchical category indentation.
+
+= Display & Styling =
+
+* 3 built-in skins — Classic, Graphite, and Sunrise.
+* 15+ color controls for accents, sidebar, chips, buttons, inputs, and empty states.
+* Typography controls — font family, font size, sidebar width, layout gap, and border radius.
+* Per-page switcher — let shoppers control how many products are displayed.
+* Styled no-results state with clear actions.
+
+= Integrations =
+
+* Shortcode support — use `[clandevs_catalog_filters]` to embed filters on any page.
+* Elementor widget — drag-and-drop filter sidebar widget.
+* WooCommerce Blocks — native Gutenberg block for the block editor.
+* Works with any WooCommerce-compatible theme.
+
+= Management =
+
+* Admin filter visibility — toggle each filter on or off from Settings.
+* Drag-and-drop ordering — reorder filter sections from admin.
+* Analytics dashboard — track how customers use filters with top-filter reports.
 
 = Shortcodes =
 
@@ -80,11 +95,21 @@ Filter analytics are stored locally in your WordPress database. Freemius SDK is 
 
 The plugin uses its own CSS for filter UI and is designed to work with any WooCommerce-compatible theme. You can adjust the sidebar width and layout gap in the Styling settings.
 
+= Is AJAX filtering supported? =
+
+Yes. Filtering updates the product list without reloading the page, and the current filter state is reflected in the URL.
+
+= Can I hide individual filters? =
+
+Yes. Use **Catalog Filters > Settings** to show or hide category, brand, price, rating, availability, color, and the apply button.
+
 == Screenshots ==
 
-1. Shop archive with sidebar filters
-2. Admin styling controls
-3. Analytics dashboard
+1. Filter sidebar on desktop — category, price, rating, brand, color, and attribute filters with active chips.
+2. Mobile drawer — compact filter drawer with clear-all and close actions on small screens.
+3. Admin settings screen — filter visibility toggles for each filter type.
+4. Active filter chips — top filter bar showing selected filters with individual remove actions.
+5. Price range slider — dual-handle slider with synced min/max inputs and contextual counts.
 
 == Changelog ==
 

@@ -51,6 +51,7 @@ class FilterOrdering {
 			'price'      => __( 'Price', 'clandevs-smart-catalog-filters' ),
 			'rating'     => __( 'Customer Rating', 'clandevs-smart-catalog-filters' ),
 			'colors'     => __( 'Colors', 'clandevs-smart-catalog-filters' ),
+			'tags'       => __( 'Tags', 'clandevs-smart-catalog-filters' ),
 			'attributes' => __( 'Attributes', 'clandevs-smart-catalog-filters' ),
 		);
 		echo '<div class="wrap">';
@@ -87,7 +88,7 @@ class FilterOrdering {
 	 * @return array<int, string>
 	 */
 	public static function get_default_order(): array {
-		return array( 'categories', 'brands', 'logic', 'price', 'rating', 'colors', 'attributes' );
+		return array( 'categories', 'brands', 'logic', 'price', 'rating', 'colors', 'tags', 'attributes' );
 	}
 
 	/**

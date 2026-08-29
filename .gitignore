@@ -27,3 +27,4 @@ composer.lock
 
 # Claude Code
 .claude/
+IMPROVEMENT-ROADMAP.md
