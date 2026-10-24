@@ -9,6 +9,11 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__);
 }
 
+// Simple in-memory option store so tests can read and write options.
+if (!isset($GLOBALS['__cscf_test_options'])) {
+    $GLOBALS['__cscf_test_options'] = array();
+}
+
 if (!function_exists('sanitize_key')) {
     function sanitize_key(string $key): string {
         $key = strtolower($key);
@@ -58,7 +63,42 @@ if (!function_exists('absint')) {
 
 if (!function_exists('get_option')) {
     function get_option(string $option, $default = false) {
+        if (array_key_exists($option, $GLOBALS['__cscf_test_options'])) {
+            return $GLOBALS['__cscf_test_options'][$option];
+        }
         return $default;
+    }
+}
+
+if (!function_exists('update_option')) {
+    function update_option(string $option, $value, $autoload = null): bool {
+        $GLOBALS['__cscf_test_options'][$option] = $value;
+        return true;
+    }
+}
+
+if (!function_exists('delete_option')) {
+    function delete_option(string $option): bool {
+        unset($GLOBALS['__cscf_test_options'][$option]);
+        return true;
+    }
+}
+
+if (!function_exists('get_transient')) {
+    function get_transient(string $transient) {
+        return get_option('_transient_' . $transient, false);
+    }
+}
+
+if (!function_exists('set_transient')) {
+    function set_transient(string $transient, $value, int $expiration = 0): bool {
+        return update_option('_transient_' . $transient, $value);
+    }
+}
+
+if (!function_exists('delete_transient')) {
+    function delete_transient(string $transient): bool {
+        return delete_option('_transient_' . $transient);
     }
 }
 
@@ -126,3 +166,4 @@ require_once dirname(__DIR__) . '/src/FilterSettings.php';
 require_once dirname(__DIR__) . '/src/StyleSettings.php';
 require_once dirname(__DIR__) . '/src/ShopFilters.php';
 require_once dirname(__DIR__) . '/src/Analytics.php';
+require_once dirname(__DIR__) . '/src/ReviewPrompt.php';

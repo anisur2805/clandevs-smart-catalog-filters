@@ -5,7 +5,7 @@ Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.4
+Stable tag: 2.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,7 +62,7 @@ Clandevs — WooCommerce Product Filter helps shoppers quickly find products usi
 
 = Privacy =
 
-This plugin does not connect to any external services. Freemius SDK is included for optional opt-in telemetry and update delivery. No data is sent without explicit user consent. Filter analytics are stored locally in your WordPress database.
+This plugin connects to no external services. Filter analytics are stored locally in your WordPress database, and no data leaves your site.
 
 == Installation ==
 
@@ -89,7 +89,7 @@ Yes. Go to **Catalog Filters > Styling** to change colors, skins, typography, la
 
 = Does this plugin collect any data? =
 
-Filter analytics are stored locally in your WordPress database. Freemius SDK is included for optional opt-in telemetry only — no data is sent without your explicit consent.
+Filter analytics are stored locally in your WordPress database only. The plugin does not send any data to external services, and it connects to no third-party APIs.
 
 = Will this work with my theme? =
 
@@ -108,10 +108,20 @@ Yes. Use **Catalog Filters > Settings** to show or hide category, brand, price, 
 1. Filter sidebar on desktop — category, price, rating, brand, color, and attribute filters with active chips.
 2. Mobile drawer — compact filter drawer with clear-all and close actions on small screens.
 3. Admin settings screen — filter visibility toggles for each filter type.
-4. Active filter chips — top filter bar showing selected filters with individual remove actions.
-5. Price range slider — dual-handle slider with synced min/max inputs and contextual counts.
 
 == Changelog ==
+
+= 2.0.6 =
+* Hardened filter analytics against malformed request data (nested arrays, non-finite prices, corrupt flush batches).
+* Fixed PHP warnings when hostile array parameters were passed in filter URLs.
+* Added continuous integration across PHP 7.4–8.4.
+* Removed obsolete Freemius deploy workflow and renamed the Composer package slug.
+
+= 2.0.5 =
+* Added an uninstall.php that honors the "Delete plugin data on uninstall" setting.
+* Deactivation no longer deletes plugin data — data is only removed on uninstall when that setting is enabled.
+* Filter analytics now feed the usage counter that powers the review prompt.
+* Removed outdated telemetry references from the readme.
 
 = 2.0.4 =
 * Stopped advertising Pro Import/Export screen to unlicensed users.
@@ -146,6 +156,12 @@ Yes. Use **Catalog Filters > Settings** to show or hide category, brand, price, 
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.0.6 =
+Hardened analytics input handling. No configuration changes needed.
+
+= 2.0.5 =
+Uninstall now honors the "Delete plugin data on uninstall" setting. Deactivation keeps your data.
 
 = 2.0.4 =
 Bug fixes and Pro hook additions.

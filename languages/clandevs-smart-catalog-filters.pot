@@ -2,641 +2,983 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clandevs Smart Catalog Filters 2.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/advanced-product-filter\n"
+"Project-Id-Version: Clandevs — WooCommerce Product Filter 2.0.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/clandevs-smart-catalog-filters\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-19T17:50:32+00:00\n"
+"POT-Creation-Date: 2026-10-24T17:56:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: clandevs-smart-catalog-filters\n"
 
 #. Plugin Name of the plugin
-#: advanced-product-filter.php
-#: src/AdminMenu.php:48
-#: src/AdminMenu.php:49
-msgid "Advanced Product Filter"
+#: clandevs-smart-catalog-filters.php
+msgid "Clandevs — WooCommerce Product Filter"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: advanced-product-filter.php
-msgid "https://clandevs.com/advancedproductfilter/"
+#: clandevs-smart-catalog-filters.php
+msgid "https://github.com/anisur2805/clandevs-smart-catalog-filters/"
 msgstr ""
 
 #. Description of the plugin
-#: advanced-product-filter.php
-msgid "Filter WooCommerce products by category, attributes, price, rating, stock, and more with AJAX and shortcode support (Elementor-friendly)."
+#: clandevs-smart-catalog-filters.php
+msgid "Filter WooCommerce products by category, price, availability, brand, color, rating, and custom attributes. AJAX-powered with analytics, full styling controls, and multiple skins."
 msgstr ""
 
 #. Author of the plugin
-#: advanced-product-filter.php
+#: clandevs-smart-catalog-filters.php
 msgid "Anisur Rahman"
 msgstr ""
 
 #. Author URI of the plugin
-#: advanced-product-filter.php
+#: clandevs-smart-catalog-filters.php
 msgid "https://portfolio.clandevs.com"
 msgstr ""
 
-#: src/Analytics.php:78
+#: clandevs-smart-catalog-filters.php:68
+#: dist/clandevs-smart-catalog-filters/clandevs-smart-catalog-filters.php:63
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:82
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:196
+#: src/AdminMenu.php:82
+#: src/StyleSettings.php:195
+msgid "Styling"
+msgstr ""
+
+#: clandevs-smart-catalog-filters.php:69
+#: dist/clandevs-smart-catalog-filters/clandevs-smart-catalog-filters.php:64
+#: dist/clandevs-smart-catalog-filters/src/ElementorWidget.php:56
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:95
+#: src/Elementor/FilterSidebarWidget.php:64
+#: src/FilterSettings.php:96
+msgid "Settings"
+msgstr ""
+
+#: clandevs-smart-catalog-filters.php:70
+#: dist/clandevs-smart-catalog-filters/clandevs-smart-catalog-filters.php:65
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:97
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:79
+#: src/AdminMenu.php:97
 #: src/Analytics.php:79
-#: src/Analytics.php:159
-msgid "Advanced Product Filter Analytics"
+msgid "Analytics"
 msgstr ""
 
+#: clandevs-smart-catalog-filters.php:99
+#: dist/clandevs-smart-catalog-filters/clandevs-smart-catalog-filters.php:94
+msgid "Clandevs Smart Catalog Filters requires WooCommerce to be installed and active."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:49
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:50
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:117
+#: src/AdminMenu.php:49
+#: src/AdminMenu.php:50
+#: src/AdminMenu.php:117
+msgid "Clandevs Smart Catalog Filters"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:83
+#: src/AdminMenu.php:83
+msgid "Tune the look and feel of the filters."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:87
+#: src/AdminMenu.php:87
+msgid "Filter Settings"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:88
+#: src/AdminMenu.php:88
+msgid "Choose which filter blocks appear on the storefront."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:92
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:24
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:25
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:57
+#: src/AdminMenu.php:92
+#: src/FilterOrdering.php:39
+#: src/FilterOrdering.php:40
+#: src/FilterOrdering.php:88
+msgid "Filter Order"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:93
+#: src/AdminMenu.php:93
+msgid "Reorder the storefront filter sections."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:98
+#: src/AdminMenu.php:98
+msgid "Review how customers use your filters."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:105
+#: src/AdminMenu.php:105
+msgid "Import / Export"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:106
+#: src/AdminMenu.php:106
+msgid "Backup or restore filter, style, and Pro settings."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/AdminMenu.php:118
+#: src/AdminMenu.php:118
+msgid "Quick access to filter styling, visibility, ordering, and reporting."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:78
+#: src/Analytics.php:78
+msgid "Catalog Filter Analytics"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:116
 #: src/Analytics.php:116
-msgid "You are not allowed to manage Advanced Product Filter analytics."
+msgid "You are not allowed to manage Clandevs Smart Catalog Filters analytics."
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:159
+#: src/Analytics.php:159
+msgid "Clandevs Smart Catalog Filters Analytics"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:160
 #: src/Analytics.php:160
 msgid "Track how customers use filters on your shop"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:172
 #: src/Analytics.php:172
 msgid "Analytics data has been reset."
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:180
 #: src/Analytics.php:180
 msgid "Total Filter Events"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:184
 #: src/Analytics.php:184
 msgid "Distinct Filter Values"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:188
 #: src/Analytics.php:188
 msgid "Last Event"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:195
 #: src/Analytics.php:195
 msgid "Top Used Filters"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:196
 #: src/Analytics.php:196
 msgid "Usage data updates when customers apply filters on the shop archive."
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:204
 #: src/Analytics.php:204
 msgid "No analytics data yet. Filter usage will appear here once customers start using the filters."
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:210
 #: src/Analytics.php:210
 msgid "Filter Type"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:211
 #: src/Analytics.php:211
 msgid "Value"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:212
 #: src/Analytics.php:212
 msgid "Events"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:241
 #: src/Analytics.php:241
 msgid "Are you sure you want to reset all analytics data?"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:243
 #: src/Analytics.php:243
 msgid "Reset Analytics Data"
 msgstr ""
 
-#: src/Analytics.php:553
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:555
+#: src/Analytics.php:567
 msgid "No data yet"
 msgstr ""
 
-#: src/Analytics.php:558
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:560
+#: src/Analytics.php:572
 msgid "Unknown"
 msgstr ""
 
-#: src/Analytics.php:575
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:577
+#: src/Analytics.php:589
 msgid "Category"
 msgstr ""
 
-#: src/Analytics.php:576
-#: src/ShopFilters.php:841
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:578
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:979
+#: src/Analytics.php:590
+#: src/ShopFilters.php:1007
 msgid "Brand"
 msgstr ""
 
-#: src/Analytics.php:577
-#: src/ShopFilters.php:772
-#: src/ShopFilters.php:844
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:579
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:862
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:982
+#: src/Analytics.php:591
+#: src/ShopFilters.php:880
+#: src/ShopFilters.php:1010
 msgid "Color"
 msgstr ""
 
-#: src/Analytics.php:578
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:580
+#: src/Analytics.php:592
 msgid "Logic"
 msgstr ""
 
-#: src/Analytics.php:579
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:581
+#: src/Analytics.php:593
 msgid "Rating"
 msgstr ""
 
-#: src/Analytics.php:580
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:582
+#: src/Analytics.php:594
 msgid "Minimum Price"
 msgstr ""
 
-#: src/Analytics.php:581
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:583
+#: src/Analytics.php:595
 msgid "Maximum Price"
 msgstr ""
 
-#: src/Analytics.php:582
-#: src/ShopFilters.php:764
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:584
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:771
+#: src/Analytics.php:596
+#: src/ShopFilters.php:787
 msgid "Availability"
 msgstr ""
 
 #. translators: %s: attribute taxonomy name
-#: src/Analytics.php:597
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:599
+#: src/Analytics.php:611
 #, php-format
 msgid "Attribute: %s"
 msgstr ""
 
-#: src/Analytics.php:613
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:615
+#: src/Analytics.php:627
 msgid "In stock"
 msgstr ""
 
-#: src/Analytics.php:614
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:616
+#: src/Analytics.php:628
 msgid "On sale"
 msgstr ""
 
-#: src/Analytics.php:615
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:617
+#: src/Analytics.php:629
 msgid "AND"
 msgstr ""
 
-#: src/Analytics.php:616
+#: dist/clandevs-smart-catalog-filters/src/Analytics.php:618
+#: src/Analytics.php:630
 msgid "OR"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/BlocksIntegration.php:30
+#: dist/clandevs-smart-catalog-filters/src/ElementorWidget.php:41
+#: src/BlocksIntegration.php:44
+#: src/Elementor/FilterSidebarWidget.php:34
+msgid "Catalog Filters"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ElementorWidget.php:63
+#: src/Elementor/FilterSidebarWidget.php:71
+msgid "Show Title"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ElementorWidget.php:74
+#: src/Elementor/FilterSidebarWidget.php:87
+msgid "Filter Products"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:48
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:785
+#: src/FilterOrdering.php:78
+#: src/ShopFilters.php:803
+msgid "Categories"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:49
+#: src/FilterOrdering.php:79
+msgid "Brands"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:50
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:801
+#: src/FilterOrdering.php:80
+#: src/ShopFilters.php:819
+msgid "Multi-select Logic"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:51
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:812
+#: src/FilterOrdering.php:81
+#: src/ShopFilters.php:830
+msgid "Price"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:52
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:832
+#: src/FilterOrdering.php:82
+#: src/ShopFilters.php:850
+msgid "Customer Rating"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:53
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:280
+#: src/FilterOrdering.php:83
+#: src/StyleSettings.php:279
+msgid "Colors"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:54
+#: src/FilterOrdering.php:85
+msgid "Attributes"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterOrdering.php:58
+#: src/FilterOrdering.php:89
+msgid "Drag and drop to reorder filters."
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:72
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:141
 #: src/FilterSettings.php:72
-#: src/FilterSettings.php:140
+#: src/FilterSettings.php:142
 msgid "Filter Visibility"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:77
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:149
 #: src/FilterSettings.php:77
-#: src/FilterSettings.php:148
+#: src/FilterSettings.php:150
 msgid "Show Categories"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:78
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:153
 #: src/FilterSettings.php:78
 #: src/FilterSettings.php:154
 msgid "Show Brands"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:79
 #: src/FilterSettings.php:79
 msgid "Show Price"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:80
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:161
 #: src/FilterSettings.php:80
-#: src/FilterSettings.php:166
+#: src/FilterSettings.php:162
 msgid "Show Customer Rating"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:81
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:165
 #: src/FilterSettings.php:81
-#: src/FilterSettings.php:172
+#: src/FilterSettings.php:166
 msgid "Show Availability"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:82
 #: src/FilterSettings.php:82
 msgid "Show Color"
 msgstr ""
 
-#: src/FilterSettings.php:93
-#: src/FilterSettings.php:94
-#: src/FilterSettings.php:119
-msgid "Advanced Product Filter Settings"
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:83
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:173
+#: src/FilterSettings.php:84
+#: src/FilterSettings.php:178
+msgid "Show Apply Filters Button"
 msgstr ""
 
-#: src/FilterSettings.php:120
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:94
+#: src/FilterSettings.php:95
+msgid "Catalog Filter Settings"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:120
+#: src/FilterSettings.php:121
+msgid "Clandevs Smart Catalog Filters Settings"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:121
+#: src/FilterSettings.php:122
 msgid "Configure which filters appear in your shop sidebar"
 msgstr ""
 
-#: src/FilterSettings.php:129
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:130
+#: src/FilterSettings.php:131
 msgid "Filter settings saved."
 msgstr ""
 
-#: src/FilterSettings.php:141
-#: src/FilterSettings.php:216
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:142
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:232
+#: src/FilterSettings.php:143
+#: src/FilterSettings.php:237
 msgid "Enable or disable individual filter blocks in the shop sidebar."
 msgstr ""
 
-#: src/FilterSettings.php:160
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:157
+#: src/FilterSettings.php:158
 msgid "Show Price Range"
 msgstr ""
 
-#: src/FilterSettings.php:178
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:169
+#: src/FilterSettings.php:170
 msgid "Show Color Filter"
 msgstr ""
 
-#: src/FilterSettings.php:186
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:193
+#: src/FilterSettings.php:198
 msgid "Data Management"
 msgstr ""
 
-#: src/FilterSettings.php:187
-msgid "Control what happens to Advanced Product Filter data when the plugin is removed."
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:194
+#: src/FilterSettings.php:199
+msgid "Control what happens to Clandevs Smart Catalog Filters data when the plugin is removed."
 msgstr ""
 
-#: src/FilterSettings.php:193
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:200
+#: src/FilterSettings.php:205
 msgid "Delete plugin data on uninstall"
 msgstr ""
 
-#: src/FilterSettings.php:195
-msgid "If enabled, plugin options and analytics data will be removed when Advanced Product Filter is uninstalled."
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:202
+#: src/FilterSettings.php:207
+msgid "If enabled, plugin options and analytics data will be removed when Clandevs Smart Catalog Filters is uninstalled."
 msgstr ""
 
-#: src/FilterSettings.php:202
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:209
+#: src/FilterSettings.php:214
 msgid "Save Settings"
 msgstr ""
 
-#: src/FilterSettings.php:252
+#: dist/clandevs-smart-catalog-filters/src/FilterSettings.php:268
+#: src/FilterSettings.php:273
 msgid "Enabled"
 msgstr ""
 
-#: src/ShopFilters.php:421
-#: src/ShopFilters.php:507
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:464
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:550
+#: src/ShopFilters.php:478
+#: src/ShopFilters.php:564
 msgid "Filters"
 msgstr ""
 
-#: src/ShopFilters.php:423
-#: src/ShopFilters.php:509
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:466
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:552
+#: src/ShopFilters.php:480
+#: src/ShopFilters.php:566
 msgid "Shop filters"
 msgstr ""
 
-#: src/ShopFilters.php:424
-#: src/ShopFilters.php:510
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:467
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:553
+#: src/ShopFilters.php:481
+#: src/ShopFilters.php:567
 msgid "Close filters"
 msgstr ""
 
-#: src/ShopFilters.php:566
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:609
+#: src/ShopFilters.php:623
 msgid "No products found"
 msgstr ""
 
-#: src/ShopFilters.php:567
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:610
+#: src/ShopFilters.php:624
 msgid "Try removing or changing some filters to find matching products."
 msgstr ""
 
-#: src/ShopFilters.php:569
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:612
+#: src/ShopFilters.php:626
 msgid "Clear all filters"
 msgstr ""
 
-#: src/ShopFilters.php:570
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:613
+#: src/ShopFilters.php:627
 msgid "Back to shop"
 msgstr ""
 
-#: src/ShopFilters.php:598
-#: src/ShopFilters.php:815
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:641
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:953
+#: src/ShopFilters.php:655
+#: src/ShopFilters.php:981
 msgid "Clear all"
 msgstr ""
 
-#: src/ShopFilters.php:628
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:671
+#: src/ShopFilters.php:685
 msgid "All"
 msgstr ""
 
-#: src/ShopFilters.php:631
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:674
+#: src/ShopFilters.php:688
 msgid "Products per page"
 msgstr ""
 
-#: src/ShopFilters.php:703
-msgid "Categories"
-msgstr ""
-
-#: src/ShopFilters.php:710
-msgid "Filter by Brands"
-msgstr ""
-
-#: src/ShopFilters.php:716
-msgid "Multi-select Logic"
-msgstr ""
-
-#: src/ShopFilters.php:717
-msgid "Match any selected option (OR)"
-msgstr ""
-
-#: src/ShopFilters.php:718
-msgid "Match all selected options (AND)"
-msgstr ""
-
-#: src/ShopFilters.php:723
-msgid "Price"
-msgstr ""
-
-#: src/ShopFilters.php:726
-msgid "Minimum price"
-msgstr ""
-
-#: src/ShopFilters.php:727
-msgid "Maximum price"
-msgstr ""
-
-#: src/ShopFilters.php:732
-msgid "Min"
-msgstr ""
-
-#: src/ShopFilters.php:733
-msgid "Max"
-msgstr ""
-
-#: src/ShopFilters.php:740
-msgid "Customer Rating"
-msgstr ""
-
-#: src/ShopFilters.php:752
-msgid "& up"
-msgstr ""
-
-#: src/ShopFilters.php:757
-msgid "Any"
-msgstr ""
-
-#: src/ShopFilters.php:765
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:772
+#: src/ShopFilters.php:788
 msgid "In stock only"
 msgstr ""
 
-#: src/ShopFilters.php:766
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:773
+#: src/ShopFilters.php:789
 msgid "On sale only"
 msgstr ""
 
-#: src/ShopFilters.php:790
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:795
+#: src/ShopFilters.php:813
+msgid "Filter by Brands"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:802
+#: src/ShopFilters.php:820
+msgid "Match any selected option (OR)"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:803
+#: src/ShopFilters.php:821
+msgid "Match all selected options (AND)"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:815
+#: src/ShopFilters.php:833
+msgid "Minimum price"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:816
+#: src/ShopFilters.php:834
+msgid "Maximum price"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:821
+#: src/ShopFilters.php:839
+msgid "Min"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:822
+#: src/ShopFilters.php:840
+msgid "Max"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:844
+#: src/ShopFilters.php:862
+msgid "& up"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:849
+#: src/ShopFilters.php:867
+msgid "Any"
+msgstr ""
+
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:919
+#: src/ShopFilters.php:947
 msgid "Apply Filters"
 msgstr ""
 
-#: src/ShopFilters.php:791
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:921
+#: src/ShopFilters.php:949
 msgid "Clear"
 msgstr ""
 
-#: src/ShopFilters.php:809
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:947
+#: src/ShopFilters.php:975
 msgid "Active Filters"
 msgstr ""
 
 #. translators: %s: product category name.
-#: src/ShopFilters.php:834
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:972
+#: src/ShopFilters.php:1000
 #, php-format
 msgid "Category: %s"
 msgstr ""
 
-#: src/ShopFilters.php:855
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:993
+#: src/ShopFilters.php:1024
 msgid "Logic: AND"
 msgstr ""
 
 #. translators: %s: minimum price with currency symbol.
-#: src/ShopFilters.php:864
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1002
+#: src/ShopFilters.php:1033
 #, php-format
 msgid "Min: %s"
 msgstr ""
 
 #. translators: %s: maximum price with currency symbol.
-#: src/ShopFilters.php:873
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1011
+#: src/ShopFilters.php:1042
 #, php-format
 msgid "Max: %s"
 msgstr ""
 
 #. translators: %d: star rating threshold.
-#: src/ShopFilters.php:882
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1020
+#: src/ShopFilters.php:1051
 #, php-format
 msgid "%d stars & up"
 msgstr ""
 
-#: src/ShopFilters.php:889
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1027
+#: src/ShopFilters.php:1058
 msgid "Stock: In stock"
 msgstr ""
 
-#: src/ShopFilters.php:896
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1034
+#: src/ShopFilters.php:1065
 msgid "Sale: On sale"
 msgstr ""
 
-#: src/ShopFilters.php:930
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1068
+#: src/ShopFilters.php:1099
 msgid "All Categories"
 msgstr ""
 
-#: src/ShopFilters.php:966
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1104
+#: src/ShopFilters.php:1135
 msgid "No options found."
 msgstr ""
 
-#: src/ShopFilters.php:974
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1112
+#: src/ShopFilters.php:1143
 msgid "Search options..."
 msgstr ""
 
-#: src/ShopFilters.php:974
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1112
+#: src/ShopFilters.php:1143
 msgid "Search filter options"
 msgstr ""
 
-#: src/ShopFilters.php:1147
+#: dist/clandevs-smart-catalog-filters/src/ShopFilters.php:1305
+#: src/ShopFilters.php:1336
 msgid "Product Pagination"
 msgstr ""
 
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:46
 #: src/StyleSettings.php:46
-msgid "You are not allowed to manage Advanced Product Filter styles."
+msgid "You are not allowed to manage Clandevs Smart Catalog Filters styles."
 msgstr ""
 
-#: src/StyleSettings.php:103
-#: src/StyleSettings.php:214
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:148
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:253
+#: src/StyleSettings.php:148
+#: src/StyleSettings.php:252
 msgid "Design Controls"
 msgstr ""
 
-#: src/StyleSettings.php:110
-#: src/StyleSettings.php:223
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:155
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:262
+#: src/StyleSettings.php:155
+#: src/StyleSettings.php:261
 msgid "Default Skin"
 msgstr ""
 
-#: src/StyleSettings.php:116
-#: src/StyleSettings.php:247
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:161
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:286
+#: src/StyleSettings.php:161
+#: src/StyleSettings.php:285
 msgid "Accent Color"
 msgstr ""
 
-#: src/StyleSettings.php:117
-#: src/StyleSettings.php:255
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:162
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:294
+#: src/StyleSettings.php:162
+#: src/StyleSettings.php:293
 msgid "Sidebar Background"
 msgstr ""
 
-#: src/StyleSettings.php:118
-#: src/StyleSettings.php:263
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:163
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:302
+#: src/StyleSettings.php:163
+#: src/StyleSettings.php:301
 msgid "Sidebar Border"
 msgstr ""
 
-#: src/StyleSettings.php:119
-#: src/StyleSettings.php:271
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:164
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:310
+#: src/StyleSettings.php:164
+#: src/StyleSettings.php:309
 msgid "Heading Color"
 msgstr ""
 
-#: src/StyleSettings.php:120
-#: src/StyleSettings.php:279
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:165
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:318
+#: src/StyleSettings.php:165
+#: src/StyleSettings.php:317
 msgid "Body Text Color"
 msgstr ""
 
-#: src/StyleSettings.php:121
-#: src/StyleSettings.php:287
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:166
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:326
+#: src/StyleSettings.php:166
+#: src/StyleSettings.php:325
 msgid "Muted Text Color"
 msgstr ""
 
-#: src/StyleSettings.php:122
-#: src/StyleSettings.php:297
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:167
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:336
+#: src/StyleSettings.php:167
+#: src/StyleSettings.php:335
 msgid "Filter Chip Background"
 msgstr ""
 
-#: src/StyleSettings.php:123
-#: src/StyleSettings.php:305
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:168
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:344
+#: src/StyleSettings.php:168
+#: src/StyleSettings.php:343
 msgid "Filter Chip Border"
 msgstr ""
 
-#: src/StyleSettings.php:124
-#: src/StyleSettings.php:313
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:169
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:352
+#: src/StyleSettings.php:169
+#: src/StyleSettings.php:351
 msgid "Primary Button Background"
 msgstr ""
 
-#: src/StyleSettings.php:125
-#: src/StyleSettings.php:321
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:170
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:360
+#: src/StyleSettings.php:170
+#: src/StyleSettings.php:359
 msgid "Primary Button Text"
 msgstr ""
 
-#: src/StyleSettings.php:126
-#: src/StyleSettings.php:329
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:171
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:368
+#: src/StyleSettings.php:171
+#: src/StyleSettings.php:367
 msgid "Input Background"
 msgstr ""
 
-#: src/StyleSettings.php:127
-#: src/StyleSettings.php:337
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:172
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:376
+#: src/StyleSettings.php:172
+#: src/StyleSettings.php:375
 msgid "Input/Control Border"
 msgstr ""
 
-#: src/StyleSettings.php:128
-#: src/StyleSettings.php:345
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:173
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:384
+#: src/StyleSettings.php:173
+#: src/StyleSettings.php:383
 msgid "No Results Background"
 msgstr ""
 
-#: src/StyleSettings.php:129
-#: src/StyleSettings.php:353
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:174
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:392
+#: src/StyleSettings.php:174
+#: src/StyleSettings.php:391
 msgid "No Results Border"
 msgstr ""
 
-#: src/StyleSettings.php:130
-#: src/StyleSettings.php:361
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:175
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:400
+#: src/StyleSettings.php:175
+#: src/StyleSettings.php:399
 msgid "No Results Shadow"
 msgstr ""
 
-#: src/StyleSettings.php:131
-#: src/StyleSettings.php:377
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:176
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:416
+#: src/StyleSettings.php:176
+#: src/StyleSettings.php:415
 msgid "Font Family"
 msgstr ""
 
-#: src/StyleSettings.php:132
-#: src/StyleSettings.php:389
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:177
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:428
+#: src/StyleSettings.php:177
+#: src/StyleSettings.php:427
 msgid "Base Font Size (px)"
 msgstr ""
 
-#: src/StyleSettings.php:133
-#: src/StyleSettings.php:401
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:178
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:440
+#: src/StyleSettings.php:178
+#: src/StyleSettings.php:439
 msgid "Sidebar Width (px)"
 msgstr ""
 
-#: src/StyleSettings.php:134
-#: src/StyleSettings.php:413
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:179
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:452
+#: src/StyleSettings.php:179
+#: src/StyleSettings.php:451
 msgid "Sidebar/Product Gap (px)"
 msgstr ""
 
-#: src/StyleSettings.php:135
-#: src/StyleSettings.php:433
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:180
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:472
+#: src/StyleSettings.php:180
+#: src/StyleSettings.php:471
 msgid "Sidebar Radius (px)"
 msgstr ""
 
-#: src/StyleSettings.php:136
-#: src/StyleSettings.php:445
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:181
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:484
+#: src/StyleSettings.php:181
+#: src/StyleSettings.php:483
 msgid "Input Radius (px)"
 msgstr ""
 
-#: src/StyleSettings.php:137
-#: src/StyleSettings.php:459
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:182
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:498
+#: src/StyleSettings.php:182
+#: src/StyleSettings.php:497
 msgid "Button Radius (px)"
 msgstr ""
 
-#: src/StyleSettings.php:138
-#: src/StyleSettings.php:471
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:183
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:510
+#: src/StyleSettings.php:183
+#: src/StyleSettings.php:509
 msgid "Section Spacing (px)"
 msgstr ""
 
-#: src/StyleSettings.php:142
-#: src/StyleSettings.php:486
-msgid "Custom CSS"
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:195
+#: src/StyleSettings.php:194
+msgid "Catalog Filter Styling"
 msgstr ""
 
-#: src/StyleSettings.php:157
-#: src/StyleSettings.php:158
-#: src/StyleSettings.php:182
-msgid "Advanced Product Filter Styling"
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:221
+#: src/StyleSettings.php:220
+msgid "Clandevs Smart Catalog Filters Styling"
 msgstr ""
 
-#: src/StyleSettings.php:183
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:222
+#: src/StyleSettings.php:221
 msgid "Customize the appearance of your shop filters"
 msgstr ""
 
-#: src/StyleSettings.php:192
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:231
+#: src/StyleSettings.php:230
 msgid "Style settings saved."
 msgstr ""
 
-#: src/StyleSettings.php:206
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:245
+#: src/StyleSettings.php:244
 msgid "Style settings have been reset to defaults."
 msgstr ""
 
-#: src/StyleSettings.php:215
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:254
+#: src/StyleSettings.php:253
 msgid "Choose a preset skin and fine-tune colors and typography."
 msgstr ""
 
-#: src/StyleSettings.php:241
-msgid "Colors"
-msgstr ""
-
-#: src/StyleSettings.php:372
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:411
+#: src/StyleSettings.php:410
 msgid "Typography & Layout"
 msgstr ""
 
-#: src/StyleSettings.php:427
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:466
+#: src/StyleSettings.php:465
 msgid "Border Radius"
 msgstr ""
 
-#: src/StyleSettings.php:496
-msgid "CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results"
-msgstr ""
-
-#: src/StyleSettings.php:513
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:535
+#: src/StyleSettings.php:534
 msgid "Save Styles"
 msgstr ""
 
-#: src/StyleSettings.php:515
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:537
+#: src/StyleSettings.php:536
 msgid "Are you sure you want to reset all style settings to defaults?"
 msgstr ""
 
-#: src/StyleSettings.php:517
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:539
+#: src/StyleSettings.php:538
 msgid "Reset to Defaults"
 msgstr ""
 
-#: src/StyleSettings.php:549
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:574
+#: src/StyleSettings.php:573
 msgid "Choose a preset skin and fine-tune colors/typography. CSS hooks: .wf-shop-layout, .wf-sidebar, .wf-chip, .wf-actions .button.alt, .wf-no-results."
 msgstr ""
 
-#: src/StyleSettings.php:828
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:842
+#: src/StyleSettings.php:840
 msgid "Classic"
 msgstr ""
 
-#: src/StyleSettings.php:829
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:843
+#: src/StyleSettings.php:841
 msgid "Graphite"
 msgstr ""
 
-#: src/StyleSettings.php:830
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:844
+#: src/StyleSettings.php:842
 msgid "Sunrise"
 msgstr ""
 
-#: advanced-product-filter.php:43
-msgid "Settings"
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:845
+#: src/StyleSettings.php:843
+msgid "Midnight"
 msgstr ""
 
-#: advanced-product-filter.php:44
-msgid "Styling"
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:846
+#: src/StyleSettings.php:844
+msgid "Sage"
 msgstr ""
 
-#: advanced-product-filter.php:45
-msgid "Analytics"
+#: dist/clandevs-smart-catalog-filters/src/StyleSettings.php:847
+#: src/StyleSettings.php:845
+msgid "Sand"
 msgstr ""
 
-#: advanced-product-filter.php:76
-msgid "Advanced Product Filter requires WooCommerce to be installed and active."
+#: src/FilterOrdering.php:84
+msgid "Tags"
+msgstr ""
+
+#: src/FilterSettings.php:83
+#: src/FilterSettings.php:174
+msgid "Show Product Tags"
+msgstr ""
+
+#. translators: %s: review URL.
+#: src/ReviewPrompt.php:72
+#, php-format
+msgid "Enjoying <strong>Clandevs — WooCommerce Product Filter</strong>? Please <a href=\"%s\" target=\"_blank\">leave a review</a> to help others discover it."
+msgstr ""
+
+#: src/ReviewPrompt.php:129
+msgid "Unauthorized"
+msgstr ""
+
+#: src/ReviewPrompt.php:134
+msgid "Invalid nonce"
+msgstr ""
+
+#: src/ReviewPrompt.php:138
+msgid "Dismissed"
+msgstr ""
+
+#: src/ShopFilters.php:890
+msgid "Product Tags"
+msgstr ""
+
+#: src/ShopFilters.php:1013
+msgid "Product Tag"
 msgstr ""

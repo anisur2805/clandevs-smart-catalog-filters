@@ -181,7 +181,6 @@ final class StyleSettings {
 		$this->register_number_field( 'control_radius', __( 'Input Radius (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
 		$this->register_number_field( 'button_radius', __( 'Button Radius (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
 		$this->register_number_field( 'section_spacing', __( 'Section Spacing (px)', 'clandevs-smart-catalog-filters' ), 0, 60, 1 );
-
 	}
 
 	/**
@@ -772,7 +771,6 @@ final class StyleSettings {
 				$sanitized[ $key ] = (string) $value;
 			}
 		}
-
 
 		return $sanitized;
 	}

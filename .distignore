@@ -17,6 +17,10 @@ __MACOSX
 .build
 node_modules
 
+# Internal working documents (never ship)
+IMPROVEMENT-ROADMAP.md
+PRODUCT-AUDIT-RESEARCH.md
+
 # Development and test files
 tests
 scripts

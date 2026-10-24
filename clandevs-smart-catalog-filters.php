@@ -3,7 +3,7 @@
  * Plugin Name: Clandevs — WooCommerce Product Filter
  * Plugin URI: https://github.com/anisur2805/clandevs-smart-catalog-filters/
  * Description: Filter WooCommerce products by category, price, availability, brand, color, rating, and custom attributes. AJAX-powered with analytics, full styling controls, and multiple skins.
- * Version: 2.0.4
+ * Version: 2.0.6
  * Author: Anisur Rahman
  * Author URI: https://portfolio.clandevs.com
  * Requires at least: 6.0
@@ -29,7 +29,7 @@ if ( defined( 'CSCF_VERSION' ) ) {
 	return;
 }
 
-define( 'CSCF_VERSION', '2.0.4' );
+define( 'CSCF_VERSION', '2.0.6' );
 define( 'CSCF_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 require_once __DIR__ . '/src/Autoloader.php';
@@ -44,28 +44,21 @@ register_deactivation_hook( __FILE__, 'cscf_deactivate' );
  * @return void
  */
 function cscf_activate() {
-	\ClandevsSmartCatalogFilters\ReviewPrompt::record_filter_use();
 	update_option( 'cscf_activation_time', (string) time(), false );
 	update_option( 'cscf_filter_use_count', 0, false );
 }
 
 /**
- * Clean up plugin data on deactivation.
+ * Clean up runtime state on deactivation.
+ *
+ * Plugin settings and analytics are intentionally kept across deactivation;
+ * data deletion happens on uninstall and is gated by the
+ * "Delete plugin data on uninstall" setting (see uninstall.php).
  *
  * @return void
  */
 function cscf_deactivate() {
-	$options = get_option( 'cscf_filter_options', array() );
-	$delete  = is_array( $options ) && isset( $options['delete_data_on_uninstall'] ) && 'yes' === $options['delete_data_on_uninstall'];
-
-	if ( ! $delete ) {
-		return;
-	}
-
-	delete_option( 'cscf_filter_options' );
-	delete_option( 'cscf_style_options' );
-	delete_option( 'cscf_analytics_data' );
-	delete_option( 'cscf_cache_last_changed' );
+	wp_clear_scheduled_hook( 'cscf_flush_analytics_buffer' );
 }
 
 add_filter(

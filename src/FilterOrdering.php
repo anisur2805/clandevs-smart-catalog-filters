@@ -11,13 +11,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Drag-and-drop filter ordering in admin.
+ */
 class FilterOrdering {
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
 	public function register_hooks(): void {
 		add_action( 'cscf_admin_menu_registered', array( $this, 'add_submenu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'wp_ajax_cscf_save_order', array( $this, 'ajax_save_order' ) );
 	}
 
+	/**
+	 * Add the Filter Order submenu page.
+	 *
+	 * @param string $menu_slug Parent menu slug.
+	 * @return void
+	 */
 	public function add_submenu( string $menu_slug ): void {
 		add_submenu_page(
 			$menu_slug,
@@ -29,6 +44,12 @@ class FilterOrdering {
 		);
 	}
 
+	/**
+	 * Enqueue admin assets on the Filter Order screen.
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @return void
+	 */
 	public function enqueue_admin_assets( string $hook ): void {
 		if ( 'clandevs-smart-catalog-filters_page_cscf-filter-order' !== $hook ) {
 			return;
@@ -36,12 +57,21 @@ class FilterOrdering {
 		wp_enqueue_style( 'cscf-admin', CSCF_PLUGIN_URL . 'assets/css/wf-admin.css', array(), CSCF_VERSION );
 		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_script( 'cscf-drag-drop', CSCF_PLUGIN_URL . 'assets/js/drag-drop.js', array( 'jquery', 'jquery-ui-sortable' ), CSCF_VERSION, true );
-		wp_localize_script( 'cscf-drag-drop', 'cscfOrder', array(
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'cscf_save_order' ),
-		) );
+		wp_localize_script(
+			'cscf-drag-drop',
+			'cscfOrder',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'cscf_save_order' ),
+			)
+		);
 	}
 
+	/**
+	 * Render the Filter Order admin page.
+	 *
+	 * @return void
+	 */
 	public function render_page(): void {
 		$order   = $this->get_filter_order();
 		$filters = array(
@@ -66,6 +96,11 @@ class FilterOrdering {
 		echo '</div>';
 	}
 
+	/**
+	 * AJAX handler that saves the custom filter order.
+	 *
+	 * @return void
+	 */
 	public function ajax_save_order(): void {
 		check_ajax_referer( 'cscf_save_order', 'nonce' );
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
@@ -76,6 +111,11 @@ class FilterOrdering {
 		wp_send_json_success();
 	}
 
+	/**
+	 * Get the saved filter order, normalized against defaults.
+	 *
+	 * @return array<int, string>
+	 */
 	public static function get_filter_order(): array {
 		$default = self::get_default_order();
 		$order   = get_option( 'cscf_filter_order', $default );

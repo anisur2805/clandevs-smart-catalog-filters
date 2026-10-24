@@ -26,7 +26,8 @@ final class License {
 	 * @param string $feature Feature key.
 	 * @return bool
 	 */
-	public static function can( string $feature ): bool {
+	public static function can( string $feature ): bool { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		unset( $feature );
 		return true;
 	}
 

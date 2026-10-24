@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Advanced Product Filter WPCS">
-	<description>WordPress coding standards for the Advanced Product Filter plugin.</description>
+<ruleset name="Clandevs Smart Catalog Filters WPCS">
+	<description>WordPress coding standards for the Clandevs Smart Catalog Filters plugin.</description>
 
 	<arg name="extensions" value="php"/>
 	<arg name="basepath" value="."/>
@@ -8,7 +8,8 @@
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
 
-	<file>advanced-product-filter.php</file>
+	<file>clandevs-smart-catalog-filters.php</file>
+	<file>uninstall.php</file>
 	<file>src</file>
 
 	<rule ref="WordPress">

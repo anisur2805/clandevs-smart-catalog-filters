@@ -423,12 +423,14 @@ final class Analytics {
 			delete_transient( $buffer_key );
 		}
 
-		$stats = $this->get_stats();
+		$stats            = $this->get_stats();
+		$processed_events = 0;
 
 		foreach ( $buffer as $event ) {
 			if ( ! isset( $event['filters'] ) || ! is_array( $event['filters'] ) ) {
 				continue;
 			}
+			++$processed_events;
 
 			$stats['total_events']   = isset( $stats['total_events'] ) ? absint( $stats['total_events'] ) + 1 : 1;
 			$stats['last_event_gmt'] = isset( $event['timestamp'] ) ? (string) $event['timestamp'] : gmdate( 'Y-m-d H:i:s' );
@@ -439,7 +441,7 @@ final class Analytics {
 
 			foreach ( $event['filters'] as $type => $values ) {
 				$type_key = sanitize_key( (string) $type );
-				if ( '' === $type_key ) {
+				if ( '' === $type_key || ctype_digit( $type_key ) || ! is_array( $values ) ) {
 					continue;
 				}
 
@@ -448,6 +450,10 @@ final class Analytics {
 				}
 
 				foreach ( $values as $value ) {
+					if ( ! is_scalar( $value ) ) {
+						continue;
+					}
+
 					$value_key = sanitize_title( (string) $value );
 					if ( '' === $value_key ) {
 						continue;
@@ -462,6 +468,12 @@ final class Analytics {
 					$stats['filters'][ $type_key ] = array_slice( $stats['filters'][ $type_key ], 0, self::MAX_DISTINCT_VALUES_PER_TYPE, true );
 				}
 			}
+		}
+
+		if ( $processed_events > 0 ) {
+			// Count this flush batch (up to 10 filtered pageviews) as a single
+			// aggregate filter use for the review-prompt threshold.
+			ReviewPrompt::record_filter_use();
 		}
 
 		update_option( self::OPTION_KEY, $stats, false );
@@ -685,6 +697,9 @@ final class Analytics {
 		if ( is_array( $raw ) ) {
 			$values = array_map(
 				static function ( $item ) {
+					if ( ! is_scalar( $item ) ) {
+						return '';
+					}
 					return sanitize_title( sanitize_text_field( (string) $item ) );
 				},
 				$raw
@@ -767,6 +782,10 @@ final class Analytics {
 		}
 
 		$value = (float) $raw;
+		if ( ! is_finite( $value ) ) {
+			return null;
+		}
+
 		if ( $value < 0 ) {
 			return 0.0;
 		}

@@ -11,11 +11,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Registers the catalog filters block with WordPress.
+ */
 class BlocksIntegration {
+
+	/**
+	 * Register hooks.
+	 *
+	 * @return void
+	 */
 	public function register_hooks(): void {
 		add_action( 'init', array( $this, 'register_block' ) );
 	}
 
+	/**
+	 * Register the block type on init.
+	 *
+	 * @return void
+	 */
 	public function register_block(): void {
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -38,10 +52,17 @@ class BlocksIntegration {
 		);
 	}
 
-	public function render_block( array $attributes ): string {
+	/**
+	 * Render the block output on the frontend.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes (unused; the block has no attributes).
+	 * @return string
+	 */
+	public function render_block( array $attributes ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		if ( ! class_exists( 'ClandevsSmartCatalogFilters\ShopFilters' ) ) {
 			return '';
 		}
+		unset( $attributes );
 		ob_start();
 		echo do_shortcode( '[clandevs_catalog_filters]' );
 		return ob_get_clean();
