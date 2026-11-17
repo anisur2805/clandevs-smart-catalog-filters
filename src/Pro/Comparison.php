@@ -33,6 +33,7 @@ class Comparison {
 	 */
 	public function register_hooks(): void {
 		add_action( 'cscf_after_filter_render', array( $this, 'render_compare_bar' ) );
+		add_action( 'wp_footer', array( $this, 'render_compare_modal' ) );
 		add_action( 'woocommerce_after_shop_loop_item', array( $this, 'render_compare_toggle' ), 20 );
 		add_action( 'wp_ajax_' . self::ACTION, array( $this, 'ajax_compare' ) );
 		add_action( 'wp_ajax_nopriv_' . self::ACTION, array( $this, 'ajax_compare' ) );
@@ -91,6 +92,23 @@ class Comparison {
 		echo '<button type="button" class="cscf-compare-go button">' . esc_html__( 'Compare', 'clandevs-smart-catalog-filters' ) . '</button>';
 		echo '<button type="button" class="cscf-compare-clear button">' . esc_html__( 'Clear', 'clandevs-smart-catalog-filters' ) . '</button>';
 		echo '</div>';
+	}
+
+	/**
+	 * Render the comparison modal at the end of the document.
+	 *
+	 * The modal is a full-viewport overlay, so it must not live inside the
+	 * filter sidebar: `.wf-sidebar` is `position: sticky`, which establishes a
+	 * stacking context that would trap the modal beneath the product grid no
+	 * matter how high its z-index is. Rendering it from wp_footer makes it a
+	 * direct child of <body>, where the overlay covers the whole page.
+	 *
+	 * @return void
+	 */
+	public function render_compare_modal(): void {
+		if ( ! \ClandevsSmartCatalogFilters\ShopFilters::is_catalog_screen() ) {
+			return;
+		}
 
 		echo '<div class="cscf-compare-modal" role="dialog" aria-modal="true" aria-label="' . esc_attr__( 'Product comparison', 'clandevs-smart-catalog-filters' ) . '" hidden>';
 		echo '<div class="cscf-compare-modal__inner">';

@@ -54,11 +54,11 @@
 		var $bar = $('.cscf-compare-bar');
 
 		if (!ids.length) {
-			$bar.attr('hidden', 'hidden');
+			$bar.prop('hidden', true);
 			return;
 		}
 
-		$bar.removeAttr('hidden');
+		$bar.prop('hidden', false);
 		$('.cscf-compare-count').text(cscfpCompare.i18n.count.replace('%d', ids.length));
 	}
 
@@ -70,9 +70,11 @@
 
 	function closeModal() {
 		$('.cscf-compare-modal')
-			.attr('hidden', 'hidden')
+			.prop('hidden', true)
 			.find('.cscf-compare-modal__body')
 			.empty();
+
+		$('body').removeClass('cscf-compare-open');
 	}
 
 	function loadComparison() {
@@ -85,7 +87,8 @@
 		var $body = $modal.find('.cscf-compare-modal__body');
 
 		$body.html('<p class="cscf-compare-loading">&hellip;</p>');
-		$modal.removeAttr('hidden');
+		$modal.prop('hidden', false);
+		$('body').addClass('cscf-compare-open');
 
 		$.post(cscfpCompare.ajaxUrl, {
 			action: cscfpCompare.action,

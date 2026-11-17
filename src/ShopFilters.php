@@ -797,9 +797,17 @@ final class ShopFilters {
 					return;
 				}
 
+				ob_start();
+				$rendered = $this->render_categories( $list_suffix );
+				$content  = (string) ob_get_clean();
+
+				if ( ! $rendered ) {
+					return;
+				}
+
 				echo '<div class="wf-filter-block">';
 				echo '<h4>' . esc_html__( 'Categories', 'clandevs-smart-catalog-filters' ) . '</h4>';
-				$this->render_categories( $list_suffix );
+				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup built by render_categories(), which escapes its own output.
 				echo '</div>';
 			},
 			'brands'     => function () use ( $show_brands, $list_suffix ) {
@@ -807,10 +815,15 @@ final class ShopFilters {
 					return;
 				}
 
-				echo '<div class="wf-filter-block">';
-				echo '<h4>' . esc_html__( 'Filter by Brands', 'clandevs-smart-catalog-filters' ) . '</h4>';
-				$this->render_term_checkboxes( $this->brand_taxonomy, 'cscf_brand[]', 'cscf_brand', $this->get_request_slug_list( 'cscf_brand' ), false, $list_suffix );
-				echo '</div>';
+				$this->render_term_filter_block(
+					__( 'Filter by Brands', 'clandevs-smart-catalog-filters' ),
+					$this->brand_taxonomy,
+					'cscf_brand[]',
+					'cscf_brand',
+					$this->get_request_slug_list( 'cscf_brand' ),
+					false,
+					$list_suffix
+				);
 			},
 			'logic'      => function () use ( $multiselect_mode ) {
 				echo '<div class="wf-filter-block">';
@@ -874,20 +887,30 @@ final class ShopFilters {
 					return;
 				}
 
-				echo '<div class="wf-filter-block">';
-				echo '<h4>' . esc_html__( 'Color', 'clandevs-smart-catalog-filters' ) . '</h4>';
-				$this->render_term_checkboxes( $this->color_taxonomy, 'cscf_color[]', 'cscf_color', $this->get_request_slug_list( 'cscf_color' ), true, $list_suffix );
-				echo '</div>';
+				$this->render_term_filter_block(
+					__( 'Color', 'clandevs-smart-catalog-filters' ),
+					$this->color_taxonomy,
+					'cscf_color[]',
+					'cscf_color',
+					$this->get_request_slug_list( 'cscf_color' ),
+					true,
+					$list_suffix
+				);
 			},
 			'tags'       => function () use ( $show_tags, $list_suffix ) {
 				if ( ! $show_tags || '' === $this->tag_taxonomy ) {
 					return;
 				}
 
-				echo '<div class="wf-filter-block">';
-				echo '<h4>' . esc_html__( 'Product Tags', 'clandevs-smart-catalog-filters' ) . '</h4>';
-				$this->render_term_checkboxes( $this->tag_taxonomy, 'cscf_tag[]', 'cscf_tag', $this->get_request_slug_list( 'cscf_tag' ), false, $list_suffix );
-				echo '</div>';
+				$this->render_term_filter_block(
+					__( 'Product Tags', 'clandevs-smart-catalog-filters' ),
+					$this->tag_taxonomy,
+					'cscf_tag[]',
+					'cscf_tag',
+					$this->get_request_slug_list( 'cscf_tag' ),
+					false,
+					$list_suffix
+				);
 			},
 			'attributes' => function () use ( $selected_attributes, $list_suffix ) {
 				foreach ( $this->custom_attribute_taxonomies as $attribute_taxonomy ) {
@@ -896,10 +919,15 @@ final class ShopFilters {
 					$selected           = isset( $selected_attributes[ $request_key ] ) && is_array( $selected_attributes[ $request_key ] ) ? $selected_attributes[ $request_key ] : array();
 					$is_color_attribute = $this->is_color_like_taxonomy( $attribute_taxonomy );
 
-					echo '<div class="wf-filter-block">';
-					echo '<h4>' . esc_html( $this->get_attribute_display_label( $attribute_taxonomy ) ) . '</h4>';
-					$this->render_term_checkboxes( $attribute_taxonomy, $field_name, $request_key, $selected, $is_color_attribute, $list_suffix );
-					echo '</div>';
+					$this->render_term_filter_block(
+						$this->get_attribute_display_label( $attribute_taxonomy ),
+						$attribute_taxonomy,
+						$field_name,
+						$request_key,
+						$selected,
+						$is_color_attribute,
+						$list_suffix
+					);
 				}
 			},
 		);
@@ -1072,9 +1100,9 @@ final class ShopFilters {
 	 * Render category radio options.
 	 *
 	 * @param string $list_suffix Unique suffix for DOM list id.
-	 * @return void
+	 * @return bool Whether any options were rendered.
 	 */
-	private function render_categories( string $list_suffix = '' ): void {
+	private function render_categories( string $list_suffix = '' ): bool {
 		$selected              = $this->get_request_slug( 'cscf_cat' );
 		$use_contextual_counts = $this->has_filter_query_args();
 		$terms                 = $this->get_terms_cached(
@@ -1088,7 +1116,7 @@ final class ShopFilters {
 		);
 
 		if ( empty( $terms ) ) {
-			return;
+			return false;
 		}
 
 		$list_id = 'wf-cat-list-' . sanitize_key( $list_suffix );
@@ -1104,6 +1132,38 @@ final class ShopFilters {
 			echo '<li><label class="' . esc_attr( $label_class ) . '"><input type="radio" name="cscf_cat" value="' . esc_attr( $term->slug ) . '"' . disabled( $disabled, true, false ) . ' ' . checked( $selected, $term->slug, false ) . ' /> <span>' . esc_html( $term->name ) . '</span><small>' . esc_html( (string) $live_count ) . '</small></label></li>';
 		}
 		echo '</ul>';
+
+		return true;
+	}
+
+	/**
+	 * Render a titled filter block for a taxonomy, skipping it when empty.
+	 *
+	 * A section with no terms is omitted entirely rather than showing a heading
+	 * above an empty state, which keeps the sidebar free of dead headings.
+	 *
+	 * @param string $heading           Section heading.
+	 * @param string $taxonomy          Taxonomy key.
+	 * @param string $field_name        HTML field name.
+	 * @param string $request_key       Request key.
+	 * @param array  $selected_values   Selected term slugs.
+	 * @param bool   $show_color_swatch Whether to render color swatches.
+	 * @param string $list_suffix       Unique suffix for DOM list id.
+	 * @return void
+	 */
+	private function render_term_filter_block( string $heading, string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch, string $list_suffix ): void {
+		ob_start();
+		$rendered = $this->render_term_checkboxes( $taxonomy, $field_name, $request_key, $selected_values, $show_color_swatch, $list_suffix );
+		$content  = (string) ob_get_clean();
+
+		if ( ! $rendered ) {
+			return;
+		}
+
+		echo '<div class="wf-filter-block">';
+		echo '<h4>' . esc_html( $heading ) . '</h4>';
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup built by render_term_checkboxes(), which escapes its own output.
+		echo '</div>';
 	}
 
 	/**
@@ -1115,9 +1175,9 @@ final class ShopFilters {
 	 * @param array  $selected_values    Selected term slugs.
 	 * @param bool   $show_color_swatch  Whether to render color swatches.
 	 * @param string $list_suffix        Unique suffix for DOM list id.
-	 * @return void
+	 * @return bool Whether any options were rendered.
 	 */
-	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false, string $list_suffix = '' ): void {
+	private function render_term_checkboxes( string $taxonomy, string $field_name, string $request_key, array $selected_values, bool $show_color_swatch = false, string $list_suffix = '' ): bool {
 		$use_contextual_counts = $this->has_filter_query_args();
 		$terms                 = $this->get_terms_cached(
 			array(
@@ -1130,8 +1190,7 @@ final class ShopFilters {
 		);
 
 		if ( empty( $terms ) ) {
-			echo '<p class="wf-empty">' . esc_html__( 'No options found.', 'clandevs-smart-catalog-filters' ) . '</p>';
-			return;
+			return false;
 		}
 
 		$list_id = 'wf-term-list-' . sanitize_key( $taxonomy . '-' . $list_suffix );
@@ -1170,6 +1229,8 @@ final class ShopFilters {
 			echo '</li>';
 		}
 		echo '</ul>';
+
+		return true;
 	}
 
 	/**

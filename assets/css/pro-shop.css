@@ -36,16 +36,19 @@
 	color: #1f2937;
 }
 
+/* The modal is rendered from wp_footer as a direct child of <body>, so nothing
+   traps it in a lower stacking context. */
 .cscf-compare-modal {
 	position: fixed;
 	inset: 0;
-	z-index: 99999;
+	z-index: 999999;
 	display: flex;
 	align-items: flex-start;
 	justify-content: center;
 	padding: 24px;
 	overflow: auto;
 	background: rgba(15, 23, 42, 0.88);
+	overscroll-behavior: contain;
 }
 
 .cscf-compare-modal[hidden] {
@@ -56,9 +59,11 @@
 	position: relative;
 	width: 100%;
 	max-width: 1100px;
+	margin: auto;
 	padding: 24px;
 	border-radius: 12px;
 	background: #ffffff;
+	box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
 }
 
 .cscf-compare-close {
@@ -73,27 +78,56 @@
 	cursor: pointer;
 }
 
+/* Lock page scroll behind the open modal. */
+body.cscf-compare-open {
+	overflow: hidden;
+}
+
 .cscf-compare-modal__body {
 	overflow-x: auto;
 }
 
 .cscf-compare-table {
 	width: 100%;
+	min-width: 640px;
 	border-collapse: collapse;
+	font-size: 14px;
 }
 
 .cscf-compare-table th,
 .cscf-compare-table td {
-	padding: 12px;
+	padding: 12px 14px;
 	text-align: left;
 	vertical-align: top;
-	border: 1px solid #e5e7eb;
+	border-bottom: 1px solid #e5e7eb;
 }
 
-.cscf-compare-table th {
+/* Product header row: one column per compared product. */
+.cscf-compare-table thead th {
+	padding-bottom: 16px;
 	width: 160px;
 	font-weight: 600;
+	color: #1f2937;
+	vertical-align: bottom;
+	border-bottom: 2px solid #e5e7eb;
+}
+
+.cscf-compare-table thead td {
+	padding-bottom: 16px;
+	border-bottom: 2px solid #e5e7eb;
+}
+
+/* Row label column. */
+.cscf-compare-table tbody th {
+	width: 160px;
+	font-weight: 600;
+	color: #1f2937;
 	background: #f8fafc;
+}
+
+.cscf-compare-table tbody tr:last-child th,
+.cscf-compare-table tbody tr:last-child td {
+	border-bottom: 0;
 }
 
 .cscf-compare-image {
