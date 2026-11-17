@@ -219,8 +219,7 @@ final class FilterSettings {
 			/**
 			 * Fires after the filter settings form.
 			 *
-			 * The Pro add-on uses this to render the drag-and-drop filter
-			 * ordering list on this screen.
+			 * Available as an extension point for additional settings panels.
 			 */
 			do_action( 'cscf_filter_settings_after_form' );
 			?>

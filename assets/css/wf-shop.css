@@ -603,6 +603,17 @@ body.wf-no-scroll {
   outline-offset: 2px;
 }
 
+/* Apply/Clear until the shopper changes something. */
+.wf-actions .wf-btn[disabled],
+.wf-actions .wf-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  filter: none;
+  pointer-events: none;
+}
+
 .wf-products .woocommerce-pagination {
   margin-top: 28px;
 }

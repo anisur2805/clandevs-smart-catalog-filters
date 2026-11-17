@@ -2,6 +2,10 @@
 /**
  * PSR-4 autoloader.
  *
+ * Maps one or more namespace prefixes onto source directories. The plugin's
+ * own namespace maps to src/; the merged Pro code keeps its historical
+ * ClandevsSmartCatalogFiltersPro namespace and maps onto src/Pro.
+ *
  * @package ClandevsSmartCatalogFilters
  */
 
@@ -16,28 +20,47 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Autoloader {
 	/**
-	 * Namespace prefix.
+	 * Default namespace prefix.
 	 *
 	 * @var string
 	 */
 	private const PREFIX = __NAMESPACE__ . '\\';
 
 	/**
-	 * Base directory.
+	 * Registered namespace prefixes mapped to base directories.
 	 *
-	 * @var string
+	 * @var array<string, string>
 	 */
-	private static $base_dir = '';
+	private static $base_dirs = array();
 
 	/**
-	 * Register autoloader callback.
+	 * Whether the spl autoloader callback has been registered.
 	 *
-	 * @param string $base_dir Base directory for namespaced classes.
+	 * @var bool
+	 */
+	private static $registered = false;
+
+	/**
+	 * Register a namespace prefix.
+	 *
+	 * Without a prefix, the plugin's own namespace maps onto the given
+	 * directory, matching the historical single-mapping behaviour.
+	 *
+	 * @param string      $base_dir Base directory for namespaced classes.
+	 * @param string|null $prefix   Namespace prefix ending with a backslash.
 	 * @return void
 	 */
-	public static function register( string $base_dir ): void {
-		self::$base_dir = rtrim( $base_dir, '/\\' ) . DIRECTORY_SEPARATOR;
-		spl_autoload_register( array( __CLASS__, 'load' ) );
+	public static function register( string $base_dir, ?string $prefix = null ): void {
+		if ( null === $prefix || '' === $prefix ) {
+			$prefix = self::PREFIX;
+		}
+
+		self::$base_dirs[ $prefix ] = rtrim( $base_dir, '/\\' ) . DIRECTORY_SEPARATOR;
+
+		if ( ! self::$registered ) {
+			spl_autoload_register( array( __CLASS__, 'load' ) );
+			self::$registered = true;
+		}
 	}
 
 	/**
@@ -47,16 +70,20 @@ final class Autoloader {
 	 * @return void
 	 */
 	public static function load( string $class_name ): void {
-		$prefix_length = strlen( self::PREFIX );
-		if ( 0 !== strncmp( self::PREFIX, $class_name, $prefix_length ) ) {
-			return;
-		}
+		foreach ( self::$base_dirs as $prefix => $base_dir ) {
+			$prefix_length = strlen( $prefix );
 
-		$relative_class = substr( $class_name, $prefix_length );
-		$file           = self::$base_dir . str_replace( '\\', DIRECTORY_SEPARATOR, $relative_class ) . '.php';
+			if ( 0 !== strncmp( $prefix, $class_name, $prefix_length ) ) {
+				continue;
+			}
 
-		if ( is_readable( $file ) ) {
-			require_once $file;
+			$relative_class = substr( $class_name, $prefix_length );
+			$file           = $base_dir . str_replace( '\\', DIRECTORY_SEPARATOR, $relative_class ) . '.php';
+
+			if ( is_readable( $file ) ) {
+				require_once $file;
+				return;
+			}
 		}
 	}
 }

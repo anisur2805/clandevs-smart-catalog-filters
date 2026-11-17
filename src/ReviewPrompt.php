@@ -37,7 +37,27 @@ final class ReviewPrompt {
 	 */
 	public function register_hooks(): void {
 		add_action( 'admin_notices', array( $this, 'maybe_render_notice' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_script' ) );
 		add_action( 'wp_ajax_cscf_dismiss_review_prompt', array( $this, 'handle_dismiss' ) );
+	}
+
+	/**
+	 * Enqueue the script that persists the notice dismissal.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_script(): void {
+		if ( ! $this->should_show_notice() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'cscf-review-prompt',
+			CSCF_PLUGIN_URL . 'assets/js/review-prompt.js',
+			array( 'jquery' ),
+			CSCF_VERSION,
+			true
+		);
 	}
 
 	/**
@@ -61,7 +81,11 @@ final class ReviewPrompt {
 		}
 
 		$review_url  = 'https://wordpress.org/support/plugin/clandevs-smart-catalog-filters/reviews/#new-post';
-		$dismiss_url = wp_nonce_url( admin_url( 'admin-ajax.php?action=cscf_dismiss_review_prompt' ), 'cscf_dismiss_review_prompt' );
+		$dismiss_url = wp_nonce_url(
+			admin_url( 'admin-ajax.php?action=cscf_dismiss_review_prompt' ),
+			'cscf_dismiss_review_prompt',
+			'nonce'
+		);
 		?>
 		<div class="notice notice-info is-dismissible cscf-review-notice" data-dismiss-url="<?php echo esc_url( $dismiss_url ); ?>">
 			<p>
@@ -129,8 +153,7 @@ final class ReviewPrompt {
 			wp_send_json_error( array( 'message' => __( 'Unauthorized', 'clandevs-smart-catalog-filters' ) ) );
 		}
 
-		check_ajax_referer( 'cscf_dismiss_review_prompt', 'nonce', false );
-		if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( (string) $_GET['nonce'] ) ), 'cscf_dismiss_review_prompt' ) ) {
+		if ( ! check_ajax_referer( 'cscf_dismiss_review_prompt', 'nonce', false ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce', 'clandevs-smart-catalog-filters' ) ) );
 		}
 

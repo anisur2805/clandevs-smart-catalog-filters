@@ -349,10 +349,8 @@ final class ShopFilters {
 			return $per_page;
 		}
 
-		if ( ! $this->has_filter_query_args() ) {
-			return $per_page;
-		}
-
+		// The per-page switcher is itself an explicit request, so it applies on
+		// an otherwise unfiltered archive too.
 		$requested = $this->get_request_absint( 'cscf_per_page' );
 		if ( $requested > 0 && $requested <= self::MAX_PER_PAGE ) {
 			return $requested;
@@ -944,9 +942,9 @@ final class ShopFilters {
 
 		echo '<div class="' . esc_attr( $show_apply_button ? 'wf-actions' : 'wf-empty-actions' ) . '">';
 		if ( $show_apply_button ) {
-			echo '<button type="submit" class="wf-btn wf-btn-primary">' . esc_html__( 'Apply Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
+			echo '<button type="submit" class="wf-btn wf-btn-primary" data-wf-apply disabled>' . esc_html__( 'Apply Filters', 'clandevs-smart-catalog-filters' ) . '</button>';
 		}
-		echo '<a class="wf-btn wf-btn-secondary" href="' . esc_url( $action ) . '">' . esc_html__( 'Clear', 'clandevs-smart-catalog-filters' ) . '</a>';
+		echo '<a class="wf-btn wf-btn-secondary" data-wf-clear href="' . esc_url( $action ) . '" aria-disabled="true">' . esc_html__( 'Clear', 'clandevs-smart-catalog-filters' ) . '</a>';
 		echo '</div>';
 		echo '</form>';
 
@@ -2280,6 +2278,35 @@ final class ShopFilters {
 	}
 
 	/**
+	 * Whether the current request renders the catalog UI anywhere on the page.
+	 *
+	 * Covers the shop and product taxonomies, plus singular pages that embed the
+	 * shortcode, the block, or the Elementor widget. Frontend integrations that
+	 * render alongside these filters use this to decide whether to enqueue their
+	 * assets, so their controls are never rendered without the matching script.
+	 *
+	 * @return bool
+	 */
+	public static function is_catalog_screen(): bool {
+		if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
+			return true;
+		}
+
+		if ( ! is_singular() ) {
+			return false;
+		}
+
+		$post_id      = get_queried_object_id();
+		$post_content = (string) get_post_field( 'post_content', $post_id );
+
+		if ( has_shortcode( $post_content, self::SHORTCODE_TAG ) || has_shortcode( $post_content, self::LEGACY_SHORTCODE_TAG ) ) {
+			return true;
+		}
+
+		return function_exists( 'has_block' ) && has_block( 'cscf/catalog-filters', $post_id );
+	}
+
+	/**
 	 * Determine whether the current singular page contains the shortcode.
 	 *
 	 * @return bool
@@ -2341,9 +2368,11 @@ final class ShopFilters {
 		$cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
 		if ( is_array( $cached ) && isset( $cached['min'], $cached['max'] ) ) {
-			return array(
-				'min' => (float) $cached['min'],
-				'max' => (float) $cached['max'],
+			return $this->filter_price_bounds(
+				array(
+					'min' => (float) $cached['min'],
+					'max' => (float) $cached['max'],
+				)
 			);
 		}
 
@@ -2381,6 +2410,25 @@ final class ShopFilters {
 			'max' => $max,
 		);
 
+		// Cache the store's base-currency bounds. The filter in
+		// filter_price_bounds() converts them for the active currency, so caching
+		// the filtered result would pin one shopper's currency onto every other
+		// visitor of the shared cache entry.
+		wp_cache_set( $cache_key, $bounds, self::CACHE_GROUP, 300 );
+
+		return $this->filter_price_bounds( $bounds );
+	}
+
+	/**
+	 * Apply the price bounds filter for the active currency.
+	 *
+	 * Kept separate from the cache so the stored bounds stay in the store's base
+	 * currency and are converted per request.
+	 *
+	 * @param array{min: float, max: float} $bounds Price bounds.
+	 * @return array{min: float, max: float}
+	 */
+	private function filter_price_bounds( array $bounds ): array {
 		/**
 		 * Filter the price boundaries for the price slider.
 		 * The Pro add-on uses this to convert prices for multi-currency setups.
@@ -2388,11 +2436,7 @@ final class ShopFilters {
 		 * @param array  $bounds  Price bounds with keys: min, max.
 		 * @param string $context Where the bounds are used ('slider').
 		 */
-		$bounds = apply_filters( 'cscf_price_bounds', $bounds, 'slider' );
-
-		wp_cache_set( $cache_key, $bounds, self::CACHE_GROUP, 300 );
-
-		return $bounds;
+		return (array) apply_filters( 'cscf_price_bounds', $bounds, 'slider' );
 	}
 
 	/**

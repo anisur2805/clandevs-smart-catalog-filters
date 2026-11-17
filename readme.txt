@@ -5,11 +5,11 @@ Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 2.0.6
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AJAX-powered WooCommerce product filter with category, attribute, price, rating, color, brand, and tag filters. Includes mobile drawer, Elementor widget, Gutenberg block, analytics, and shareable filter URLs.
+AJAX-powered WooCommerce product filter with category, attribute, price, rating, color, brand, and tag filters. Includes saved presets, product comparison, SEO filter URLs, advanced analytics, date filtering, and variation filters.
 
 == Description ==
 
@@ -54,6 +54,13 @@ Clandevs — WooCommerce Product Filter helps shoppers quickly find products usi
 * Admin filter visibility — toggle each filter on or off from Settings.
 * Drag-and-drop ordering — reorder filter sections from admin.
 * Analytics dashboard — track how customers use filters with top-filter reports.
+* Saved filter presets — shoppers save and share filter combinations; store owners publish store presets.
+* Product comparison bar — shoppers add products to a side-by-side comparison table.
+* Date range filter — narrow shop archives to products from a chosen period.
+* Variation filter — filter products by their variations' attributes and stock.
+* SEO filter URLs — pretty, human-readable paths like `/shop/category/shoes/price/50-200/`.
+* Import / Export — move filter, style, ordering, swatch, and preset settings between sites as JSON.
+* Multi-currency price slider — respects WCPay Multi-Currency, WPML, CURCY, and Aelia when active.
 
 = Shortcodes =
 
@@ -111,6 +118,14 @@ Yes. Use **Catalog Filters > Settings** to show or hide category, brand, price, 
 
 == Changelog ==
 
+= 3.0.0 =
+* Every former Pro add-on feature is now built in: saved filter presets, product comparison, advanced analytics with period comparison and trend chart, SEO-friendly filter URLs, date range filter, variation filter, visual swatches for attribute terms, multi-currency price slider support, import/export, filter ordering UI, and both block and Elementor integrations.
+* No license key or add-on is needed anymore. If the old Pro add-on is still active, it is deactivated automatically and its settings carry over unchanged.
+* Existing Pro data (presets, swatches, analytics, SEO URL settings) is read in place — nothing to reconfigure.
+* Filter settings screen gained attribute-term visual swatch controls and filter section ordering.
+* Shop filters gained date range inputs, variation filters, product comparison, and preset save/share.
+* Added uninstall cleanup for all formerly Pro options and analytics data under the existing "Delete plugin data on uninstall" setting.
+
 = 2.0.6 =
 * Hardened filter analytics against malformed request data (nested arrays, non-finite prices, corrupt flush batches).
 * Fixed PHP warnings when hostile array parameters were passed in filter URLs.
@@ -156,6 +171,9 @@ Yes. Use **Catalog Filters > Settings** to show or hide category, brand, price, 
 * Initial release
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+The Pro add-on's features are now included in this plugin — no license or separate add-on needed. The old Pro add-on is deactivated automatically; all settings and data carry over.
 
 = 2.0.6 =
 Hardened analytics input handling. No configuration changes needed.

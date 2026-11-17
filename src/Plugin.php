@@ -140,9 +140,16 @@ final class Plugin {
 		$filter_ordering = new FilterOrdering();
 		$filter_ordering->register_hooks();
 
+		// The Pro feature set ships with this plugin. Its classes keep the
+		// historical Pro namespace and are guarded so a stale Pro add-on
+		// cannot boot a second copy of the same services.
+		if ( class_exists( '\ClandevsSmartCatalogFiltersPro\ProPlugin' ) ) {
+			\ClandevsSmartCatalogFiltersPro\ProPlugin::boot();
+		}
+
 		/**
-		 * Fires after all free plugin services have been booted.
-		 * The Pro add-on uses this to boot its own services.
+		 * Fires after all plugin services (free and merged Pro) have booted.
+		 * Kept as an extension point for legacy integrations.
 		 *
 		 * @param self $plugin Plugin instance.
 		 */

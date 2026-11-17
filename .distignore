@@ -16,6 +16,7 @@ __MACOSX
 /_dist
 .build
 node_modules
+*.zip
 
 # Internal working documents (never ship)
 IMPROVEMENT-ROADMAP.md

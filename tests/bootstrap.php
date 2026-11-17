@@ -9,6 +9,16 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__);
 }
 
+// The merged Pro classes keep their historical constants; the tests for
+// Presets, SEO URLs and Advanced Analytics exercise those classes.
+if (!defined('CSCFP_VERSION')) {
+    define('CSCFP_VERSION', 'test');
+}
+
+if (!defined('CSCFP_PLUGIN_URL')) {
+    define('CSCFP_PLUGIN_URL', 'https://example.test/wp-content/plugins/pro/');
+}
+
 // Simple in-memory option store so tests can read and write options.
 if (!isset($GLOBALS['__cscf_test_options'])) {
     $GLOBALS['__cscf_test_options'] = array();
@@ -110,7 +120,7 @@ if (!function_exists('__')) {
 
 if (!function_exists('taxonomy_exists')) {
     function taxonomy_exists(string $taxonomy): bool {
-        return in_array($taxonomy, array('pa_brand', 'pa_color', 'pa_size'), true);
+        return in_array($taxonomy, array('pa_brand', 'pa_color', 'pa_size', 'product_cat'), true);
     }
 }
 
@@ -161,9 +171,52 @@ if (!function_exists('sanitize_hex_color')) {
     }
 }
 
+if (!function_exists('wp_parse_str')) {
+    function wp_parse_str(string $input, &$result): void {
+        parse_str($input, $result);
+    }
+}
+
+if (!function_exists('wp_parse_url')) {
+    function wp_parse_url(string $url, int $component = -1) {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- this stub IS the wp_parse_url implementation.
+        return parse_url($url, $component);
+    }
+}
+
+if (!function_exists('trailingslashit')) {
+    function trailingslashit(string $value): string {
+        return rtrim($value, "/\\") . '/';
+    }
+}
+
+if (!function_exists('home_url')) {
+    function home_url(string $path = '/'): string {
+        return 'https://example.test' . $path;
+    }
+}
+
+if (!function_exists('wc_get_page_permalink')) {
+    function wc_get_page_permalink(string $page): string {
+        return 'https://example.test/shop/';
+    }
+}
+
+if (!function_exists('apply_filters')) {
+    function apply_filters(string $hook, $value) {
+        return $value;
+    }
+}
+
 require_once dirname(__DIR__) . '/src/License.php';
 require_once dirname(__DIR__) . '/src/FilterSettings.php';
 require_once dirname(__DIR__) . '/src/StyleSettings.php';
 require_once dirname(__DIR__) . '/src/ShopFilters.php';
 require_once dirname(__DIR__) . '/src/Analytics.php';
 require_once dirname(__DIR__) . '/src/ReviewPrompt.php';
+
+// The merged Pro classes under test (they keep the Pro namespace).
+require_once dirname(__DIR__) . '/src/Pro/DateRangeFilter.php';
+require_once dirname(__DIR__) . '/src/Pro/AdvancedAnalytics.php';
+require_once dirname(__DIR__) . '/src/Pro/SEOFriendlyURLs.php';
+require_once dirname(__DIR__) . '/src/Pro/Presets.php';

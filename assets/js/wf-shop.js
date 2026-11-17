@@ -133,6 +133,50 @@
       setDrawerState(false);
     }
 
+    /**
+     * Enable the Apply/Clear actions only once the form differs from what is
+     * currently applied, so they are not clickable with nothing to do.
+     */
+    function syncActionState() {
+      var form = layout.querySelector('.wf-filter-form');
+      if (!form) {
+        return;
+      }
+
+      var applyButton = form.querySelector('[data-wf-apply]');
+      var clearLink = form.querySelector('[data-wf-clear]');
+      var isDirty = true;
+
+      try {
+        var current = new URL(window.location.href).searchParams;
+        var next = new URL(buildUrlFromForm(form), window.location.origin).searchParams;
+        var currentKeys = Array.from(current.keys()).sort();
+        var nextKeys = Array.from(next.keys()).sort();
+
+        isDirty = currentKeys.join('&') !== nextKeys.join('&');
+
+        if (!isDirty) {
+          // Same parameter names; compare the values too.
+          for (var i = 0; i < currentKeys.length; i += 1) {
+            if (current.getAll(currentKeys[i]).join(',') !== next.getAll(nextKeys[i]).join(',')) {
+              isDirty = true;
+              break;
+            }
+          }
+        }
+      } catch (error) {
+        isDirty = true;
+      }
+
+      if (applyButton) {
+        applyButton.disabled = !isDirty;
+      }
+
+      if (clearLink) {
+        clearLink.setAttribute('aria-disabled', isDirty ? 'false' : 'true');
+      }
+    }
+
     function initMobileDrawer() {
       if (!mobileBreakpoint.matches) {
         closeDrawer();
@@ -156,6 +200,7 @@
 
       initPriceSliders();
       initOptionSearch();
+      syncActionState();
     }
 
     function initOptionSearch() {
@@ -418,6 +463,8 @@
         window.clearTimeout(priceDebounceTimer);
       }
 
+      syncActionState();
+
       priceDebounceTimer = window.setTimeout(function () {
         requestAndSwap(buildUrlFromForm(filterForm));
       }, 500);
@@ -458,6 +505,7 @@
     initPriceSliders();
     initOptionSearch();
     initMobileDrawer();
+    syncActionState();
 
     return {
       close: closeDrawer
