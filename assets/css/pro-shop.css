@@ -1,27 +1,75 @@
 /* Clandevs Smart Catalog Filters Pro — Shop Styles */
 
+/* Fallbacks for the skin variables, so these controls look right even when the
+   catalog layout wrapper (which defines them) is not present. */
+.cscf-compare-toggle,
+.cscf-compare-bar,
+.cscf-presets {
+	--cscf-accent: var(--wf-accent, #0b6a78);
+	--cscf-accent-text: var(--wf-button-text, #ffffff);
+	--cscf-border: var(--wf-control-border, #cbd5e1);
+	--cscf-muted: var(--wf-muted-text, #64748b);
+	--cscf-text: var(--wf-text-color, #1f2937);
+}
+
 /* Comparison */
 
+/* Per-product compare button. */
 .cscf-compare-toggle {
 	display: inline-flex;
-	width: 100%;
-	margin-top: 10px;
+	align-items: center;
 	justify-content: center;
+	width: 100%;
+	min-height: 40px;
+	margin-top: 10px;
+	padding: 0 14px;
+	font: inherit;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1;
+	color: var(--cscf-text);
+	background: #ffffff;
+	border: 1px solid var(--cscf-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 
+.cscf-compare-toggle:hover,
+.cscf-compare-toggle:focus-visible {
+	border-color: var(--cscf-accent);
+	color: var(--cscf-accent);
+}
+
+.cscf-compare-toggle:focus-visible {
+	outline: 2px solid var(--cscf-accent);
+	outline-offset: 2px;
+}
+
+/* Selected state: filled with the plugin accent rather than flat black. */
 .cscf-compare-toggle.is-selected {
-	background: #1f2937;
-	color: #ffffff;
+	background: var(--cscf-accent);
+	border-color: var(--cscf-accent);
+	color: var(--cscf-accent-text);
 }
 
+.cscf-compare-toggle.is-selected:hover,
+.cscf-compare-toggle.is-selected:focus-visible {
+	background: var(--cscf-accent);
+	border-color: var(--cscf-accent);
+	color: var(--cscf-accent-text);
+	filter: brightness(1.06);
+}
+
+/* "N selected" bar. */
 .cscf-compare-bar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
+	gap: 10px;
 	margin-top: 16px;
 	padding: 12px 14px;
-	border: 1px solid #dbe2ea;
+	border: 1px solid var(--cscf-border);
 	border-radius: 12px;
 	background: #ffffff;
 }
@@ -33,7 +81,45 @@
 .cscf-compare-count {
 	font-size: 14px;
 	font-weight: 500;
-	color: #1f2937;
+	color: var(--cscf-text);
+	white-space: nowrap;
+}
+
+/* The bar's own actions, sized to sit together without crowding the count. */
+.cscf-compare-bar .button {
+	min-height: 36px;
+	padding: 0 14px;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.cscf-compare-go {
+	background: var(--cscf-accent);
+	border: 1px solid var(--cscf-accent);
+	color: var(--cscf-accent-text);
+}
+
+.cscf-compare-go:hover,
+.cscf-compare-go:focus-visible {
+	background: var(--cscf-accent);
+	border-color: var(--cscf-accent);
+	color: var(--cscf-accent-text);
+	filter: brightness(1.06);
+}
+
+.cscf-compare-clear {
+	background: #ffffff;
+	border: 1px solid var(--cscf-border);
+	color: var(--cscf-muted);
+}
+
+.cscf-compare-clear:hover,
+.cscf-compare-clear:focus-visible {
+	border-color: var(--cscf-text);
+	color: var(--cscf-text);
 }
 
 /* The modal is rendered from wp_footer as a direct child of <body>, so nothing
@@ -169,40 +255,6 @@ body.cscf-compare-open {
 	font-size: 14px;
 }
 
-.cscf-preset-list {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	margin: 0 0 8px;
-	padding: 0;
-	list-style: none;
-}
-
-.cscf-preset-list li {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	padding: 4px 10px;
-	border: 1px solid #dbe2ea;
-	border-radius: 999px;
-	background: #f8fafc;
-}
-
-.cscf-preset-link {
-	font-size: 13px;
-	text-decoration: none;
-}
-
-.cscf-preset-remove {
-	padding: 0 2px;
-	font-size: 15px;
-	line-height: 1;
-	color: #6b7280;
-	border: 0;
-	background: none;
-	cursor: pointer;
-}
-
 /* Visual swatches — selected state.
    The free plugin renders .wf-term-swatch directly after its checkbox. */
 
@@ -247,23 +299,86 @@ body.cscf-compare-open {
 
 /* Preset dropdown */
 
+.cscf-preset-loader {
+	display: block;
+	margin-bottom: 10px;
+}
+
 .cscf-preset-loader select {
 	width: 100%;
-	margin-bottom: 8px;
+	min-height: 40px;
+	padding: 0 34px 0 12px;
+	font: inherit;
+	font-size: 14px;
+	color: var(--cscf-text);
+	background-color: #ffffff;
+	border: 1px solid var(--cscf-border);
+	border-radius: 8px;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 10px center;
+	background-size: 16px;
+}
+
+.cscf-preset-loader select:focus-visible {
+	outline: 2px solid var(--cscf-accent);
+	outline-offset: 1px;
 }
 
 .cscf-preset-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
+	gap: 8px;
 }
 
 .cscf-preset-actions button[hidden] {
 	display: none;
 }
 
+.cscf-preset-actions .button {
+	flex: 1 1 auto;
+	min-height: 38px;
+	padding: 0 14px;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.cscf-preset-save {
+	background: var(--cscf-accent);
+	border: 1px solid var(--cscf-accent);
+	color: var(--cscf-accent-text);
+}
+
+.cscf-preset-save:hover,
+.cscf-preset-save:focus-visible {
+	background: var(--cscf-accent);
+	border-color: var(--cscf-accent);
+	color: var(--cscf-accent-text);
+	filter: brightness(1.06);
+}
+
+.cscf-preset-remove.button {
+	background: #ffffff;
+	border: 1px solid #fecaca;
+	color: #b91c1c;
+}
+
+.cscf-preset-remove.button:hover,
+.cscf-preset-remove.button:focus-visible {
+	background: #fef2f2;
+	border-color: #fca5a5;
+	color: #991b1b;
+}
+
 .cscf-preset-limit {
-	margin: 6px 0 0;
+	margin: 8px 0 0;
 	font-size: 12px;
-	color: #6b7280;
+	color: var(--cscf-muted);
 }
